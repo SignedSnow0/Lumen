@@ -1,7 +1,7 @@
-﻿#include "Application.h"
+﻿#include "EditorApplication.h"
 
 EditorApp::EditorApp()
-	: Application({})
+	: Application({ Lumen::Graphics::RendererAPI::Vulkan })
 {
 
 }

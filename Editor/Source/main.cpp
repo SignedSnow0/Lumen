@@ -1,4 +1,5 @@
-#include "Application.h"
+#include "EditorApplication.h"
+#pragma comment(lib, "Lumen.lib")
 
 void Start()
 {

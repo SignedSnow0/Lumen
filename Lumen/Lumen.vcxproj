@@ -61,11 +61,15 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)External\Include\;$(VULKAN_SDK)\Include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)External\Lib\</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -76,7 +80,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)External\Include\;$(VULKAN_SDK)\Include\</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
@@ -85,14 +89,39 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)External\Lib\</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\Types.h" />
     <ClInclude Include="Lumen.h" />
+    <ClInclude Include="Source\Core\Window.h" />
+    <ClInclude Include="Source\Graphics\Rhi\GraphicsContext.h" />
+    <ClInclude Include="Source\Graphics\Rhi\GraphicsSurface.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkBuffer.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkContext.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkDevice.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkInterface.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkPipeline.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkRenderPass.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkShader.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkSurface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\GraphicsContext.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\GraphicsSurface.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkContext.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkDevice.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkInterface.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkPipeline.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkRenderPass.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkShader.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkSurface.cpp" />
+    <ClCompile Include="Source\Platform\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
