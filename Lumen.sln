@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32002.185
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Editor.vcxproj", "{A3DD4735-2533-40B8-AD1F-73CEA3186D14}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3CB362DA-C25E-4BC6-ADB8-912EB3290F09} = {3CB362DA-C25E-4BC6-ADB8-912EB3290F09}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lumen", "Lumen\Lumen.vcxproj", "{3CB362DA-C25E-4BC6-ADB8-912EB3290F09}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{0A2ED510-F45A-48F8-A659-3FF668F9218F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3DD4735-2533-40B8-AD1F-73CEA3186D14}.Debug|x64.ActiveCfg = Debug|x64
+		{A3DD4735-2533-40B8-AD1F-73CEA3186D14}.Debug|x64.Build.0 = Debug|x64
+		{A3DD4735-2533-40B8-AD1F-73CEA3186D14}.Release|x64.ActiveCfg = Release|x64
+		{A3DD4735-2533-40B8-AD1F-73CEA3186D14}.Release|x64.Build.0 = Release|x64
+		{3CB362DA-C25E-4BC6-ADB8-912EB3290F09}.Debug|x64.ActiveCfg = Debug|x64
+		{3CB362DA-C25E-4BC6-ADB8-912EB3290F09}.Debug|x64.Build.0 = Debug|x64
+		{3CB362DA-C25E-4BC6-ADB8-912EB3290F09}.Release|x64.ActiveCfg = Release|x64
+		{3CB362DA-C25E-4BC6-ADB8-912EB3290F09}.Release|x64.Build.0 = Release|x64
+		{0A2ED510-F45A-48F8-A659-3FF668F9218F}.Debug|x64.ActiveCfg = Debug|x64
+		{0A2ED510-F45A-48F8-A659-3FF668F9218F}.Debug|x64.Build.0 = Debug|x64
+		{0A2ED510-F45A-48F8-A659-3FF668F9218F}.Release|x64.ActiveCfg = Release|x64
+		{0A2ED510-F45A-48F8-A659-3FF668F9218F}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {630E2708-F23D-4BFF-B6E5-892FA16689AF}
+	EndGlobalSection
+EndGlobal
