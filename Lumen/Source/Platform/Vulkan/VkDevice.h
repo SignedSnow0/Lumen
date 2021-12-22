@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 
+#include <vma/vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 namespace Lumen::Graphics::Vulkan
@@ -37,6 +38,7 @@ if ((func) != VK_SUCCESS)			\
 		[[nodiscard]] constexpr VkInstance Instance() const { return mInstance; }
 		[[nodiscard]] constexpr VkQueue GraphicsQueue() const { return mGraphicsQueue; }
 		[[nodiscard]] constexpr VkQueue PresentQueue() const { return mPresentQueue; }
+		[[nodiscard]] VmaAllocator Allocator() const { return mAllocator; }
 
 		void Init();
 		void Release();
@@ -48,6 +50,7 @@ if ((func) != VK_SUCCESS)			\
 		bool IsDeviceSuitable(VkPhysicalDevice device, QueueFamiliyIndices& indices);
 		void CreatePhysicalDevice();
 		void CreateLogicalDevice();
+		void CreateAllocator();
 
 		QueueFamiliyIndices			mIndices;
 		VkPhysicalDevice			mPhysicalDevice{};
@@ -56,5 +59,6 @@ if ((func) != VK_SUCCESS)			\
 		VkQueue						mGraphicsQueue{};
 		VkQueue						mPresentQueue{};
 		VkDebugUtilsMessengerEXT	mDebugMessenger{};
+		VmaAllocator				mAllocator{};
 	};
 }

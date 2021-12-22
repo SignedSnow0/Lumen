@@ -187,6 +187,7 @@ namespace Lumen::Graphics::Vulkan
 		CreateDebugMessenger();
 		CreatePhysicalDevice();
 		CreateLogicalDevice();
+		CreateAllocator();
 
 		std::cout << "Device init" << std::endl;
 	}
@@ -361,5 +362,16 @@ namespace Lumen::Graphics::Vulkan
 
 		vkGetDeviceQueue(mDevice, mIndices.Graphics.value(), 0, &mGraphicsQueue);
 		vkGetDeviceQueue(mDevice, mIndices.Present.value(), 0, &mGraphicsQueue);
+	}
+
+	void VkDevice::CreateAllocator()
+	{
+		VmaAllocatorCreateInfo createInfo{};
+		createInfo.instance = mInstance;
+		createInfo.physicalDevice = mPhysicalDevice;
+		createInfo.device = mDevice;
+		createInfo.vulkanApiVersion = 0;
+
+		vmaCreateAllocator(&createInfo, &mAllocator);
 	}
 }

@@ -32,7 +32,7 @@ namespace Lumen::Graphics::Vulkan
 		std::map<bindingLocation, VkUniform>		Uniforms{};
 		VkDescriptorSetLayout						Layout{};
 		VkDescriptorPool							Pool{};
-		std::vector<VkDescriptorSet>				Sets{ VkSurface::BufferCount };
+		std::vector<::VkDescriptorSet>				Sets{ VkSurface::BufferCount };
 		uint32_t									Set{};
 
 		void Initialize();

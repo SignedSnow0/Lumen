@@ -1,7 +1,10 @@
 ﻿#include "VkPipeline.h"
 
+#include <array>
+
 #include "VkBuffer.h"
 #include "VkDevice.h"
+#include "VkContext.h"
 
 namespace Lumen::Graphics::Vulkan
 {
@@ -20,7 +23,7 @@ namespace Lumen::Graphics::Vulkan
 		VertexInput.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 		VertexInput.pVertexAttributeDescriptions = attributeDescriptions.data();
 
-		InputAssembly.topology = vk::PrimitiveTopology::eTriangleList;
+		InputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		InputAssembly.primitiveRestartEnable = false;
 
 		Viewport.x = 0.f;
@@ -30,8 +33,8 @@ namespace Lumen::Graphics::Vulkan
 		Viewport.minDepth = 0.f;
 		Viewport.maxDepth = 1.f;
 
-		Scissor.offset = vk::Offset2D{ 0,0 };
-		Scissor.extent = vk::Extent2D{ width, height };
+		Scissor.offset = VkOffset2D{ 0,0 };
+		Scissor.extent = VkExtent2D{ width, height };
 
 		ViewportState.viewportCount = 1;
 		ViewportState.pViewports = &Viewport;
@@ -40,33 +43,33 @@ namespace Lumen::Graphics::Vulkan
 
 		Rasterizer.depthClampEnable = false;
 		Rasterizer.rasterizerDiscardEnable = false;
-		Rasterizer.polygonMode = vk::PolygonMode::eFill;
+		Rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 		Rasterizer.lineWidth = 1.f;
-		Rasterizer.cullMode = vk::CullModeFlagBits::eBack;
-		Rasterizer.frontFace = vk::FrontFace::eCounterClockwise;
+		Rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+		Rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		Rasterizer.depthBiasEnable = false;
 		Rasterizer.depthBiasConstantFactor = 0.f;
 		Rasterizer.depthBiasClamp = 0.f;
 		Rasterizer.depthBiasSlopeFactor = 0.f;
 
 		Multisampling.sampleShadingEnable = false;
-		Multisampling.rasterizationSamples = vk::SampleCountFlagBits::e1;
+		Multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 		Multisampling.minSampleShading = 1.f;
 		Multisampling.pSampleMask = nullptr;
 		Multisampling.alphaToCoverageEnable = false;
 		Multisampling.alphaToOneEnable = false;
 
-		ColorBlendAttachment.colorWriteMask = vk::ColorComponentFlagBits::eR| vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
+		ColorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 		ColorBlendAttachment.blendEnable = false;
-		ColorBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eOne;
-		ColorBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eZero;
-		ColorBlendAttachment.colorBlendOp = vk::BlendOp::eAdd;
-		ColorBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eOne;
-		ColorBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eZero;
-		ColorBlendAttachment.alphaBlendOp = vk::BlendOp::eAdd;
+		ColorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		ColorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+		ColorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		ColorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		ColorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		ColorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
 		ColorBlending.logicOpEnable = false;
-		ColorBlending.logicOp = vk::LogicOp::eCopy;
+		ColorBlending.logicOp = VK_LOGIC_OP_COPY;
 		ColorBlending.attachmentCount = 1;
 		ColorBlending.pAttachments = &ColorBlendAttachment;
 		ColorBlending.blendConstants[0] = 0.f;
@@ -74,8 +77,8 @@ namespace Lumen::Graphics::Vulkan
 		ColorBlending.blendConstants[2] = 0.f;
 		ColorBlending.blendConstants[3] = 0.f;
 
-		DynamicStates.push_back(vk::DynamicState::eViewport);
-		DynamicStates.push_back(vk::DynamicState::eScissor);
+		DynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+		DynamicStates.push_back(VK_DYNAMIC_STATE_SCISSOR);
 
 		DynamicState.dynamicStateCount = static_cast<uint32_t>(DynamicStates.size());
 		DynamicState.pDynamicStates = DynamicStates.data();
@@ -91,29 +94,29 @@ namespace Lumen::Graphics::Vulkan
 	 * \brief Sets the current pipeline as the one to be used from this command on
 	 * \param cmd Buffer used to memorize given commands
 	 */
-	void VkPipeline::Bind(vk::CommandBuffer cmd)
+	void VkPipeline::Bind(VkCommandBuffer cmd)
 	{
-		cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline);
+		vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
 
-		const vk::Viewport vp
+		const VkViewport vp
 		{
 			0, 0,
 			static_cast<float>(mRenderPass->Width()), static_cast<float>(mRenderPass->Height()),
 			0, 1
 		};
-		const vk::Rect2D scissor
+		const VkRect2D scissor
 		{
-			vk::Offset2D{ 0, 0 },
-			vk::Extent2D{ mRenderPass->Width(), mRenderPass->Height() }
+			VkOffset2D{ 0, 0 },
+			VkExtent2D{ mRenderPass->Width(), mRenderPass->Height() }
 		};
 
-		cmd.setViewport(0, 1, &vp);
-		cmd.setScissor(0, 1, &scissor);
+		vkCmdSetViewport(cmd, 0, 1, &vp);
+		vkCmdSetScissor(cmd, 0, 1, &scissor);
 	}
 
-	void VkPipeline::BindDescriptorSet(const VkDescriptorSet& set, vk::CommandBuffer cmd, uint32_t frame)
+	void VkPipeline::BindDescriptorSet(const VkDescriptorSet& set, VkCommandBuffer cmd, uint32_t frame)
 	{
-		cmd.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mLayout, set.Set, 1, &set.Sets[frame], 0, nullptr);
+		vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mLayout, set.Set, 1, &set.Sets[frame], 0, nullptr);
 	}
 
 	/**
@@ -121,8 +124,8 @@ namespace Lumen::Graphics::Vulkan
 	 */
 	void VkPipeline::Release()
 	{
-		VkGraphics::Device().Device().destroyPipeline(mPipeline);
-		VkGraphics::Device().Device().destroyPipelineLayout(mLayout);
+		vkDestroyPipeline(VkContext::Get().LogicalDevice(), mPipeline ,nullptr);
+		vkDestroyPipelineLayout(VkContext::Get().LogicalDevice(), mLayout, nullptr);
 	}
 
 	/**
@@ -134,16 +137,17 @@ namespace Lumen::Graphics::Vulkan
 	{
 		{
 			auto descriptorLayout{ shader.DescriptorsLayout() };
-			vk::PipelineLayoutCreateInfo createInfo{};
+			VkPipelineLayoutCreateInfo createInfo{};
+			createInfo.sType					= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 			createInfo.setLayoutCount			= static_cast<uint32_t>(descriptorLayout.size());
 			createInfo.pSetLayouts				= descriptorLayout.data();
 			createInfo.pushConstantRangeCount	= 0;
 			createInfo.pPushConstantRanges		= nullptr;
 
-			VK_ASSERT(VkGraphics::Device().Device().createPipelineLayout(&createInfo, nullptr, &mLayout), "Failed to create pipeline layout");
+			VK_ASSERT(vkCreatePipelineLayout(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mLayout), "Failed to create pipeline layout");
 		}
 
-		vk::GraphicsPipelineCreateInfo createInfo{};
+		VkGraphicsPipelineCreateInfo createInfo{};
 		createInfo.stageCount			= static_cast<uint32_t>(shader.GetPipelineStages().size());
 		createInfo.pStages				= shader.GetPipelineStages().data();
 		createInfo.pVertexInputState	= &settings.VertexInput;
@@ -160,6 +164,6 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.basePipelineHandle	= nullptr;
 		createInfo.basePipelineIndex	= -1;
 
-		mPipeline = VkGraphics::Device().Device().createGraphicsPipeline(nullptr, createInfo).value;
+		vkCreateGraphicsPipelines(VkContext::Get().LogicalDevice(), nullptr, 1, &createInfo, nullptr, &mPipeline);
 	}
 }

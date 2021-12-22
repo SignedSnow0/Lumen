@@ -1,5 +1,6 @@
 ﻿#include "VkShader.h"
 
+#include <fstream>
 #include <iostream>
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
@@ -80,6 +81,23 @@ namespace Lumen::Graphics::Vulkan
 
 			return { module.cbegin(), module.cend() };
 		}
+
+		std::string ReadFile(const std::filesystem::path& filePath)
+		{
+			std::ifstream file(filePath, std::ios::ate | std::ios::binary);
+			if (file.is_open())
+			{
+				const size_t size = file.tellg();
+				std::string buffer;
+				buffer.resize(size);
+				file.seekg(0);
+				file.read(buffer.data(), size);
+				file.close();
+				return buffer;
+			}
+
+			return "";
+		}
 	}
 
 	VkDescriptorSet::VkDescriptorSet(const VkDescriptorSet& right)
@@ -97,87 +115,90 @@ namespace Lumen::Graphics::Vulkan
 	void VkDescriptorSet::Initialize()
 	{
 		{
-			std::vector<vk::DescriptorSetLayoutBinding> bindings{};
+			std::vector<VkDescriptorSetLayoutBinding> bindings{};
 			for (const auto& [binding, uniform] : Uniforms)
 				bindings.emplace_back(uniform.LayoutBinding);
 
-			vk::DescriptorSetLayoutCreateInfo createInfo{};
+			VkDescriptorSetLayoutCreateInfo createInfo{};
+			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 			createInfo.bindingCount = static_cast<uint32_t>(bindings.size());
 			createInfo.pBindings	= bindings.data();
 
-			VK_ASSERT(VkGraphics::Device().Device().createDescriptorSetLayout(&createInfo, nullptr, &Layout), "Failed to create descriptor set layout");
+			VK_ASSERT(vkCreateDescriptorSetLayout(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &Layout), "Failed to create descriptor set layout");
 		}
 		{
-			std::vector<vk::DescriptorPoolSize> sizes{};
+			std::vector<VkDescriptorPoolSize> sizes{};
 			if(!Uniforms.empty())
 			{
-				vk::DescriptorPoolSize& size = sizes.emplace_back();
-				size.type				= vk::DescriptorType::eUniformBuffer;
+				VkDescriptorPoolSize& size = sizes.emplace_back();
+				size.type				= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 				size.descriptorCount	= static_cast<uint32_t>(Uniforms.size());
 			}
 
-			vk::DescriptorPoolCreateInfo createInfo{};
+			VkDescriptorPoolCreateInfo createInfo{};
+			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 			createInfo.maxSets			= VkSurface::BufferCount;
 			createInfo.poolSizeCount	= static_cast<uint32_t>(sizes.size());
 			createInfo.pPoolSizes		= sizes.data();
 
-			VK_ASSERT(VkGraphics::Device().Device().createDescriptorPool(&createInfo, nullptr, &Pool), "Failed to create descriptor pool");
+			VK_ASSERT(vkCreateDescriptorPool(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &Pool), "Failed to create descriptor pool");
 		}
 		{
-			const std::vector<vk::DescriptorSetLayout> layouts{ VkSurface::BufferCount, Layout };
+			const std::vector<VkDescriptorSetLayout> layouts{ VkSurface::BufferCount, Layout };
 
-			vk::DescriptorSetAllocateInfo allocInfo{};
+			VkDescriptorSetAllocateInfo allocInfo{};
 			allocInfo.descriptorPool		= Pool;
 			allocInfo.descriptorSetCount	= static_cast<uint32_t>(layouts.size());
 			allocInfo.pSetLayouts			= layouts.data();
 
-			VK_ASSERT(VkGraphics::Device().Device().allocateDescriptorSets(&allocInfo, Sets.data()), "Failed to allocate descriptor sets");
+			VK_ASSERT(vkAllocateDescriptorSets(VkContext::Get().LogicalDevice(), &allocInfo, Sets.data()), "Failed to allocate descriptor sets");
 		}
 	}
 
 	void VkDescriptorSet::Release()
 	{
-		VkGraphics::Device().Device().freeDescriptorSets(Pool, static_cast<uint32_t>(Sets.size()), Sets.data());
-		VkGraphics::Device().Device().destroyDescriptorPool(Pool);
-		VkGraphics::Device().Device().destroyDescriptorSetLayout(Layout);
+		vkFreeDescriptorSets(VkContext::Get().LogicalDevice(), Pool, static_cast<uint32_t>(Sets.size()), Sets.data());
+		vkDestroyDescriptorPool(VkContext::Get().LogicalDevice(), Pool, nullptr);
+		vkDestroyDescriptorSetLayout(VkContext::Get().LogicalDevice(), Layout, nullptr);
 	}
 
 	void VkDescriptorSet::AttachUniformBuffer(const VkUniformBuffer& buffer, uint32_t binding)
 	{
 		for(uint32_t i{ 0 }; i < VkSurface::BufferCount; i++)
 		{
-			vk::DescriptorBufferInfo bufferInfo{};
+			VkDescriptorBufferInfo bufferInfo{};
 			bufferInfo.buffer = buffer.Buffer(i);
 			bufferInfo.offset = 0;
 			bufferInfo.range = buffer.Size();
 	
-			vk::WriteDescriptorSet uniformWrite{};
+			VkWriteDescriptorSet uniformWrite{};
+			uniformWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			uniformWrite.dstSet = Sets[i];
 			uniformWrite.dstBinding = binding;
 			uniformWrite.dstArrayElement = 0;
-			uniformWrite.descriptorType = vk::DescriptorType::eUniformBuffer;
+			uniformWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			uniformWrite.descriptorCount = 1;
 			uniformWrite.pBufferInfo = &bufferInfo;
 			uniformWrite.pImageInfo = nullptr;
 			uniformWrite.pTexelBufferView = nullptr;
 
-			VkGraphics::Device().Device().updateDescriptorSets(1, &uniformWrite, 0, nullptr);
+			vkUpdateDescriptorSets(VkContext::Get().LogicalDevice(), 1, &uniformWrite, 0, nullptr);
 		}
 	}
 
-	VkShader::VkShader(const std::unordered_map<std::string, vk::ShaderStageFlagBits>& sources)
+	VkShader::VkShader(const std::unordered_map<std::string, VkShaderStageFlagBits>& sources)
 	{
 		for(auto& [path, stage] : sources)
 		{
-			const auto blob = Compile(Utils::ReadFile(path), stage);
+			const auto blob = Compile(ReadFile(path), stage);
 			CreateModule(blob, stage);
 			Reflect(blob, stage);
 		}
 	}
 
-	std::vector<vk::DescriptorSetLayout> VkShader::DescriptorsLayout() const
+	std::vector<VkDescriptorSetLayout> VkShader::DescriptorsLayout() const
 	{
-		std::vector<vk::DescriptorSetLayout> layouts{ mDescriptorSets.size() };
+		std::vector<VkDescriptorSetLayout> layouts{ mDescriptorSets.size() };
 		uint32_t i{ 0 };
 		for (auto [set, descriptor] : mDescriptorSets)
 		{
@@ -195,7 +216,7 @@ namespace Lumen::Graphics::Vulkan
 	void VkShader::Release()
 	{
 		for(const auto& module : mModules)
-			VkGraphics::Device().Device().destroyShaderModule(module);
+			vkDestroyShaderModule(VkContext::Get().LogicalDevice(), module, nullptr);
 	}
 
 	/**
@@ -203,14 +224,15 @@ namespace Lumen::Graphics::Vulkan
 	 * \param blob The shader`s spir-v bytecode
 	 * \param stage Pipeline stage of the specified module
 	 */
-	void VkShader::CreateModule(const std::vector<uint32_t>& blob, vk::ShaderStageFlagBits stage)
+	void VkShader::CreateModule(const std::vector<uint32_t>& blob, VkShaderStageFlagBits stage)
 	{
-		vk::ShaderModuleCreateInfo createInfo{};
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = blob.size() * sizeof(uint32_t);
 		createInfo.pCode = blob.data();
 
 		mModules.emplace_back();
-		VK_ASSERT(VkGraphics::Device().Device().createShaderModule(&createInfo, nullptr, &mModules.back()), "Failed to create shader module");
+		VK_ASSERT(vkCreateShaderModule(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mModules.back()), "Failed to create shader module");
 
 		auto& info = mPipelineInfos.emplace_back();
 		info.stage = stage;
@@ -218,7 +240,7 @@ namespace Lumen::Graphics::Vulkan
 		info.pName = "main";
 	}
 
-	void VkShader::Reflect(const std::vector<uint32_t>& blob, vk::ShaderStageFlagBits stage)
+	void VkShader::Reflect(const std::vector<uint32_t>& blob, VkShaderStageFlagBits stage)
 	{
 		const spirv_cross::Compiler compiler{ blob };
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
@@ -238,9 +260,9 @@ namespace Lumen::Graphics::Vulkan
 				//todo get members info
 			}
 
-			vk::DescriptorSetLayoutBinding layoutBinding{};
+			VkDescriptorSetLayoutBinding layoutBinding{};
 			layoutBinding.binding = binding;
-			layoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+			layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			layoutBinding.descriptorCount = 1;
 			layoutBinding.stageFlags = stage;
 			layoutBinding.pImmutableSamplers = nullptr;

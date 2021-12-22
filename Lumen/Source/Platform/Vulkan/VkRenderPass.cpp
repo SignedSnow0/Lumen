@@ -1,38 +1,38 @@
 ﻿#include "VkRenderPass.h"
 
-#include "VkGraphics.h"
+#include "VkContext.h"
 #include "VkSurface.h"
 
-namespace FrostEngine::Vulkan
+namespace Lumen::Graphics::Vulkan
 {
 	/**
 	 * \brief Fills the structure with default settings for a color attachment
 	 * \param format The attachment`s format used
 	 */
-	void Attachment::AsColor(vk::Format format)
+	void Attachment::AsColor(VkFormat format)
 	{
 		Description.format = format;
-		Description.samples = vk::SampleCountFlagBits::e1;
-		Description.loadOp = vk::AttachmentLoadOp::eClear;
-		Description.storeOp = vk::AttachmentStoreOp::eStore;
-		Description.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
-		Description.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
-		Description.initialLayout = vk::ImageLayout::eUndefined;
-		Description.finalLayout = vk::ImageLayout::ePresentSrcKHR;
+		Description.samples = VK_SAMPLE_COUNT_1_BIT;
+		Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		Description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		Description.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		Description.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		Description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		Description.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		Reference.attachment = 0;
-		Reference.layout = vk::ImageLayout::eColorAttachmentOptimal;
+		Reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		Subpass.pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
+		Subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		Subpass.colorAttachmentCount = 1;
 		Subpass.pColorAttachments = &Reference;
 
 		Dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		Dependency.dstSubpass = 0;
-		Dependency.srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-		Dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-		Dependency.srcAccessMask = vk::AccessFlagBits{ 0 };
-		Dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+		Dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		Dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		Dependency.srcAccessMask = 0;
+		Dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	}
 
 	VkRenderPass::VkRenderPass(std::vector<Attachment> attachments, VkSurface& target)
@@ -44,18 +44,19 @@ namespace FrostEngine::Vulkan
 	void VkRenderPass::Initialize()
 	{
 		{
-			std::vector<vk::AttachmentDescription> descriptions{ mAttachments.size() };
-			std::vector<vk::SubpassDescription> subpasses{ mAttachments.size() };
-			std::vector<vk::SubpassDependency> dependencies{ mAttachments.size() };
+			std::vector<VkAttachmentDescription> descriptions{ mAttachments.size() };
+			std::vector<VkSubpassDescription> subpasses{ mAttachments.size() };
+			std::vector<VkSubpassDependency> dependencies{ mAttachments.size() };
 			uint32_t i{ 0 };
-			for (const auto description : mAttachments)
+			for (const auto& description : mAttachments)
 			{
 				descriptions[i] = description.Description;
 				subpasses[i] = description.Subpass;
 				dependencies[i] = description.Dependency;
 				i++;
 			}
-			vk::RenderPassCreateInfo createInfo{};
+			VkRenderPassCreateInfo createInfo{};
+			createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 			createInfo.attachmentCount = static_cast<uint32_t>(mAttachments.size());
 			createInfo.pAttachments = descriptions.data();
 			createInfo.subpassCount = static_cast<uint32_t>(mAttachments.size());
@@ -63,7 +64,7 @@ namespace FrostEngine::Vulkan
 			createInfo.dependencyCount = static_cast<uint32_t>(mAttachments.size());
 			createInfo.pDependencies = dependencies.data();
 
-			VK_ASSERT(VkGraphics::Device().Device().createRenderPass(&createInfo, nullptr, &mRenderPass), "Failed to create render pass");
+			VK_ASSERT(vkCreateRenderPass(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mRenderPass), "Failed to create render pass");
 		}
 		CreateFramebuffers();
 	}
@@ -74,9 +75,9 @@ namespace FrostEngine::Vulkan
 	void VkRenderPass::Release()
 	{
 		for (const auto& framebuffer : mFramebuffers)
-			VkGraphics::Device().Device().destroyFramebuffer(framebuffer);
+			vkDestroyFramebuffer(VkContext::Get().LogicalDevice(), framebuffer, nullptr);
 
-		VkGraphics::Device().Device().destroyRenderPass(mRenderPass);
+		vkDestroyRenderPass(VkContext::Get().LogicalDevice(), mRenderPass, nullptr);
 	}
 
 	/**
@@ -88,17 +89,18 @@ namespace FrostEngine::Vulkan
 		if (mSize.first != mTarget->Width() || mSize.second != mTarget->Height())
 			Resize();
 
-		const vk::ClearValue color{ vk::ClearColorValue{ std::array{ 0.f,0.f,0.f,1.f } } };
+		const VkClearValue color{ VkClearColorValue{{ 0.f,0.f,0.f,1.f } } };
 
-		vk::RenderPassBeginInfo beginInfo{};
+		VkRenderPassBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		beginInfo.renderPass = mRenderPass;
 		beginInfo.framebuffer = mFramebuffers[frame];
-		beginInfo.renderArea.offset = vk::Offset2D{ 0, 0 };
-		beginInfo.renderArea.extent = vk::Extent2D{ mTarget->Width(), mTarget->Height() };
+		beginInfo.renderArea.offset = VkOffset2D{ 0, 0 };
+		beginInfo.renderArea.extent = VkExtent2D{ mTarget->Width(), mTarget->Height() };
 		beginInfo.clearValueCount = 1;
 		beginInfo.pClearValues = &color;
 
-		mTarget->CommandBuffer().beginRenderPass(&beginInfo, vk::SubpassContents::eInline);
+		vkCmdBeginRenderPass(mTarget->CommandBuffer(), &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	/**
@@ -106,7 +108,7 @@ namespace FrostEngine::Vulkan
 	 */
 	void VkRenderPass::End()
 	{
-		mTarget->CommandBuffer().endRenderPass();
+		vkCmdEndRenderPass(mTarget->CommandBuffer());
 	}
 
 	void VkRenderPass::CreateFramebuffers()
@@ -114,9 +116,9 @@ namespace FrostEngine::Vulkan
 		mFramebuffers.resize(VkSurface::BufferCount);
 		for (uint32_t i{ 0 }; i < VkSurface::BufferCount; i++)
 		{
-			const vk::ImageView views[]{ mTarget->ImageView(i) };
+			const VkImageView views[]{ mTarget->ImageView(i) };
 
-			vk::FramebufferCreateInfo createInfo{};
+			VkFramebufferCreateInfo createInfo{};
 			createInfo.renderPass = mRenderPass;
 			createInfo.attachmentCount = 1;
 			createInfo.pAttachments = views;
@@ -124,7 +126,7 @@ namespace FrostEngine::Vulkan
 			createInfo.height = mTarget->Height();
 			createInfo.layers = 1;
 
-			VK_ASSERT(VkGraphics::Device().Device().createFramebuffer(&createInfo, nullptr, &mFramebuffers[i]), "Failed to create framebuffer");
+			VK_ASSERT(vkCreateFramebuffer(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mFramebuffers[i]), "Failed to create framebuffer");
 		}
 
 		mSize.first = mTarget->Width();
@@ -135,7 +137,7 @@ namespace FrostEngine::Vulkan
 	{
 		for (uint32_t i{ 0 }; i < mFramebuffers.size(); i++)
 		{
-			VkGraphics::Device().Device().destroyFramebuffer(mFramebuffers[i]);
+			vkDestroyFramebuffer(VkContext::Get().LogicalDevice(), mFramebuffers[i], nullptr);
 		}
 
 		CreateFramebuffers();

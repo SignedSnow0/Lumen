@@ -29,5 +29,6 @@
     <ClCompile Include="Source\Platform\Vulkan\VkSurface.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\GraphicsSurface.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\vma.cpp" />
   </ItemGroup>
 </Project>

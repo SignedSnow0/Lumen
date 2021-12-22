@@ -1,24 +1,24 @@
 ﻿#pragma once
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 #include "VkShader.h"
 #include "VkRenderPass.h"
 
-namespace FrostEngine::Vulkan
+namespace Lumen::Graphics::Vulkan
 {
 	struct PipelineSettings
 	{
-		vk::PipelineVertexInputStateCreateInfo		VertexInput{};
-		vk::PipelineInputAssemblyStateCreateInfo	InputAssembly{};
-		vk::Viewport								Viewport{};
-		vk::Rect2D									Scissor{};
-		vk::PipelineViewportStateCreateInfo			ViewportState{};
-		vk::PipelineRasterizationStateCreateInfo	Rasterizer{};
-		vk::PipelineMultisampleStateCreateInfo		Multisampling{};
-		vk::PipelineColorBlendAttachmentState		ColorBlendAttachment{};
-		vk::PipelineColorBlendStateCreateInfo		ColorBlending{};
-		std::vector<vk::DynamicState>				DynamicStates{};
-		vk::PipelineDynamicStateCreateInfo			DynamicState{};
+		VkPipelineVertexInputStateCreateInfo	VertexInput{};
+		VkPipelineInputAssemblyStateCreateInfo	InputAssembly{};
+		VkViewport								Viewport{};
+		VkRect2D								Scissor{};
+		VkPipelineViewportStateCreateInfo		ViewportState{};
+		VkPipelineRasterizationStateCreateInfo	Rasterizer{};
+		VkPipelineMultisampleStateCreateInfo	Multisampling{};
+		VkPipelineColorBlendAttachmentState		ColorBlendAttachment{};
+		VkPipelineColorBlendStateCreateInfo		ColorBlending{};
+		std::vector<VkDynamicState>				DynamicStates{};
+		VkPipelineDynamicStateCreateInfo		DynamicState{};
 
 		void DefaultSettings(uint32_t width, uint32_t height);
 	};
@@ -30,15 +30,15 @@ namespace FrostEngine::Vulkan
 		explicit VkPipeline(const VkShader& shader, const PipelineSettings& settings, VkRenderPass* renderPass);
 		~VkPipeline() { Release(); }
 
-		void Bind(vk::CommandBuffer cmd);
-		void BindDescriptorSet(const VkDescriptorSet& set, vk::CommandBuffer cmd, uint32_t frame);
+		void Bind(VkCommandBuffer cmd);
+		void BindDescriptorSet(const VkDescriptorSet& set, VkCommandBuffer cmd, uint32_t frame);
 		void Release();
 
 	private:
 		void CreatePipeline(const VkShader& shader, const PipelineSettings& settings);
 
 		VkRenderPass*		mRenderPass{ nullptr };
-		vk::PipelineLayout	mLayout{};
-		vk::Pipeline		mPipeline{};
+		VkPipelineLayout	mLayout{};
+		::VkPipeline		mPipeline{};
 	};
 }

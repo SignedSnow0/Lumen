@@ -121,6 +121,7 @@
     <ClCompile Include="Source\Platform\Vulkan\VkRenderPass.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkShader.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkSurface.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\vma.cpp" />
     <ClCompile Include="Source\Platform\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

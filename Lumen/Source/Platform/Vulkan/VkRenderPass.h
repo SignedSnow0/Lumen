@@ -1,20 +1,18 @@
 ﻿#pragma once
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 #include "VkSurface.h"
 
-namespace FrostEngine::Vulkan
+namespace Lumen::Graphics::Vulkan
 {
-	class VkSurface;
-
 	struct Attachment
 	{
-		vk::AttachmentDescription	Description{};
-		vk::AttachmentReference		Reference{};
-		vk::SubpassDescription		Subpass{};
-		vk::SubpassDependency		Dependency{};
+		VkAttachmentDescription	Description{};
+		VkAttachmentReference	Reference{};
+		VkSubpassDescription	Subpass{};
+		VkSubpassDependency		Dependency{};
 
-		void AsColor(vk::Format format);
+		void AsColor(VkFormat format);
 	};
 
 	class VkRenderPass
@@ -26,7 +24,7 @@ namespace FrostEngine::Vulkan
 
 		[[nodiscard]] constexpr uint32_t Width() const { return mTarget->Width(); }
 		[[nodiscard]] constexpr uint32_t Height() const { return mTarget->Height(); }
-		[[nodiscard]] constexpr vk::RenderPass Get() const { return mRenderPass; }
+		[[nodiscard]] constexpr ::VkRenderPass Get() const { return mRenderPass; }
 
 		void Initialize();
 		void Release();
@@ -41,7 +39,7 @@ namespace FrostEngine::Vulkan
 		std::pair<uint32_t, uint32_t>	mSize{};
 		const std::vector<Attachment>	mAttachments{};
 		VkSurface*						mTarget{ nullptr };
-		std::vector<vk::Framebuffer>	mFramebuffers{};
-		vk::RenderPass					mRenderPass{};
+		std::vector<VkFramebuffer>		mFramebuffers{};
+		::VkRenderPass					mRenderPass{};
 	};
 }
