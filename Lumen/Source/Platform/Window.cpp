@@ -1,8 +1,8 @@
 #include "Core/Window.h"
 
 #ifdef _WIN64
-#include <glfw/glfw3.h>
-#pragma comment(lib, "glfw/glfw3.lib")
+#include <GLFW/glfw3.h>
+
 namespace Lumen
 {
 	namespace

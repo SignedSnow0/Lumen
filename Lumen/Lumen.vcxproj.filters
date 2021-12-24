@@ -43,4 +43,7 @@
     <ClCompile Include="Source\Graphics\Rhi\Pipeline.cpp" />
     <ClCompile Include="Source\Graphics\TestRenderer.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>
