@@ -8,6 +8,59 @@
 
 namespace Lumen::Graphics::Vulkan
 {
+	namespace
+	{
+		Pipeline* CreateFuncVulkan(const PipelineInitInfo& initInfo)
+		{
+			const VkShader& shader = *dynamic_cast<VkShader*>(initInfo.Shader);
+			const auto renderPass = dynamic_cast<VkRenderPass*>(initInfo.RenderPass);
+			PipelineSettings settings{};
+			settings.DefaultSettings(initInfo.InitialWidth, initInfo.InitialHeight);
+			switch (initInfo.CullMode)
+			{
+			case CullMode::Front:
+				settings.Rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
+				break;
+			case CullMode::Back: 
+				settings.Rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+				break;
+			case CullMode::FrontAndBack:
+				settings.Rasterizer.cullMode = VK_CULL_MODE_FRONT_AND_BACK;
+				break;
+			case CullMode::None: 
+				settings.Rasterizer.cullMode = VK_CULL_MODE_NONE;
+				break;
+			}
+			switch (initInfo.DrawType)
+			{
+			case DrawType::Point:
+				settings.InputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+				break;
+			case DrawType::Triangle: 
+				settings.InputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+				break;
+			case DrawType::Line: 
+				settings.InputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+				break;
+			}
+			switch (initInfo.PolygonMode)
+			{
+			case PolygonMode::Fill:
+				settings.Rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+				break;
+			case PolygonMode::Line:
+				settings.Rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
+				break;
+			case PolygonMode::Point:
+				settings.Rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+				break;
+			}
+			//todo blendmode
+
+			return new VkPipeline{ shader, settings, renderPass };
+		}
+	}
+
 	/**
 	 * \brief Fills the structure with the default fixed functions settings
 	 * \param width Width in pixels of the target`s initial dimension
@@ -18,11 +71,13 @@ namespace Lumen::Graphics::Vulkan
 		static const auto bindingDescription = VkVertexBuffer::BindingDescription();
 		static const auto attributeDescriptions = VkVertexBuffer::AttributeDescriptions();
 
+		VertexInput.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		VertexInput.vertexBindingDescriptionCount = 1;
 		VertexInput.pVertexBindingDescriptions = &bindingDescription;
 		VertexInput.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 		VertexInput.pVertexAttributeDescriptions = attributeDescriptions.data();
 
+		InputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		InputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		InputAssembly.primitiveRestartEnable = false;
 
@@ -36,11 +91,13 @@ namespace Lumen::Graphics::Vulkan
 		Scissor.offset = VkOffset2D{ 0,0 };
 		Scissor.extent = VkExtent2D{ width, height };
 
+		ViewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		ViewportState.viewportCount = 1;
 		ViewportState.pViewports = &Viewport;
 		ViewportState.scissorCount = 1;
 		ViewportState.pScissors = &Scissor;
 
+		Rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		Rasterizer.depthClampEnable = false;
 		Rasterizer.rasterizerDiscardEnable = false;
 		Rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
@@ -52,6 +109,7 @@ namespace Lumen::Graphics::Vulkan
 		Rasterizer.depthBiasClamp = 0.f;
 		Rasterizer.depthBiasSlopeFactor = 0.f;
 
+		Multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		Multisampling.sampleShadingEnable = false;
 		Multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 		Multisampling.minSampleShading = 1.f;
@@ -68,6 +126,7 @@ namespace Lumen::Graphics::Vulkan
 		ColorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 		ColorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
+		ColorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		ColorBlending.logicOpEnable = false;
 		ColorBlending.logicOp = VK_LOGIC_OP_COPY;
 		ColorBlending.attachmentCount = 1;
@@ -80,6 +139,7 @@ namespace Lumen::Graphics::Vulkan
 		DynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
 		DynamicStates.push_back(VK_DYNAMIC_STATE_SCISSOR);
 
+		DynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		DynamicState.dynamicStateCount = static_cast<uint32_t>(DynamicStates.size());
 		DynamicState.pDynamicStates = DynamicStates.data();
 	}
@@ -92,10 +152,11 @@ namespace Lumen::Graphics::Vulkan
 
 	/**
 	 * \brief Sets the current pipeline as the one to be used from this command on
-	 * \param cmd Buffer used to memorize given commands
 	 */
-	void VkPipeline::Bind(VkCommandBuffer cmd)
+	void VkPipeline::Bind()
 	{
+		VkCommandBuffer cmd = VkSurface::Bound()->CommandBuffer();
+
 		vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
 
 		const VkViewport vp
@@ -114,9 +175,23 @@ namespace Lumen::Graphics::Vulkan
 		vkCmdSetScissor(cmd, 0, 1, &scissor);
 	}
 
-	void VkPipeline::BindDescriptorSet(const VkDescriptorSet& set, VkCommandBuffer cmd, uint32_t frame)
+	void VkPipeline::BindDescriptorSet(const DescriptorSet& set, uint32_t frame)
 	{
-		vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mLayout, set.Set, 1, &set.Sets[frame], 0, nullptr);
+		VkCommandBuffer cmd = VkSurface::Bound()->CommandBuffer();
+
+		const auto vkSet = reinterpret_cast<const VkDescriptorSet*>(&set);
+		const ::VkDescriptorSet dSet = vkSet->Set(frame);
+		vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mLayout, vkSet->SetIndex(), 1, &dSet, 0, nullptr);
+	}
+
+	void VkPipeline::SetInterface()
+	{
+		sCreateFunc = CreateFuncVulkan;
+	}
+
+	void VkPipeline::Init()
+	{
+
 	}
 
 	/**
@@ -136,11 +211,12 @@ namespace Lumen::Graphics::Vulkan
 	void VkPipeline::CreatePipeline(const VkShader& shader, const PipelineSettings& settings)
 	{
 		{
-			auto descriptorLayout{ shader.DescriptorsLayout() };
+			const auto descriptorLayouts{ shader.DescriptorsLayout() };
+				
 			VkPipelineLayoutCreateInfo createInfo{};
 			createInfo.sType					= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-			createInfo.setLayoutCount			= static_cast<uint32_t>(descriptorLayout.size());
-			createInfo.pSetLayouts				= descriptorLayout.data();
+			createInfo.setLayoutCount			= static_cast<uint32_t>(descriptorLayouts.size());
+			createInfo.pSetLayouts				= descriptorLayouts.data();
 			createInfo.pushConstantRangeCount	= 0;
 			createInfo.pPushConstantRanges		= nullptr;
 
@@ -148,6 +224,7 @@ namespace Lumen::Graphics::Vulkan
 		}
 
 		VkGraphicsPipelineCreateInfo createInfo{};
+		createInfo.sType				= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		createInfo.stageCount			= static_cast<uint32_t>(shader.GetPipelineStages().size());
 		createInfo.pStages				= shader.GetPipelineStages().data();
 		createInfo.pVertexInputState	= &settings.VertexInput;

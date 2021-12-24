@@ -22,18 +22,6 @@ namespace Lumen::Graphics::Vulkan
 	{
 		shaderc::Compiler compiler;
 
-		struct ShaderInfos
-		{
-			std::filesystem::path SourcePath;
-			VkShaderStageFlagBits Stage;
-		};
-
-		ShaderInfos engineShaderInfos[]
-		{
-			{ "D:/Dev/FrostEngine/Engine/Source/Graphics/Vulkan/Shaders/vertex.vert", VK_SHADER_STAGE_VERTEX_BIT },
-			{ "D:/Dev/FrostEngine/Engine/Source/Graphics/Vulkan/Shaders/fragment.frag", VK_SHADER_STAGE_FRAGMENT_BIT }
-		};
-
 		/**
 		 * \brief Converts the vulkan stages to equivalent shaderc stages
 		 * \param stage Shader stage to convert
@@ -46,11 +34,11 @@ namespace Lumen::Graphics::Vulkan
 			case VK_SHADER_STAGE_VERTEX_BIT:					return shaderc_vertex_shader;
 			case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT:		return shaderc_tess_control_shader;
 			case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT:	return shaderc_tess_evaluation_shader;
-			case VK_SHADER_STAGE_GEOMETRY_BIT:				return shaderc_geometry_shader;
-			case VK_SHADER_STAGE_FRAGMENT_BIT:				return shaderc_fragment_shader;
+			case VK_SHADER_STAGE_GEOMETRY_BIT:					return shaderc_geometry_shader;
+			case VK_SHADER_STAGE_FRAGMENT_BIT:					return shaderc_fragment_shader;
 			case VK_SHADER_STAGE_COMPUTE_BIT:					return shaderc_compute_shader;
 			//case VK_SHADER_STAGE_ALL_GRAPHICS:				return shaderc_callable_shader; //?
-			//case VK_SHADER_STAGE_ALL:						return shaderc_callable_shader; //?
+			//case VK_SHADER_STAGE_ALL:							return shaderc_callable_shader; //?
 			case VK_SHADER_STAGE_RAYGEN_BIT_KHR:				return shaderc_raygen_shader;
 			case VK_SHADER_STAGE_ANY_HIT_BIT_KHR:				return shaderc_anyhit_shader;
 			case VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR:			return shaderc_closesthit_shader;
@@ -98,101 +86,34 @@ namespace Lumen::Graphics::Vulkan
 
 			return "";
 		}
-	}
 
-	VkDescriptorSet::VkDescriptorSet(const VkDescriptorSet& right)
-		: Uniforms{right.Uniforms}, Set{ right.Set }
-	{
-	}
-
-	VkDescriptorSet& VkDescriptorSet::operator=(const VkDescriptorSet& right)
-	{
-		this->Uniforms = right.Uniforms;
-		this->Set = right.Set;
-		return *this;
-	}
-
-	void VkDescriptorSet::Initialize()
-	{
+		Shader* CreateFuncVulkan(const std::unordered_map<std::string, ShaderStage>& sources)
 		{
-			std::vector<VkDescriptorSetLayoutBinding> bindings{};
-			for (const auto& [binding, uniform] : Uniforms)
-				bindings.emplace_back(uniform.LayoutBinding);
-
-			VkDescriptorSetLayoutCreateInfo createInfo{};
-			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-			createInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-			createInfo.pBindings	= bindings.data();
-
-			VK_ASSERT(vkCreateDescriptorSetLayout(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &Layout), "Failed to create descriptor set layout");
-		}
-		{
-			std::vector<VkDescriptorPoolSize> sizes{};
-			if(!Uniforms.empty())
-			{
-				VkDescriptorPoolSize& size = sizes.emplace_back();
-				size.type				= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				size.descriptorCount	= static_cast<uint32_t>(Uniforms.size());
-			}
-
-			VkDescriptorPoolCreateInfo createInfo{};
-			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			createInfo.maxSets			= VkSurface::BufferCount;
-			createInfo.poolSizeCount	= static_cast<uint32_t>(sizes.size());
-			createInfo.pPoolSizes		= sizes.data();
-
-			VK_ASSERT(vkCreateDescriptorPool(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &Pool), "Failed to create descriptor pool");
-		}
-		{
-			const std::vector<VkDescriptorSetLayout> layouts{ VkSurface::BufferCount, Layout };
-
-			VkDescriptorSetAllocateInfo allocInfo{};
-			allocInfo.descriptorPool		= Pool;
-			allocInfo.descriptorSetCount	= static_cast<uint32_t>(layouts.size());
-			allocInfo.pSetLayouts			= layouts.data();
-
-			VK_ASSERT(vkAllocateDescriptorSets(VkContext::Get().LogicalDevice(), &allocInfo, Sets.data()), "Failed to allocate descriptor sets");
+			return new VkShader{ sources };
 		}
 	}
 
-	void VkDescriptorSet::Release()
-	{
-		vkFreeDescriptorSets(VkContext::Get().LogicalDevice(), Pool, static_cast<uint32_t>(Sets.size()), Sets.data());
-		vkDestroyDescriptorPool(VkContext::Get().LogicalDevice(), Pool, nullptr);
-		vkDestroyDescriptorSetLayout(VkContext::Get().LogicalDevice(), Layout, nullptr);
-	}
-
-	void VkDescriptorSet::AttachUniformBuffer(const VkUniformBuffer& buffer, uint32_t binding)
-	{
-		for(uint32_t i{ 0 }; i < VkSurface::BufferCount; i++)
-		{
-			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = buffer.Buffer(i);
-			bufferInfo.offset = 0;
-			bufferInfo.range = buffer.Size();
-	
-			VkWriteDescriptorSet uniformWrite{};
-			uniformWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			uniformWrite.dstSet = Sets[i];
-			uniformWrite.dstBinding = binding;
-			uniformWrite.dstArrayElement = 0;
-			uniformWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			uniformWrite.descriptorCount = 1;
-			uniformWrite.pBufferInfo = &bufferInfo;
-			uniformWrite.pImageInfo = nullptr;
-			uniformWrite.pTexelBufferView = nullptr;
-
-			vkUpdateDescriptorSets(VkContext::Get().LogicalDevice(), 1, &uniformWrite, 0, nullptr);
-		}
-	}
-
-	VkShader::VkShader(const std::unordered_map<std::string, VkShaderStageFlagBits>& sources)
+	VkShader::VkShader(const std::unordered_map<std::string, ShaderStage>& sources)
 	{
 		for(auto& [path, stage] : sources)
 		{
-			const auto blob = Compile(ReadFile(path), stage);
-			CreateModule(blob, stage);
-			Reflect(blob, stage);
+			VkShaderStageFlagBits vkStage = VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
+			switch (stage)
+			{
+			case ShaderStage::Vertex:
+				vkStage = VK_SHADER_STAGE_VERTEX_BIT;
+				break;
+			case ShaderStage::Fragment:
+				vkStage = VK_SHADER_STAGE_FRAGMENT_BIT;
+				break;
+			case ShaderStage::Compute:
+				vkStage = VK_SHADER_STAGE_COMPUTE_BIT;
+				break;
+			}
+
+			const auto blob = Compile(ReadFile(path), vkStage);
+			CreateModule(blob, vkStage);
+			Reflect(blob, vkStage);
 		}
 	}
 
@@ -202,12 +123,17 @@ namespace Lumen::Graphics::Vulkan
 		uint32_t i{ 0 };
 		for (auto [set, descriptor] : mDescriptorSets)
 		{
-			descriptor.Initialize();
-			layouts[i] = descriptor.Layout;
+			descriptor.CreateLayout();
+			layouts[i] = descriptor.mLayout;
 			i++;
 		}
 
 		return layouts;
+	}
+
+	void VkShader::Init()
+	{
+
 	}
 
 	/**
@@ -217,6 +143,11 @@ namespace Lumen::Graphics::Vulkan
 	{
 		for(const auto& module : mModules)
 			vkDestroyShaderModule(VkContext::Get().LogicalDevice(), module, nullptr);
+	}
+
+	void VkShader::SetInterface()
+	{
+		sCreateFunc = CreateFuncVulkan;
 	}
 
 	/**
@@ -235,6 +166,7 @@ namespace Lumen::Graphics::Vulkan
 		VK_ASSERT(vkCreateShaderModule(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mModules.back()), "Failed to create shader module");
 
 		auto& info = mPipelineInfos.emplace_back();
+		info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		info.stage = stage;
 		info.module = mModules.back();
 		info.pName = "main";
@@ -249,8 +181,9 @@ namespace Lumen::Graphics::Vulkan
 		{
 			const std::string& name = resource.name;
 			const spirv_cross::SPIRType& bufferType = compiler.get_type(resource.base_type_id);
-			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+			u32 binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+			u32 set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+			u32 size = static_cast<u32>(compiler.get_declared_struct_size(bufferType));
 
 			auto memberCount = static_cast<uint32_t>(bufferType.member_types.size());
 			for(const auto& memberType : bufferType.member_types)
@@ -270,36 +203,16 @@ namespace Lumen::Graphics::Vulkan
 			if(!mDescriptorSets.contains(set))
 			{
 				VkDescriptorSet dSet{};
-				dSet.Set = set;
+				dSet.mSet = set;
 				mDescriptorSets.insert({ set, dSet });
 			}
 
-			assert(!mDescriptorSets[set].Uniforms.contains(binding) && "Duplicated resource");
-			if(!mDescriptorSets[set].Uniforms.contains(binding))
+			assert(!mDescriptorSets[set].mUniforms.contains(binding) && "Duplicated resource");
+			if(!mDescriptorSets[set].mUniforms.contains(binding))
 			{
-				VkUniform uBuffer{ layoutBinding, name, stage };
-				mDescriptorSets[set].Uniforms.insert({ binding, uBuffer });
+				VkUniform uBuffer{ size, layoutBinding, name, stage };
+				mDescriptorSets[set].mUniforms.insert({ binding, uBuffer });
 			}
 		}
-	}
-
-	//------------------------------Engine shaders--------------------------------//
-	std::vector<VkShader*> EngineShaders::sShaders{ Count };
-
-	/**
-	 * \brief Initializes the default shaders subsystem
-	 */
-	void EngineShaders::Initialize()
-	{
-		sShaders[0] = new VkShader{ { { engineShaderInfos[0].SourcePath.string(), engineShaderInfos[0].Stage }, { engineShaderInfos[1].SourcePath.string(), engineShaderInfos[1].Stage } } };
-	}
-
-	/**
-	 * \brief Shuts down the subsystem
-	 */
-	void EngineShaders::Shutdown()
-	{
-		for (const auto& shader : sShaders)
-			delete shader;
 	}
 }

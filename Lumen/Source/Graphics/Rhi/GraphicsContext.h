@@ -16,7 +16,8 @@ namespace Lumen::Graphics
 	class GraphicsContext
 	{
     public:
-        virtual ~GraphicsContext();
+        static GraphicsContext* Create();
+        virtual ~GraphicsContext() = default;
 
         static RendererAPI GetRenderAPI() { return sRenderAPI; }
         static void SetRenderAPI(RendererAPI api);
@@ -24,8 +25,6 @@ namespace Lumen::Graphics
         virtual void Init() = 0;
        
         virtual void WaitIdle() const = 0;
-
-        static GraphicsContext* Create();
 
     protected:
         static GraphicsContext* (*sCreateFunc)();

@@ -1,6 +1,11 @@
 ﻿#include "VkInterface.h"
 
 #include "VkContext.h"
+#include "VkSurface.h"
+#include "VkRenderPass.h"
+#include "VkDescriptorSet.h"
+#include "VkPipeline.h"
+#include "VkShader.h"
 
 namespace Lumen::Graphics::Vulkan
 {
@@ -12,5 +17,10 @@ namespace Lumen::Graphics::Vulkan
 	void SetApiInterface()
 	{
 		VkContext::SetInterface();
+		VkSurface::SetInterface();
+		VkRenderPass::SetInterface();
+		VkDescriptorSet::SetInterface();
+		VkShader::SetInterface();
+		VkPipeline::SetInterface();
 	}
 }

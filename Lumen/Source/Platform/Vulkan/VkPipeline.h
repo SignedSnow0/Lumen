@@ -3,6 +3,7 @@
 
 #include "VkShader.h"
 #include "VkRenderPass.h"
+#include "Graphics/Rhi/Pipeline.h"
 
 namespace Lumen::Graphics::Vulkan
 {
@@ -23,16 +24,20 @@ namespace Lumen::Graphics::Vulkan
 		void DefaultSettings(uint32_t width, uint32_t height);
 	};
 
-	class VkPipeline
+	class VkPipeline : public Pipeline
 	{
 	public:
 		VkPipeline() = default;
 		explicit VkPipeline(const VkShader& shader, const PipelineSettings& settings, VkRenderPass* renderPass);
-		~VkPipeline() { Release(); }
+		~VkPipeline() override { VkPipeline::Release(); }
 
-		void Bind(VkCommandBuffer cmd);
-		void BindDescriptorSet(const VkDescriptorSet& set, VkCommandBuffer cmd, uint32_t frame);
-		void Release();
+		void Init() override;
+		void Release() override;
+
+		void Bind() override;
+		void BindDescriptorSet(const DescriptorSet& set, uint32_t frame) override;
+
+		static void SetInterface();
 
 	private:
 		void CreatePipeline(const VkShader& shader, const PipelineSettings& settings);

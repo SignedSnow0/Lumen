@@ -1,6 +1,7 @@
 ﻿#include "Application.h"
 
 #include "Window.h"
+#include "Graphics/TestRenderer.h"
 
 namespace Lumen
 {
@@ -30,6 +31,8 @@ namespace Lumen
 		Graphics::GraphicsContext::SetRenderAPI(mInitInfo.Api);
 		mGraphicsContext = Graphics::GraphicsContext::Create();
 		mGraphicsContext->Init();
+
+		Graphics::TestRenderer renderer{ &mWindows[0] };
 
 		return true;
 	}

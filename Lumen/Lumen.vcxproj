@@ -98,10 +98,16 @@
     <ClInclude Include="Source\Core\Types.h" />
     <ClInclude Include="Lumen.h" />
     <ClInclude Include="Source\Core\Window.h" />
+    <ClInclude Include="Source\Graphics\Rhi\DescriptorSet.h" />
     <ClInclude Include="Source\Graphics\Rhi\GraphicsContext.h" />
-    <ClInclude Include="Source\Graphics\Rhi\GraphicsSurface.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Pipeline.h" />
+    <ClInclude Include="Source\Graphics\Rhi\RenderPass.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Shader.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Surface.h" />
+    <ClInclude Include="Source\Graphics\TestRenderer.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkBuffer.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkContext.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkDescriptorSet.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkDevice.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkInterface.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkPipeline.h" />
@@ -111,10 +117,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\DescriptorSet.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\GraphicsContext.cpp" />
-    <ClCompile Include="Source\Graphics\Rhi\GraphicsSurface.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Pipeline.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\RenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Surface.cpp" />
+    <ClCompile Include="Source\Graphics\TestRenderer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkContext.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkDescriptorSet.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkInterface.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkPipeline.cpp" />

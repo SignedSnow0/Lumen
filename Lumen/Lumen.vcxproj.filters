@@ -13,8 +13,14 @@
     <ClInclude Include="Source\Platform\Vulkan\VkRenderPass.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkShader.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkSurface.h" />
-    <ClInclude Include="Source\Graphics\Rhi\GraphicsSurface.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Surface.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkBuffer.h" />
+    <ClInclude Include="Source\Graphics\Rhi\RenderPass.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Shader.h" />
+    <ClInclude Include="Source\Graphics\Rhi\DescriptorSet.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkDescriptorSet.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Pipeline.h" />
+    <ClInclude Include="Source\Graphics\TestRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
@@ -27,8 +33,14 @@
     <ClCompile Include="Source\Platform\Vulkan\VkRenderPass.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkShader.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkSurface.cpp" />
-    <ClCompile Include="Source\Graphics\Rhi\GraphicsSurface.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Surface.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\vma.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\RenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\DescriptorSet.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkDescriptorSet.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Pipeline.cpp" />
+    <ClCompile Include="Source\Graphics\TestRenderer.cpp" />
   </ItemGroup>
 </Project>

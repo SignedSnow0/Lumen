@@ -57,6 +57,7 @@ namespace Lumen::Graphics::Vulkan
 	class VkUniformBuffer
 	{
 	public:
+		VkUniformBuffer() = default;
 		explicit VkUniformBuffer(uint32_t size);
 
 		[[nodiscard]] constexpr uint32_t Size() const { return mSize; }
@@ -68,6 +69,6 @@ namespace Lumen::Graphics::Vulkan
 		std::vector<::VkBuffer> mBuffers{ VkSurface::BufferCount };
 		std::vector<VmaAllocation> mAllocations{ VkSurface::BufferCount };
 
-		uint32_t mSize{};
+		uint32_t mSize{ 0 };
 	};
 }

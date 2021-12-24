@@ -5,43 +5,53 @@
 
 namespace Lumen::Graphics::Vulkan
 {
+	namespace 
+	{
+		RenderPass* CreateFuncVulkan(Surface* target)
+		{
+			Attachment color{};
+			color.AsColor(VK_FORMAT_B8G8R8A8_SRGB);
+			return new VkRenderPass{ { color }, *dynamic_cast<VkSurface*>(target) };
+		}
+	}
+
 	/**
 	 * \brief Fills the structure with default settings for a color attachment
 	 * \param format The attachment`s format used
 	 */
 	void Attachment::AsColor(VkFormat format)
 	{
-		Description.format = format;
-		Description.samples = VK_SAMPLE_COUNT_1_BIT;
-		Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		Description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		Description.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		Description.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		Description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		Description.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		Description.format			= format;
+		Description.samples			= VK_SAMPLE_COUNT_1_BIT;
+		Description.loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
+		Description.storeOp			= VK_ATTACHMENT_STORE_OP_STORE;
+		Description.stencilLoadOp	= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		Description.stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		Description.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
+		Description.finalLayout		= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-		Reference.attachment = 0;
-		Reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		Reference.attachment	= 0;
+		Reference.layout		= VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		Subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		Subpass.colorAttachmentCount = 1;
-		Subpass.pColorAttachments = &Reference;
+		Subpass.pipelineBindPoint		= VK_PIPELINE_BIND_POINT_GRAPHICS;
+		Subpass.colorAttachmentCount	= 1;
+		Subpass.pColorAttachments		= &Reference;
 
-		Dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		Dependency.dstSubpass = 0;
-		Dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		Dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		Dependency.srcAccessMask = 0;
-		Dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		Dependency.srcSubpass		= VK_SUBPASS_EXTERNAL;
+		Dependency.dstSubpass		= 0;
+		Dependency.srcStageMask		= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		Dependency.dstStageMask		= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		Dependency.srcAccessMask	= 0;
+		Dependency.dstAccessMask	= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	}
 
 	VkRenderPass::VkRenderPass(std::vector<Attachment> attachments, VkSurface& target)
 		: mAttachments{ std::move(attachments) }, mTarget{ &target }
 	{
-		Initialize();
+		Init();
 	}
 
-	void VkRenderPass::Initialize()
+	void VkRenderPass::Init()
 	{
 		{
 			std::vector<VkAttachmentDescription> descriptions{ mAttachments.size() };
@@ -51,18 +61,18 @@ namespace Lumen::Graphics::Vulkan
 			for (const auto& description : mAttachments)
 			{
 				descriptions[i] = description.Description;
-				subpasses[i] = description.Subpass;
+				subpasses[i]	= description.Subpass;
 				dependencies[i] = description.Dependency;
 				i++;
 			}
 			VkRenderPassCreateInfo createInfo{};
-			createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-			createInfo.attachmentCount = static_cast<uint32_t>(mAttachments.size());
-			createInfo.pAttachments = descriptions.data();
-			createInfo.subpassCount = static_cast<uint32_t>(mAttachments.size());
-			createInfo.pSubpasses = subpasses.data();
-			createInfo.dependencyCount = static_cast<uint32_t>(mAttachments.size());
-			createInfo.pDependencies = dependencies.data();
+			createInfo.sType			= VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+			createInfo.attachmentCount	= static_cast<uint32_t>(mAttachments.size());
+			createInfo.pAttachments		= descriptions.data();
+			createInfo.subpassCount		= static_cast<uint32_t>(mAttachments.size());
+			createInfo.pSubpasses		= subpasses.data();
+			createInfo.dependencyCount	= static_cast<uint32_t>(mAttachments.size());
+			createInfo.pDependencies	= dependencies.data();
 
 			VK_ASSERT(vkCreateRenderPass(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mRenderPass), "Failed to create render pass");
 		}
@@ -84,7 +94,7 @@ namespace Lumen::Graphics::Vulkan
 	 * \brief Sets the current target for all the future draw calls
 	 * \param frame Frame index to record commands to
 	 */
-	void VkRenderPass::Begin(uint32_t frame)
+	void VkRenderPass::Begin(u32 frame)
 	{
 		if (mSize.first != mTarget->Width() || mSize.second != mTarget->Height())
 			Resize();
@@ -111,6 +121,11 @@ namespace Lumen::Graphics::Vulkan
 		vkCmdEndRenderPass(mTarget->CommandBuffer());
 	}
 
+	void VkRenderPass::SetInterface()
+	{
+		sCreateFunc = CreateFuncVulkan;
+	}
+
 	void VkRenderPass::CreateFramebuffers()
 	{
 		mFramebuffers.resize(VkSurface::BufferCount);
@@ -119,6 +134,7 @@ namespace Lumen::Graphics::Vulkan
 			const VkImageView views[]{ mTarget->ImageView(i) };
 
 			VkFramebufferCreateInfo createInfo{};
+			createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			createInfo.renderPass = mRenderPass;
 			createInfo.attachmentCount = 1;
 			createInfo.pAttachments = views;

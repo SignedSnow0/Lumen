@@ -19,16 +19,23 @@ namespace Lumen::Graphics::Vulkan
 			std::vector<VkSurfaceFormatKHR> Formats{};
 			std::vector<VkPresentModeKHR> PresentModes{};
 		} capabilities;
+
+		Surface* CreateFuncVulkan(Window* window)
+		{
+			return new VkSurface{ window };
+		}
 	}
 
-	VkSurface::VkSurface(Window& window)
-		: GraphicsSurface{ window }
+	VkSurface* VkSurface::sBound{ nullptr };
+
+	VkSurface::VkSurface(Window* window)
+		: mWindow{ window }
 	{ }
 
 	/**
-	 * \brief Creates all the necessary resources for the class
+	 * @brief Creates all the necessary resources for the class
 	 */
-	void VkSurface::Initialize()
+	void VkSurface::Init()
 	{
 		assert(mWindow);
 		VkResult result = glfwCreateWindowSurface(VkContext::Get().Instance(), mWindow->Native(), nullptr, &mSurface);
@@ -53,7 +60,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Destroys all the class` resources
+	 * @brief Destroys all the class` resources
 	 */
 	void VkSurface::Release()
 	{
@@ -77,9 +84,9 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Retrives the next available frame and begins command buffer recording
+	 * @brief Retrives the next available frame and begins command buffer recording
 	 */
-	void VkSurface::BeginFrame()
+	void VkSurface::Begin()
 	{
 		VK_ASSERT(vkWaitForFences(VkContext::Get().LogicalDevice(), 1, &mInFlightFences[mCurrentFrame], true, UINT64_MAX), "Failed to wait for fence")
 
@@ -92,12 +99,14 @@ namespace Lumen::Graphics::Vulkan
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		VK_ASSERT(vkBeginCommandBuffer(mCommandBuffers[mImageIndex], &beginInfo), "Failed to begin command buffer");
+
+		sBound = this;
 	}
 
 	/**
-	 * \brief Submits the current framebuffer to the graphics and presentation queues
+	 * @brief Submits the current framebuffer to the graphics and presentation queues
 	 */
-	void VkSurface::EndFrame()
+	void VkSurface::End()
 	{
 		vkEndCommandBuffer(mCommandBuffers[mImageIndex]);
 
@@ -139,8 +148,13 @@ namespace Lumen::Graphics::Vulkan
 		mCurrentFrame = (mCurrentFrame + 1) % MaxFramesInFlight;
 	}
 
+	void VkSurface::SetInterface()
+	{
+		sCreateFunc = CreateFuncVulkan;
+	}
+
 	/**
-	 * \brief Gets all the current surface`s capabilities
+	 * @brief Gets all the current surface`s capabilities
 	 */
 	void VkSurface::QuerySupport()
 	{
@@ -160,7 +174,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Chooses the best settings from all the available capabilities
+	 * @brief Chooses the best settings from all the available capabilities
 	 */
 	void VkSurface::ChooseSettings()
 	{
@@ -192,7 +206,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Chooses the best width and height for the current surface`s state
+	 * @brief Chooses the best width and height for the current surface`s state
 	 */
 	void VkSurface::ChooseExtent()
 	{
@@ -219,7 +233,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Creates a swapchain and gets its images
+	 * @brief Creates a swapchain and gets its images
 	 */
 	void VkSurface::CreateSwapchain()
 	{
@@ -253,7 +267,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Creates image views from the swapchain`s images
+	 * @brief Creates image views from the swapchain`s images
 	 */
 	void VkSurface::CreateImageViews()
 	{
@@ -280,7 +294,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Creates a command pool and allocates a command buffer for each frame
+	 * @brief Creates a command pool and allocates a command buffer for each frame
 	 */
 	void VkSurface::CreateCommandBuffers()
 	{
@@ -293,7 +307,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Creates fences and semaphores used in framebuffer syncronization
+	 * @brief Creates fences and semaphores used in framebuffer syncronization
 	 */
 	void VkSurface::CreateSyncObjects()
 	{

@@ -33,7 +33,7 @@ namespace Lumen::Graphics::Vulkan
 
 	void VkContext::WaitIdle() const
 	{
-
+		vkDeviceWaitIdle(mDevice.Device());
 	}
 
 	/**

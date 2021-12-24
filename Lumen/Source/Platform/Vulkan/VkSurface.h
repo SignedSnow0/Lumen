@@ -3,20 +3,20 @@
 #include <vulkan/vulkan.h>
 
 #include "Core/Window.h"
-#include "Graphics/Rhi/GraphicsSurface.h"
+#include "Graphics/Rhi/Surface.h"
 
 namespace Lumen::Graphics::Vulkan
 {
 	class VkRenderer;
 
-	class VkSurface : public GraphicsSurface
+	class VkSurface final : public Surface
 	{
 	public:
 		constexpr static uint32_t BufferCount{ 3 };
 		
 		VkSurface() = default;
-		explicit VkSurface(Window& window);
-		~VkSurface() { Release(); }
+		explicit VkSurface(Window* window);
+		~VkSurface() override { VkSurface::Release(); }
 
 		[[nodiscard]] constexpr VkFormat Format() const { return mFormat.format; }
 		[[nodiscard]] constexpr uint32_t Width() const { return mExtent.width; }
@@ -26,11 +26,15 @@ namespace Lumen::Graphics::Vulkan
 		[[nodiscard]] constexpr VkCommandBuffer CommandBuffer() const { return mCommandBuffers[mImageIndex]; }
 		[[nodiscard]] constexpr uint32_t ImageIndex() const { return mImageIndex; }
 
-		void Initialize();
-		void Release();
+		[[nodiscard]] static VkSurface* Bound() { return sBound; }
 
-		void BeginFrame();
-		void EndFrame();
+		void Init() override;
+		void Release() override;
+
+		void Begin() override;
+		void End() override;
+
+		static void SetInterface();
 
 	private:
 		void QuerySupport();
@@ -57,7 +61,9 @@ namespace Lumen::Graphics::Vulkan
 		VkSurfaceFormatKHR				mFormat{};
 		VkPresentModeKHR				mPresentMode{};
 		VkExtent2D						mExtent{};
-
+		Window*							mWindow{ nullptr };
 		constexpr static uint32_t		MaxFramesInFlight{ BufferCount - 1 };
+
+		static VkSurface* sBound;
 	};
 }

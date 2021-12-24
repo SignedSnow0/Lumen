@@ -2,6 +2,7 @@
 #include <vulkan/vulkan.h>
 
 #include "VkSurface.h"
+#include "Graphics/Rhi/RenderPass.h"
 
 namespace Lumen::Graphics::Vulkan
 {
@@ -15,22 +16,23 @@ namespace Lumen::Graphics::Vulkan
 		void AsColor(VkFormat format);
 	};
 
-	class VkRenderPass
+	class VkRenderPass final : public RenderPass
 	{
 	public:
-		VkRenderPass() = default;
 		explicit VkRenderPass(std::vector<Attachment> attachments, VkSurface& target);
-		~VkRenderPass() { Release(); }
+		~VkRenderPass() override { VkRenderPass::Release(); }
 
 		[[nodiscard]] constexpr uint32_t Width() const { return mTarget->Width(); }
 		[[nodiscard]] constexpr uint32_t Height() const { return mTarget->Height(); }
 		[[nodiscard]] constexpr ::VkRenderPass Get() const { return mRenderPass; }
 
-		void Initialize();
-		void Release();
+		void Init() override;
+		void Release() override;
 
-		void Begin(uint32_t frame);
-		void End();
+		void Begin(u32 frame) override;
+		void End() override;
+
+		static void SetInterface();
 
 	private:
 		void CreateFramebuffers();

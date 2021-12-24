@@ -20,11 +20,6 @@ namespace Lumen::Graphics
         return sCreateFunc();
     }
 
-    GraphicsContext::~GraphicsContext()
-    {
-
-    }
-
     /**
      * @brief Sets the render api to the one passed as argument
      * @param api The graphics api to set
