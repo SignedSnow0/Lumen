@@ -56,7 +56,7 @@ namespace Lumen::Graphics::Vulkan
 		VkDescriptorSetLayout					mLayout{};
 		VkDescriptorPool						mPool{ nullptr };
 		std::vector<::VkDescriptorSet>			mSets{ VkSurface::BufferCount };
-		uint32_t								mSet{};
+		u32										mSet{};
 		b8										mCreated{ false };
 
 		friend class VkShader;

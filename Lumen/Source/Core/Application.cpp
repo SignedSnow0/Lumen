@@ -11,8 +11,8 @@ namespace Lumen
 		WindowInitInfo info
 		{
 			"Window",
-			800,
-			600
+			1920,
+			1080
 		};
 		mWindows.emplace_back(info);
 	}

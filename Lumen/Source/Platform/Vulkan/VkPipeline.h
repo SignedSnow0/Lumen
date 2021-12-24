@@ -21,7 +21,7 @@ namespace Lumen::Graphics::Vulkan
 		std::vector<VkDynamicState>				DynamicStates{};
 		VkPipelineDynamicStateCreateInfo		DynamicState{};
 
-		void DefaultSettings(uint32_t width, uint32_t height);
+		void DefaultSettings(u32 width, u32 height);
 	};
 
 	class VkPipeline : public Pipeline
@@ -35,7 +35,7 @@ namespace Lumen::Graphics::Vulkan
 		void Release() override;
 
 		void Bind() override;
-		void BindDescriptorSet(const DescriptorSet& set, uint32_t frame) override;
+		void BindDescriptorSet(const DescriptorSet& set, u32 frame) override;
 
 		static void SetInterface();
 

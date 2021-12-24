@@ -1,11 +1,9 @@
 ﻿#include "VkShader.h"
 
 #include <fstream>
-#include <iostream>
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
 
-#include "VkBuffer.h"
 #include "VkContext.h"
 
 #ifdef _DEBUG
@@ -23,9 +21,9 @@ namespace Lumen::Graphics::Vulkan
 		shaderc::Compiler compiler;
 
 		/**
-		 * \brief Converts the vulkan stages to equivalent shaderc stages
-		 * \param stage Shader stage to convert
-		 * \return The converted shader stage
+		 * @brief Converts the vulkan stages to equivalent shaderc stages
+		 * @param stage Shader stage to convert
+		 * @return The converted shader stage
 		 */
 		shaderc_shader_kind VulkanToShaderc(VkShaderStageFlagBits stage)
 		{
@@ -53,18 +51,17 @@ namespace Lumen::Graphics::Vulkan
 		}
 
 		/**
-		 * \brief Compiles the shader to a blob
-		 * \param source Shader`s source code
-		 * \param stage Shader`s pipeline stage
-		 * \return A buffer with the spir-v bytecode
+		 * @brief Compiles the shader to a blob
+		 * @param source Shader`s source code
+		 * @param stage Shader`s pipeline stage
+		 * @return A buffer with the spir-v bytecode
 		 */
-		std::vector<uint32_t> Compile(const std::string& source, VkShaderStageFlagBits stage)
+		std::vector<u32> Compile(const std::string& source, VkShaderStageFlagBits stage)
 		{
 			shaderc::CompileOptions options;
 			options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_1);
 
 			const shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, VulkanToShaderc(stage), "", options);
-
 			assert(module.GetCompilationStatus() == shaderc_compilation_status_success);
 
 			return { module.cbegin(), module.cend() };
@@ -75,7 +72,7 @@ namespace Lumen::Graphics::Vulkan
 			std::ifstream file(filePath, std::ios::ate | std::ios::binary);
 			if (file.is_open())
 			{
-				const size_t size = file.tellg();
+				const u64 size = file.tellg();
 				std::string buffer;
 				buffer.resize(size);
 				file.seekg(0);
@@ -95,7 +92,7 @@ namespace Lumen::Graphics::Vulkan
 
 	VkShader::VkShader(const std::unordered_map<std::string, ShaderStage>& sources)
 	{
-		for(auto& [path, stage] : sources)
+		for (auto& [path, stage] : sources)
 		{
 			VkShaderStageFlagBits vkStage = VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
 			switch (stage)
@@ -120,7 +117,8 @@ namespace Lumen::Graphics::Vulkan
 	std::vector<VkDescriptorSetLayout> VkShader::DescriptorsLayout() const
 	{
 		std::vector<VkDescriptorSetLayout> layouts{ mDescriptorSets.size() };
-		uint32_t i{ 0 };
+
+		u32 i{ 0 };
 		for (auto [set, descriptor] : mDescriptorSets)
 		{
 			descriptor.CreateLayout();
@@ -137,11 +135,11 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Destroys all the class` resources
+	 * @brief Destroys all the class` resources
 	 */
 	void VkShader::Release()
 	{
-		for(const auto& module : mModules)
+		for (const auto& module : mModules)
 			vkDestroyShaderModule(VkContext::Get().LogicalDevice(), module, nullptr);
 	}
 
@@ -151,42 +149,42 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Creates a shader module
-	 * \param blob The shader`s spir-v bytecode
-	 * \param stage Pipeline stage of the specified module
+	 * @brief Creates a shader module
+	 * @param blob The shader`s spir-v bytecode
+	 * @param stage Pipeline stage of the specified module
 	 */
-	void VkShader::CreateModule(const std::vector<uint32_t>& blob, VkShaderStageFlagBits stage)
+	void VkShader::CreateModule(const std::vector<u32>& blob, VkShaderStageFlagBits stage)
 	{
 		VkShaderModuleCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = blob.size() * sizeof(uint32_t);
-		createInfo.pCode = blob.data();
+		createInfo.sType	= VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = blob.size() * sizeof(u32);
+		createInfo.pCode	= blob.data();
 
 		mModules.emplace_back();
 		VK_ASSERT(vkCreateShaderModule(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mModules.back()), "Failed to create shader module");
 
-		auto& info = mPipelineInfos.emplace_back();
-		info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		info.stage = stage;
+		auto& info	= mPipelineInfos.emplace_back();
+		info.sType	= VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		info.stage	= stage;
 		info.module = mModules.back();
-		info.pName = "main";
+		info.pName	= "main";
 	}
 
-	void VkShader::Reflect(const std::vector<uint32_t>& blob, VkShaderStageFlagBits stage)
+	void VkShader::Reflect(const std::vector<u32>& blob, VkShaderStageFlagBits stage)
 	{
 		const spirv_cross::Compiler compiler{ blob };
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		for(const spirv_cross::Resource& resource : resources.uniform_buffers)
+		for (const spirv_cross::Resource& resource : resources.uniform_buffers)
 		{
-			const std::string& name = resource.name;
+			const std::string& name					= resource.name;
 			const spirv_cross::SPIRType& bufferType = compiler.get_type(resource.base_type_id);
-			u32 binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			u32 set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-			u32 size = static_cast<u32>(compiler.get_declared_struct_size(bufferType));
+			u32 binding								= compiler.get_decoration(resource.id, spv::DecorationBinding);
+			u32 set									= compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+			u32 size								= static_cast<u32>(compiler.get_declared_struct_size(bufferType));
 
-			auto memberCount = static_cast<uint32_t>(bufferType.member_types.size());
-			for(const auto& memberType : bufferType.member_types)
+			auto memberCount = static_cast<u32>(bufferType.member_types.size());
+			for (const auto& memberType : bufferType.member_types)
 			{
 				const spirv_cross::SPIRType& member = compiler.get_type(memberType);
 				spirv_cross::SPIRType::BaseType type = member.basetype;
@@ -194,13 +192,13 @@ namespace Lumen::Graphics::Vulkan
 			}
 
 			VkDescriptorSetLayoutBinding layoutBinding{};
-			layoutBinding.binding = binding;
-			layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			layoutBinding.descriptorCount = 1;
-			layoutBinding.stageFlags = stage;
-			layoutBinding.pImmutableSamplers = nullptr;
+			layoutBinding.binding				= binding;
+			layoutBinding.descriptorType		= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			layoutBinding.descriptorCount		= 1;
+			layoutBinding.stageFlags			= stage;
+			layoutBinding.pImmutableSamplers	= nullptr;
 
-			if(!mDescriptorSets.contains(set))
+			if (!mDescriptorSets.contains(set))
 			{
 				VkDescriptorSet dSet{};
 				dSet.mSet = set;
@@ -208,7 +206,7 @@ namespace Lumen::Graphics::Vulkan
 			}
 
 			assert(!mDescriptorSets[set].mUniforms.contains(binding) && "Duplicated resource");
-			if(!mDescriptorSets[set].mUniforms.contains(binding))
+			if (!mDescriptorSets[set].mUniforms.contains(binding))
 			{
 				VkUniform uBuffer{ size, layoutBinding, name, stage };
 				mDescriptorSets[set].mUniforms.insert({ binding, uBuffer });

@@ -16,8 +16,8 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Fills the structure with default settings for a color attachment
-	 * \param format The attachment`s format used
+	 * @brief Fills the structure with default settings for a color attachment
+	 * @param format The attachment`s format used
 	 */
 	void Attachment::AsColor(VkFormat format)
 	{
@@ -57,7 +57,7 @@ namespace Lumen::Graphics::Vulkan
 			std::vector<VkAttachmentDescription> descriptions{ mAttachments.size() };
 			std::vector<VkSubpassDescription> subpasses{ mAttachments.size() };
 			std::vector<VkSubpassDependency> dependencies{ mAttachments.size() };
-			uint32_t i{ 0 };
+			u32 i{ 0 };
 			for (const auto& description : mAttachments)
 			{
 				descriptions[i] = description.Description;
@@ -65,13 +65,14 @@ namespace Lumen::Graphics::Vulkan
 				dependencies[i] = description.Dependency;
 				i++;
 			}
+
 			VkRenderPassCreateInfo createInfo{};
 			createInfo.sType			= VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-			createInfo.attachmentCount	= static_cast<uint32_t>(mAttachments.size());
+			createInfo.attachmentCount	= static_cast<u32>(mAttachments.size());
 			createInfo.pAttachments		= descriptions.data();
-			createInfo.subpassCount		= static_cast<uint32_t>(mAttachments.size());
+			createInfo.subpassCount		= static_cast<u32>(mAttachments.size());
 			createInfo.pSubpasses		= subpasses.data();
-			createInfo.dependencyCount	= static_cast<uint32_t>(mAttachments.size());
+			createInfo.dependencyCount	= static_cast<u32>(mAttachments.size());
 			createInfo.pDependencies	= dependencies.data();
 
 			VK_ASSERT(vkCreateRenderPass(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mRenderPass), "Failed to create render pass");
@@ -80,7 +81,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Destroys all the class` resources
+	 * @brief Destroys all the class` resources
 	 */
 	void VkRenderPass::Release()
 	{
@@ -91,30 +92,29 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * \brief Sets the current target for all the future draw calls
-	 * \param frame Frame index to record commands to
+	 * @brief Sets the current target for all the future draw calls
+	 * @param frame Frame index to record commands to
 	 */
 	void VkRenderPass::Begin(u32 frame)
 	{
 		if (mSize.first != mTarget->Width() || mSize.second != mTarget->Height())
 			Resize();
-
-		const VkClearValue color{ VkClearColorValue{{ 0.f,0.f,0.f,1.f } } };
+		constexpr VkClearValue color{ {{ 0.f,0.f,0.f,1.f } } };
 
 		VkRenderPassBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		beginInfo.renderPass = mRenderPass;
-		beginInfo.framebuffer = mFramebuffers[frame];
+		beginInfo.sType				= VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		beginInfo.renderPass		= mRenderPass;
+		beginInfo.framebuffer		= mFramebuffers[frame];
 		beginInfo.renderArea.offset = VkOffset2D{ 0, 0 };
 		beginInfo.renderArea.extent = VkExtent2D{ mTarget->Width(), mTarget->Height() };
-		beginInfo.clearValueCount = 1;
-		beginInfo.pClearValues = &color;
+		beginInfo.clearValueCount	= 1;
+		beginInfo.pClearValues		= &color;
 
 		vkCmdBeginRenderPass(mTarget->CommandBuffer(), &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	/**
-	 * \brief Unbinds the current target from future draw calls
+	 * @brief Unbinds the current target from future draw calls
 	 */
 	void VkRenderPass::End()
 	{
@@ -129,18 +129,18 @@ namespace Lumen::Graphics::Vulkan
 	void VkRenderPass::CreateFramebuffers()
 	{
 		mFramebuffers.resize(VkSurface::BufferCount);
-		for (uint32_t i{ 0 }; i < VkSurface::BufferCount; i++)
+		for (u32 i{ 0 }; i < VkSurface::BufferCount; i++)
 		{
 			const VkImageView views[]{ mTarget->ImageView(i) };
 
 			VkFramebufferCreateInfo createInfo{};
-			createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			createInfo.renderPass = mRenderPass;
-			createInfo.attachmentCount = 1;
-			createInfo.pAttachments = views;
-			createInfo.width = mTarget->Width();
-			createInfo.height = mTarget->Height();
-			createInfo.layers = 1;
+			createInfo.sType			= VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			createInfo.renderPass		= mRenderPass;
+			createInfo.attachmentCount	= 1;
+			createInfo.pAttachments		= views;
+			createInfo.width			= mTarget->Width();
+			createInfo.height			= mTarget->Height();
+			createInfo.layers			= 1;
 
 			VK_ASSERT(vkCreateFramebuffer(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mFramebuffers[i]), "Failed to create framebuffer");
 		}
@@ -151,10 +151,8 @@ namespace Lumen::Graphics::Vulkan
 
 	void VkRenderPass::Resize()
 	{
-		for (uint32_t i{ 0 }; i < mFramebuffers.size(); i++)
-		{
+		for (u32 i{ 0 }; i < mFramebuffers.size(); i++)
 			vkDestroyFramebuffer(VkContext::Get().LogicalDevice(), mFramebuffers[i], nullptr);
-		}
 
 		CreateFramebuffers();
 	}

@@ -22,9 +22,9 @@ namespace Lumen::Graphics::Vulkan
 		explicit VkRenderPass(std::vector<Attachment> attachments, VkSurface& target);
 		~VkRenderPass() override { VkRenderPass::Release(); }
 
-		[[nodiscard]] constexpr uint32_t Width() const { return mTarget->Width(); }
-		[[nodiscard]] constexpr uint32_t Height() const { return mTarget->Height(); }
-		[[nodiscard]] constexpr ::VkRenderPass Get() const { return mRenderPass; }
+		[[nodiscard]] constexpr u32 Width() const			{ return mTarget->Width(); }
+		[[nodiscard]] constexpr u32 Height() const			{ return mTarget->Height(); }
+		[[nodiscard]] constexpr ::VkRenderPass Get() const	{ return mRenderPass; }
 
 		void Init() override;
 		void Release() override;
@@ -38,7 +38,7 @@ namespace Lumen::Graphics::Vulkan
 		void CreateFramebuffers();
 		void Resize();
 
-		std::pair<uint32_t, uint32_t>	mSize{};
+		std::pair<u32, u32>				mSize{};
 		const std::vector<Attachment>	mAttachments{};
 		VkSurface*						mTarget{ nullptr };
 		std::vector<VkFramebuffer>		mFramebuffers{};

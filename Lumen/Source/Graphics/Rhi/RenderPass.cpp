@@ -2,8 +2,6 @@
 
 #include <cassert>
 
-#include "Surface.h"
-
 namespace Lumen::Graphics
 {
 	RenderPass* (*RenderPass::sCreateFunc)(Surface*) = nullptr;

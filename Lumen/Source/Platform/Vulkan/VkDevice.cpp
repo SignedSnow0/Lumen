@@ -45,7 +45,7 @@ namespace Lumen::Graphics::Vulkan
 				std::string out = "[Validation layer: ] ";
 				out.append(pCallbackData->pMessage);
 #endif
-				if(std::ofstream log{ ".FrostEngine/ValidationLayer.txt", std::ios::out | (reset ? std::ios::trunc : std::ios::app) }; log.is_open())
+				if (std::ofstream log{ ".FrostEngine/ValidationLayer.txt", std::ios::out | (reset ? std::ios::trunc : std::ios::app) }; log.is_open())
 				{
 					log << out << "\n\n";
 					log.close();
@@ -112,7 +112,7 @@ namespace Lumen::Graphics::Vulkan
 		bool CheckValidationSupport()
 		{
 			//get all available instance layers
-			uint32_t layerCount;
+			u32 layerCount;
 			VK_ASSERT(vkEnumerateInstanceLayerProperties(&layerCount, nullptr), "Failed to enumerate instance layers");
 			std::vector<VkLayerProperties> availableLayers{ layerCount };
 			VK_ASSERT(vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()), "Failed to enumerate instance layers");
@@ -120,7 +120,7 @@ namespace Lumen::Graphics::Vulkan
 			//find all layers in validationLayers from enumerations
 			for (const char* layerName : validationLayers)
 			{
-				bool layerFound = false;
+				b8 layerFound = false;
 
 				for (const auto& layerProperties : availableLayers) 
 				{
@@ -147,7 +147,7 @@ namespace Lumen::Graphics::Vulkan
 			glfwInit();
 
 			//get required glfw extensions
-			uint32_t glfwExtensionCount{ 0 };
+			u32 glfwExtensionCount{ 0 };
 			const char** glfwExtensions{ nullptr };//todo only with glfw
 			glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
@@ -165,7 +165,7 @@ namespace Lumen::Graphics::Vulkan
 		 */
 		bool CheckExtensionSupport(VkPhysicalDevice device)
 		{
-			uint32_t extensionCount{ 0 };
+			u32 extensionCount{ 0 };
 			VK_ASSERT(vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr), "Failed to query device extensions");
 			std::vector<VkExtensionProperties> availableExtensions{ extensionCount };
 			VK_ASSERT(vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data()), "Failed to query device extensions");
@@ -188,8 +188,6 @@ namespace Lumen::Graphics::Vulkan
 		CreatePhysicalDevice();
 		CreateLogicalDevice();
 		CreateAllocator();
-
-		std::cout << "Device init" << std::endl;
 	}
 
 	/**
@@ -226,9 +224,9 @@ namespace Lumen::Graphics::Vulkan
 		VkInstanceCreateInfo createInfo{};
 		createInfo.sType					= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo			= &appInfo;
-		createInfo.enabledExtensionCount	= static_cast<uint32_t>(extensions.size());
+		createInfo.enabledExtensionCount	= static_cast<u32>(extensions.size());
 		createInfo.ppEnabledExtensionNames	= extensions.data();
-		createInfo.enabledLayerCount		= validationSupport ? static_cast<uint32_t>(validationLayers.size()) : 0;
+		createInfo.enabledLayerCount		= validationSupport ? static_cast<u32>(validationLayers.size()) : 0;
 		createInfo.ppEnabledLayerNames		= validationSupport ? validationLayers.data() : nullptr;
 		createInfo.pNext					= &debugCreateInfo;
 		VK_ASSERT(vkCreateInstance(&createInfo, nullptr, &mInstance), "Failed to create instance");
@@ -252,7 +250,7 @@ namespace Lumen::Graphics::Vulkan
 	 */
 	bool VkDevice::FindQueueFamilies(VkPhysicalDevice device, QueueFamiliyIndices& indices)
 	{
-		uint32_t queueFamilyCount{ 0 };
+		u32 queueFamilyCount{ 0 };
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 		std::vector<VkQueueFamilyProperties> queueFamilies{ queueFamilyCount };
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
@@ -269,7 +267,7 @@ namespace Lumen::Graphics::Vulkan
 
 		VK_ASSERT(glfwCreateWindowSurface(mInstance, window.Native(), nullptr, &surface), "Failed to create surface from window");
 
-		uint32_t i{ 0 };
+		u32 i{ 0 };
 		b32 supported{ false };
 		for (const auto& queueFamily : queueFamilies)
 		{
@@ -316,12 +314,12 @@ namespace Lumen::Graphics::Vulkan
 	 */
 	void VkDevice::CreatePhysicalDevice()
 	{
-		uint32_t deviceCount{ 0 };
+		u32 deviceCount{ 0 };
 		VK_ASSERT(vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr), "Failed to enumerate physical devices");
 		std::vector<VkPhysicalDevice> devices{ deviceCount };
 		VK_ASSERT(vkEnumeratePhysicalDevices(mInstance, &deviceCount, devices.data()), "Failed to enumerate physical devices");
 
-		for(const auto& device : devices)
+		for (const auto& device : devices)
 		{
 			//check device suitability and query queue indices
 			if(IsDeviceSuitable(device, mIndices))
@@ -339,7 +337,7 @@ namespace Lumen::Graphics::Vulkan
 	 */
 	void VkDevice::CreateLogicalDevice()
 	{
-		float queuePriority{ 1.f };
+		f32 queuePriority{ 1.f };
 
 		VkDeviceQueueCreateInfo queueInfo{};
 		queueInfo.sType				= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -367,9 +365,9 @@ namespace Lumen::Graphics::Vulkan
 	void VkDevice::CreateAllocator()
 	{
 		VmaAllocatorCreateInfo createInfo{};
-		createInfo.instance = mInstance;
-		createInfo.physicalDevice = mPhysicalDevice;
-		createInfo.device = mDevice;
+		createInfo.instance			= mInstance;
+		createInfo.physicalDevice	= mPhysicalDevice;
+		createInfo.device			= mDevice;
 		createInfo.vulkanApiVersion = 0;
 
 		vmaCreateAllocator(&createInfo, &mAllocator);

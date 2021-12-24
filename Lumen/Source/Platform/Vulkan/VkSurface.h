@@ -12,19 +12,19 @@ namespace Lumen::Graphics::Vulkan
 	class VkSurface final : public Surface
 	{
 	public:
-		constexpr static uint32_t BufferCount{ 3 };
+		constexpr static u32 BufferCount{ 3 };
 		
 		VkSurface() = default;
 		explicit VkSurface(Window* window);
 		~VkSurface() override { VkSurface::Release(); }
 
-		[[nodiscard]] constexpr VkFormat Format() const { return mFormat.format; }
-		[[nodiscard]] constexpr uint32_t Width() const { return mExtent.width; }
-		[[nodiscard]] constexpr uint32_t Height() const { return mExtent.height; }
-		[[nodiscard]] constexpr VkImageView ImageView(uint32_t frame) const { return mImageViews[frame]; }
-		[[nodiscard]] constexpr VkSurfaceKHR Get() const { return mSurface; }
-		[[nodiscard]] constexpr VkCommandBuffer CommandBuffer() const { return mCommandBuffers[mImageIndex]; }
-		[[nodiscard]] constexpr uint32_t ImageIndex() const { return mImageIndex; }
+		[[nodiscard]] constexpr VkFormat Format() const					{ return mFormat.format; }
+		[[nodiscard]] constexpr u32 Width() const						{ return mExtent.width; }
+		[[nodiscard]] constexpr u32 Height() const						{ return mExtent.height; }
+		[[nodiscard]] constexpr VkImageView ImageView(u32 frame) const	{ return mFrames[frame].ImageView; }
+		[[nodiscard]] constexpr VkSurfaceKHR Get() const				{ return mSurface; }
+		[[nodiscard]] constexpr VkCommandBuffer CommandBuffer() const	{ return mFrames[mImageIndex].CommandBuffer; }
+		[[nodiscard]] constexpr u32 ImageIndex() const					{ return mImageIndex; }
 
 		[[nodiscard]] static VkSurface* Bound() { return sBound; }
 
@@ -46,24 +46,29 @@ namespace Lumen::Graphics::Vulkan
 		void CreateSyncObjects();
 		void Resize();
 
-		uint32_t						mCurrentFrame{ 0 };
-		uint32_t						mImageIndex{ 0 };
-		VkCommandPool					mCommandPool{};
-		std::vector<VkSemaphore>		mImageAvailableSemaphores{};
-		std::vector<VkSemaphore>		mRenderFinishedSemaphores{};
-		std::vector<VkFence>			mInFlightFences;
-		std::vector<VkCommandBuffer>	mCommandBuffers{};
-		std::vector<VkImage>			mImages{};
-		std::vector<VkImageView>		mImageViews{};
-		bool							mInitialized{ false };
-		VkSwapchainKHR					mSwapchain{};
-		VkSurfaceKHR					mSurface{};
-		VkSurfaceFormatKHR				mFormat{};
-		VkPresentModeKHR				mPresentMode{};
-		VkExtent2D						mExtent{};
-		Window*							mWindow{ nullptr };
-		constexpr static uint32_t		MaxFramesInFlight{ BufferCount - 1 };
+		struct FrameData
+		{
+			VkSemaphore		ImageAvailable{};
+			VkSemaphore		RenderFinished{};
+			VkFence			InFlight{};
+			VkCommandBuffer CommandBuffer{};
+			VkImage			Image{};
+			VkImageView		ImageView{};
+		};
 
-		static VkSurface* sBound;
+		std::vector<FrameData>	mFrames{ BufferCount };
+		u32						mCurrentFrame{ 0 };
+		u32						mImageIndex{ 0 };
+		b8						mInitialized{ false };
+		VkCommandPool			mCommandPool{};
+		VkSwapchainKHR			mSwapchain{};
+		VkSurfaceKHR			mSurface{};
+		VkSurfaceFormatKHR		mFormat{};
+		VkPresentModeKHR		mPresentMode{};
+		VkExtent2D				mExtent{};
+		Window*					mWindow{ nullptr };
+
+		constexpr static u32	MaxFramesInFlight{ BufferCount - 1 };
+		static VkSurface*		sBound;
 	};
 }

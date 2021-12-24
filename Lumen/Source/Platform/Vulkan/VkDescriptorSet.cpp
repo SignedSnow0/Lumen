@@ -21,7 +21,7 @@ namespace Lumen::Graphics::Vulkan
 
 	VkDescriptorSet::VkDescriptorSet(VkShader* shader, u32 setIndex)
 	{
-		*this = shader->GetDescriptorSet(setIndex);
+		*this = shader->DescriptorSet(setIndex);
 	}
 
 	VkDescriptorSet::VkDescriptorSet(const VkDescriptorSet& right)
@@ -42,7 +42,7 @@ namespace Lumen::Graphics::Vulkan
 		CreatePool();
 		CreateDescriptorSet();
 
-		for(auto& [binding, uniform] : mUniforms)
+		for (auto& [binding, uniform] : mUniforms)
 		{
 			uniform.Buffer = new VkUniformBuffer{ uniform.Size };
 		}
@@ -54,7 +54,7 @@ namespace Lumen::Graphics::Vulkan
 
 	void VkDescriptorSet::Release()
 	{
-		if(mCreated)
+		if (mCreated)
 		{
 			vkDestroyDescriptorPool(VkContext::Get().LogicalDevice(), mPool, nullptr); //descriptors are automatically freed
 			vkDestroyDescriptorSetLayout(VkContext::Get().LogicalDevice(), mLayout, nullptr);
@@ -67,10 +67,10 @@ namespace Lumen::Graphics::Vulkan
 	{
 		std::vector<VkWriteDescriptorSet> writes{ mUniforms.size() };
 
-		for (uint32_t i{ 0 }; i < VkSurface::BufferCount; i++)
+		for (u32 i{ 0 }; i < VkSurface::BufferCount; i++)
 		{
 			u32 j = 0;
-			for(auto& [binding, uniform] : mUniforms)
+			for (auto& [binding, uniform] : mUniforms)
 			{
 				VkDescriptorBufferInfo bufferInfo{};
 				bufferInfo.buffer	= uniform.Buffer->Buffer(i);
@@ -116,9 +116,9 @@ namespace Lumen::Graphics::Vulkan
 			bindings.emplace_back(uniform.LayoutBinding);
 
 		VkDescriptorSetLayoutCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		createInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-		createInfo.pBindings = bindings.data();
+		createInfo.sType		= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		createInfo.bindingCount = static_cast<u32>(bindings.size());
+		createInfo.pBindings	= bindings.data();
 
 		VK_ASSERT(vkCreateDescriptorSetLayout(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mLayout), "Failed to create descriptor set layout");
 	}
@@ -129,15 +129,15 @@ namespace Lumen::Graphics::Vulkan
 		if (!mUniforms.empty())
 		{
 			VkDescriptorPoolSize& size = sizes.emplace_back();
-			size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			size.descriptorCount = static_cast<uint32_t>(mUniforms.size());
+			size.type				= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			size.descriptorCount	= static_cast<u32>(mUniforms.size());
 		}
 
 		VkDescriptorPoolCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		createInfo.maxSets = VkSurface::BufferCount;
-		createInfo.poolSizeCount = static_cast<uint32_t>(sizes.size());
-		createInfo.pPoolSizes = sizes.data();
+		createInfo.sType			= VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.maxSets			= VkSurface::BufferCount;
+		createInfo.poolSizeCount	= static_cast<u32>(sizes.size());
+		createInfo.pPoolSizes		= sizes.data();
 
 		VK_ASSERT(vkCreateDescriptorPool(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mPool), "Failed to create descriptor pool");
 	}
@@ -148,9 +148,9 @@ namespace Lumen::Graphics::Vulkan
 
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = mPool;
-		allocInfo.descriptorSetCount = static_cast<uint32_t>(layouts.size());
-		allocInfo.pSetLayouts = layouts.data();
+		allocInfo.descriptorPool		= mPool;
+		allocInfo.descriptorSetCount	= static_cast<u32>(layouts.size());
+		allocInfo.pSetLayouts			= layouts.data();
 
 		VK_ASSERT(vkAllocateDescriptorSets(VkContext::Get().LogicalDevice(), &allocInfo, mSets.data()), "Failed to allocate descriptor sets");
 	}

@@ -4,6 +4,8 @@
 #include <vma/vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
+#include "Core/Types.h"
+
 namespace Lumen::Graphics::Vulkan
 {
 #ifdef _DEBUG
@@ -19,8 +21,8 @@ if ((func) != VK_SUCCESS)			\
 
 	struct QueueFamiliyIndices
 	{
-		std::optional<uint32_t> Graphics;
-		std::optional<uint32_t> Present;
+		std::optional<u32> Graphics;
+		std::optional<u32> Present;
 
 		[[nodiscard]] bool IsComplete() const { return Graphics.has_value() && Present.has_value(); }
 	};
@@ -31,14 +33,14 @@ if ((func) != VK_SUCCESS)			\
 		VkDevice() = default;
 		~VkDevice() { Release(); }
 
-		[[nodiscard]] constexpr uint32_t GraphicsFamily() const { return mIndices.Graphics.value(); }
-		[[nodiscard]] constexpr uint32_t PresentFamily() const { return mIndices.Present.value(); }
-		[[nodiscard]] constexpr ::VkDevice Device() const { return mDevice; }
+		[[nodiscard]] constexpr u32 GraphicsFamily() const				{ return mIndices.Graphics.value(); }
+		[[nodiscard]] constexpr u32 PresentFamily() const				{ return mIndices.Present.value(); }
+		[[nodiscard]] constexpr ::VkDevice Device() const				{ return mDevice; }
 		[[nodiscard]] constexpr VkPhysicalDevice PhysicalDevice() const { return mPhysicalDevice; }
-		[[nodiscard]] constexpr VkInstance Instance() const { return mInstance; }
-		[[nodiscard]] constexpr VkQueue GraphicsQueue() const { return mGraphicsQueue; }
-		[[nodiscard]] constexpr VkQueue PresentQueue() const { return mPresentQueue; }
-		[[nodiscard]] VmaAllocator Allocator() const { return mAllocator; }
+		[[nodiscard]] constexpr VkInstance Instance() const				{ return mInstance; }
+		[[nodiscard]] constexpr VkQueue GraphicsQueue() const			{ return mGraphicsQueue; }
+		[[nodiscard]] constexpr VkQueue PresentQueue() const			{ return mPresentQueue; }
+		[[nodiscard]] VmaAllocator Allocator() const					{ return mAllocator; }
 
 		void Init();
 		void Release();

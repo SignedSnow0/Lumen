@@ -16,18 +16,15 @@ namespace Lumen::Graphics::Vulkan
 
 	VkContext::VkContext()
 	{
-		std::cout << "Vulkan context created" << std::endl;
 		sInstance = this;
 	}
 
 	VkContext::~VkContext()
 	{
-		std::cout << "Vulkan context destroyed" << std::endl;
 	}
 
 	void VkContext::Init()
 	{
-		std::cout << "Vulkan context init" << std::endl;
 		mDevice.Init();
 	}
 
