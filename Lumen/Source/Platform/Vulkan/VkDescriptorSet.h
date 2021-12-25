@@ -43,7 +43,7 @@ namespace Lumen::Graphics::Vulkan
 		[[nodiscard]] constexpr ::VkDescriptorSet Set(u32 frame) const { return mSets.at(frame); }
 
 		void Update() override;
-		void SetUniform(u32 binding, const void* data) override;
+		void SetUniform(u32 binding, const void* data, u32 frame) override;
 
 		static void SetInterface();
 

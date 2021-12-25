@@ -12,6 +12,8 @@ namespace Lumen::Graphics
 		explicit TestRenderer(Window* target);
 		~TestRenderer();
 
+		void Render();
+
 	private:
 		Surface* mSurface{ nullptr };
 		RenderPass* mRenderPass{ nullptr };

@@ -104,6 +104,7 @@
     <ClInclude Include="Source\Graphics\Rhi\RenderPass.h" />
     <ClInclude Include="Source\Graphics\Rhi\Shader.h" />
     <ClInclude Include="Source\Graphics\Rhi\Surface.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Buffers.h" />
     <ClInclude Include="Source\Graphics\TestRenderer.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkBuffer.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkContext.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="Source\Graphics\Rhi\RenderPass.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Shader.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Surface.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Buffers.cpp" />
     <ClCompile Include="Source\Graphics\TestRenderer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkContext.cpp" />

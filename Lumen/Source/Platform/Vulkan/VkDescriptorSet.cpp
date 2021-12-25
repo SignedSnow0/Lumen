@@ -96,11 +96,11 @@ namespace Lumen::Graphics::Vulkan
 		}
 	}
 
-	void VkDescriptorSet::SetUniform(u32 binding, const void* data)
+	void VkDescriptorSet::SetUniform(u32 binding, const void* data, u32 frame)
 	{
 		if (mUniforms.contains(binding))
 		{
-			mUniforms.at(binding).Buffer->Update(data, 0);//todo get current frame
+			mUniforms.at(binding).Buffer->Update(data, frame);
 		}
 	}
 

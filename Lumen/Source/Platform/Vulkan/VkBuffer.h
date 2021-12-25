@@ -1,18 +1,12 @@
 ﻿#pragma once
 #include <vulkan/vulkan.h>
 #include <vma/vk_mem_alloc.h>
-#include <glm/glm.hpp>
 
 #include "VkSurface.h"
+#include "Graphics/Rhi/Buffers.h"
 
 namespace Lumen::Graphics::Vulkan
 {
-	struct Vertex
-	{
-		glm::vec2 Position;
-		glm::vec3 Color;
-	};
-
 	class VkBuffer
 	{
 	public:
@@ -29,26 +23,31 @@ namespace Lumen::Graphics::Vulkan
 		u64 mSize{ 0 };
 	};
 
-	class VkVertexBuffer : public VkBuffer
+	class VkVertexBuffer : public VertexBuffer, public VkBuffer
 	{
 	public:
 		explicit VkVertexBuffer(const Vertex* vertices, u32 vertexCount);
 
-		void Bind(const VkCommandBuffer& cmd) const;
+		void Bind(Surface* target) const override;
 
 		static VkVertexInputBindingDescription BindingDescription();
 		static std::array<VkVertexInputAttributeDescription, 2> AttributeDescriptions();
+
+		static void SetInterface();
 
 	private:
 		u32 mCount{ 0 };
 	};
 
-	class VkIndexBuffer : public VkBuffer
+	class VkIndexBuffer : public IndexBuffer, public VkBuffer
 	{
 	public:
 		explicit VkIndexBuffer(const u32* indices, u32 indicesCount);
 
-		void Bind(const VkCommandBuffer& cmd) const;
+		void Bind(Surface* target) const override;
+		void Draw(Surface* target) const override;
+
+		static void SetInterface();
 
 	private:
 		u32 mCount{ 0 };

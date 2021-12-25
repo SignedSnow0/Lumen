@@ -15,7 +15,7 @@ namespace Lumen::Graphics
 		virtual void Release() = 0;
 
 		virtual void Update() = 0;
-		virtual void SetUniform(u32 binding, const void* data) = 0;
+		virtual void SetUniform(u32 binding, const void* data, u32 frame) = 0;
 
 	protected:
 		static DescriptorSet* (*sCreateFunc)(Shader*, u32);

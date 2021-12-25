@@ -359,7 +359,7 @@ namespace Lumen::Graphics::Vulkan
 		VK_ASSERT(vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice), "Failed to create device");
 
 		vkGetDeviceQueue(mDevice, mIndices.Graphics.value(), 0, &mGraphicsQueue);
-		vkGetDeviceQueue(mDevice, mIndices.Present.value(), 0, &mGraphicsQueue);
+		vkGetDeviceQueue(mDevice, mIndices.Present.value(), 0, &mPresentQueue);
 	}
 
 	void VkDevice::CreateAllocator()

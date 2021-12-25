@@ -7,6 +7,11 @@
 
 namespace Lumen
 {
+	namespace Graphics
+	{
+		class TestRenderer;
+	}
+
 	struct AppInitInfo
 	{
 		Graphics::RendererAPI Api{};
@@ -29,5 +34,7 @@ namespace Lumen
 		b8 mShutdown{ false };
 		std::vector<Window> mWindows{};
 		Graphics::GraphicsContext* mGraphicsContext{ nullptr };
+
+		Graphics::TestRenderer* renderer{ nullptr };
 	};
 }

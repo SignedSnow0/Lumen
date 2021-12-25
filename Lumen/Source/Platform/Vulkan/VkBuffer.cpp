@@ -11,6 +11,7 @@ namespace Lumen::Graphics::Vulkan
 		void CopyBuffer(::VkBuffer src, ::VkBuffer dst, VkDeviceSize size)
 		{
 			VkCommandPoolCreateInfo poolInfo{};
+			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 			VkCommandPool pool{};//todo single pool
 			VK_ASSERT(vkCreateCommandPool(VkContext::Get().LogicalDevice(), &poolInfo, nullptr, &pool), "Failed to create command pool");
 
@@ -47,7 +48,16 @@ namespace Lumen::Graphics::Vulkan
 			vkFreeCommandBuffers(VkContext::Get().LogicalDevice(), pool, 1, &commandBuffer);
 			vkDestroyCommandPool(VkContext::Get().LogicalDevice(), pool, nullptr);
 		}
-		
+
+		VertexBuffer* CreateFuncVulkan(const Vertex* vertices, u32 vertexCount)
+		{
+			return new VkVertexBuffer{ vertices, vertexCount };
+		}
+
+		IndexBuffer* CreateFuncVulkan(const u32 * indices, u32 indexCount)
+		{
+			return new VkIndexBuffer{ indices, indexCount };
+		}
 	}
 
 	VkBuffer::VkBuffer(u64 size, VkBufferUsageFlags usage, VmaMemoryUsage vmaUsage)
@@ -89,9 +99,10 @@ namespace Lumen::Graphics::Vulkan
 		CopyBuffer(stagingBuffer.Buffer(), mBuffer, mSize);
 	}
 
-	void VkVertexBuffer::Bind(const VkCommandBuffer& cmd) const
+	void VkVertexBuffer::Bind(Surface* target) const
 	{
-		VkDeviceSize offsets[]{ 0 };
+		VkCommandBuffer cmd = dynamic_cast<VkSurface*>(target)->CommandBuffer();
+		constexpr VkDeviceSize offsets[]{ 0 };
 		vkCmdBindVertexBuffers(cmd, 0, 1, &mBuffer, offsets);
 	}
 
@@ -121,6 +132,11 @@ namespace Lumen::Graphics::Vulkan
 		return attributeDescriptions;
 	}
 
+	void VkVertexBuffer::SetInterface()
+	{
+		sCreateFunc = CreateFuncVulkan;
+	}
+
 	VkIndexBuffer::VkIndexBuffer(const u32* indices, u32 indicesCount)
 		: VkBuffer{ sizeof(u32) * indicesCount, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY }, mCount{ indicesCount }
 	{
@@ -130,9 +146,21 @@ namespace Lumen::Graphics::Vulkan
 		CopyBuffer(stagingBuffer.Buffer(), mBuffer, mSize);
 	}
 
-	void VkIndexBuffer::Bind(const VkCommandBuffer& cmd) const
+	void VkIndexBuffer::Bind(Surface* target) const
 	{
+		VkCommandBuffer cmd = dynamic_cast<VkSurface*>(target)->CommandBuffer();
 		vkCmdBindIndexBuffer(cmd, mBuffer, 0, VK_INDEX_TYPE_UINT32);
+	}
+
+	void VkIndexBuffer::Draw(Surface* target) const
+	{
+		VkCommandBuffer cmd = dynamic_cast<VkSurface*>(target)->CommandBuffer();
+		vkCmdDrawIndexed(cmd, mCount, 1, 0, 0, 0);
+	}
+
+	void VkIndexBuffer::SetInterface()
+	{
+		sCreateFunc = CreateFuncVulkan;
 	}
 
 	VkUniformBuffer::VkUniformBuffer(u32 size)

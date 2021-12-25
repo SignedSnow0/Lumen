@@ -24,7 +24,7 @@ namespace Lumen::Graphics::Vulkan
 		[[nodiscard]] constexpr VkImageView ImageView(u32 frame) const	{ return mFrames[frame].ImageView; }
 		[[nodiscard]] constexpr VkSurfaceKHR Get() const				{ return mSurface; }
 		[[nodiscard]] constexpr VkCommandBuffer CommandBuffer() const	{ return mFrames[mImageIndex].CommandBuffer; }
-		[[nodiscard]] constexpr u32 ImageIndex() const					{ return mImageIndex; }
+		[[nodiscard]] constexpr u32 CurrentFrame() const override		{ return mImageIndex; }
 
 		[[nodiscard]] static VkSurface* Bound() { return sBound; }
 

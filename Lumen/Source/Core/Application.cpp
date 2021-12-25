@@ -32,19 +32,21 @@ namespace Lumen
 		mGraphicsContext = Graphics::GraphicsContext::Create();
 		mGraphicsContext->Init();
 
-		Graphics::TestRenderer renderer{ &mWindows[0] };
+		renderer = new Graphics::TestRenderer{ &mWindows[0] };
 
 		return true;
 	}
 
 	void Application::Shutdown()
 	{
-
+		delete renderer;
 	}
 
 	void Application::Run()
 	{
 		Window::Update();
+
+		renderer->Render();
 
 		for(u32 i{ 0 }; i < mWindows.size(); i++)
 		{
@@ -53,6 +55,5 @@ namespace Lumen
 		}
 		if (mWindows.empty())
 			mShutdown = true;
-
 	}
 }

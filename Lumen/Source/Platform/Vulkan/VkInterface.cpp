@@ -22,5 +22,7 @@ namespace Lumen::Graphics::Vulkan
 		VkDescriptorSet::SetInterface();
 		VkShader::SetInterface();
 		VkPipeline::SetInterface();
+		VkVertexBuffer::SetInterface();
+		VkIndexBuffer::SetInterface();
 	}
 }
