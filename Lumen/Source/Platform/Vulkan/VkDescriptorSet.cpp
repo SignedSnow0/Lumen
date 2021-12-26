@@ -3,6 +3,7 @@
 #include "VkBuffer.h"
 #include "VkContext.h"
 #include "VkShader.h"
+#include "VkTexture.h"
 
 namespace Lumen::Graphics::Vulkan
 {
@@ -25,14 +26,15 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	VkDescriptorSet::VkDescriptorSet(const VkDescriptorSet& right)
-		: mUniforms{ right.mUniforms }, mSet{ right.mSet }
+		: mUniforms{ right.mUniforms }, mSamplers{ right.mSamplers }, mSet{ right.mSet }
 	{
 	}
 
 	VkDescriptorSet& VkDescriptorSet::operator=(const VkDescriptorSet& right)
 	{
-		this->mUniforms = right.mUniforms;
-		this->mSet = right.mSet;
+		mUniforms = right.mUniforms;
+		mSamplers = right.mSamplers;
+		mSet = right.mSet;
 		return *this;
 	}
 
@@ -47,7 +49,11 @@ namespace Lumen::Graphics::Vulkan
 			uniform.Buffer = new VkUniformBuffer{ uniform.Size };
 		}
 
-		Update();
+		for(u32 i{ 0 }; i < VkSurface::BufferCount; i++)
+		{
+			mToUpdate[i] = true;
+			Update(i);
+		}
 
 		mCreated = true;
 	}
@@ -63,23 +69,22 @@ namespace Lumen::Graphics::Vulkan
 		}
 	}
 
-	void VkDescriptorSet::Update()
+	void VkDescriptorSet::Update(u32 frame)
 	{
-		std::vector<VkWriteDescriptorSet> writes{ mUniforms.size() };
-
-		for (u32 i{ 0 }; i < VkSurface::BufferCount; i++)
+		if (mToUpdate[frame])
 		{
-			u32 j = 0;
+			std::vector<VkWriteDescriptorSet> writes{};
+
 			for (auto& [binding, uniform] : mUniforms)
 			{
 				VkDescriptorBufferInfo bufferInfo{};
-				bufferInfo.buffer	= uniform.Buffer->Buffer(i);
+				bufferInfo.buffer	= uniform.Buffer->Buffer(frame);
 				bufferInfo.offset	= 0;
 				bufferInfo.range	= uniform.Buffer->Size();
 
-				VkWriteDescriptorSet uniformWrite{};
+				VkWriteDescriptorSet& uniformWrite = writes.emplace_back();
 				uniformWrite.sType				= VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-				uniformWrite.dstSet				= mSets[i];
+				uniformWrite.dstSet				= mSets[frame];
 				uniformWrite.dstBinding			= binding;
 				uniformWrite.dstArrayElement	= 0;
 				uniformWrite.descriptorType		= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -87,20 +92,52 @@ namespace Lumen::Graphics::Vulkan
 				uniformWrite.pBufferInfo		= &bufferInfo;
 				uniformWrite.pImageInfo			= nullptr;
 				uniformWrite.pTexelBufferView	= nullptr;
+			}
 
-				writes[j] = uniformWrite;
-				j++;
+			for (auto& [binding, sampler] : mSamplers)
+			{
+				if (sampler.Texture)
+				{
+					VkDescriptorImageInfo imageInfo{};
+					imageInfo.imageLayout	= sampler.Texture->Layout();
+					imageInfo.sampler		= sampler.Texture->Sampler();
+					imageInfo.imageView		= sampler.Texture->View();
+
+					VkWriteDescriptorSet& samplerWrite = writes.emplace_back();
+					samplerWrite.sType				= VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					samplerWrite.dstSet				= mSets[frame];
+					samplerWrite.dstBinding			= binding;
+					samplerWrite.dstArrayElement	= 0;
+					samplerWrite.descriptorType		= VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					samplerWrite.descriptorCount	= 1;
+					samplerWrite.pImageInfo			= &imageInfo;
+					samplerWrite.pBufferInfo		= nullptr;
+					samplerWrite.pTexelBufferView	= nullptr;
+				}
 			}
 
 			vkUpdateDescriptorSets(VkContext::Get().LogicalDevice(), static_cast<u32>(writes.size()), writes.data(), 0, nullptr);
+
+			mToUpdate[frame] = false;
 		}
 	}
 
-	void VkDescriptorSet::SetUniform(u32 binding, const void* data, u32 frame)
+	void VkDescriptorSet::UpdateUniform(u32 binding, const void* data, u32 frame)
 	{
 		if (mUniforms.contains(binding))
 		{
 			mUniforms.at(binding).Buffer->Update(data, frame);
+		}
+	}
+
+	void VkDescriptorSet::SetTexture(u32 binding, Texture* texture)
+	{
+		if (mSamplers.contains(binding))
+		{
+			mSamplers.at(binding).Texture = reinterpret_cast<VkTexture*>(texture);
+
+			for (u32 i{ 0 }; i < VkSurface::BufferCount; i++)
+				mToUpdate[i] = true;
 		}
 	}
 
@@ -114,6 +151,8 @@ namespace Lumen::Graphics::Vulkan
 		std::vector<VkDescriptorSetLayoutBinding> bindings{};
 		for (const auto& [binding, uniform] : mUniforms)
 			bindings.emplace_back(uniform.LayoutBinding);
+		for (const auto& [binding, sampler] : mSamplers)
+			bindings.emplace_back(sampler.LayoutBinding);
 
 		VkDescriptorSetLayoutCreateInfo createInfo{};
 		createInfo.sType		= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -131,6 +170,12 @@ namespace Lumen::Graphics::Vulkan
 			VkDescriptorPoolSize& size = sizes.emplace_back();
 			size.type				= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			size.descriptorCount	= static_cast<u32>(mUniforms.size());
+		}
+		if(!mSamplers.empty())
+		{
+			VkDescriptorPoolSize& size = sizes.emplace_back();
+			size.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			size.descriptorCount = static_cast<u32>(mSamplers.size());
 		}
 
 		VkDescriptorPoolCreateInfo createInfo{};

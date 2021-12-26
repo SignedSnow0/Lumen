@@ -125,7 +125,6 @@ namespace Lumen::Graphics::Vulkan
 			layouts[i] = descriptor.mLayout;
 			i++;
 		}
-
 		return layouts;
 	}
 
@@ -210,6 +209,34 @@ namespace Lumen::Graphics::Vulkan
 			{
 				VkUniform uBuffer{ size, layoutBinding, name, stage };
 				mDescriptorSets[set].mUniforms.insert({ binding, uBuffer });
+			}
+		}
+
+		for (const spirv_cross::Resource& resource : resources.sampled_images)
+		{
+			u32 set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+			u32 binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+			const std::string& name = resource.name;
+
+			VkDescriptorSetLayoutBinding layoutBinding{};
+			layoutBinding.binding				= binding;
+			layoutBinding.descriptorType		= VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			layoutBinding.descriptorCount		= 1;
+			layoutBinding.stageFlags			= stage;
+			layoutBinding.pImmutableSamplers	= nullptr;
+
+			if (!mDescriptorSets.contains(set))
+			{
+				VkDescriptorSet dSet{};
+				dSet.mSet = set;
+				mDescriptorSets.insert({ set, dSet });
+			}
+
+			assert(!mDescriptorSets[set].mSamplers.contains(binding) && "Duplicated resource");
+			if (!mDescriptorSets[set].mSamplers.contains(binding))
+			{
+				VkSampler vkSampler{ layoutBinding, name, stage };
+				mDescriptorSets[set].mSamplers.insert({ binding, vkSampler });
 			}
 		}
 	}

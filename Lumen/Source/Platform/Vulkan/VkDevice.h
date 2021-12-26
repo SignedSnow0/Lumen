@@ -33,14 +33,15 @@ if ((func) != VK_SUCCESS)			\
 		VkDevice() = default;
 		~VkDevice() { Release(); }
 
-		[[nodiscard]] constexpr u32 GraphicsFamily() const				{ return mIndices.Graphics.value(); }
-		[[nodiscard]] constexpr u32 PresentFamily() const				{ return mIndices.Present.value(); }
-		[[nodiscard]] constexpr ::VkDevice Device() const				{ return mDevice; }
-		[[nodiscard]] constexpr VkPhysicalDevice PhysicalDevice() const { return mPhysicalDevice; }
-		[[nodiscard]] constexpr VkInstance Instance() const				{ return mInstance; }
-		[[nodiscard]] constexpr VkQueue GraphicsQueue() const			{ return mGraphicsQueue; }
-		[[nodiscard]] constexpr VkQueue PresentQueue() const			{ return mPresentQueue; }
-		[[nodiscard]] VmaAllocator Allocator() const					{ return mAllocator; }
+		[[nodiscard]] constexpr VkPhysicalDeviceProperties Properties() const	{ return mProperties; }
+		[[nodiscard]] constexpr u32 GraphicsFamily() const						{ return mIndices.Graphics.value(); }
+		[[nodiscard]] constexpr u32 PresentFamily() const						{ return mIndices.Present.value(); }
+		[[nodiscard]] constexpr ::VkDevice Device() const						{ return mDevice; }
+		[[nodiscard]] constexpr VkPhysicalDevice PhysicalDevice() const			{ return mPhysicalDevice; }
+		[[nodiscard]] constexpr VkInstance Instance() const						{ return mInstance; }
+		[[nodiscard]] constexpr VkQueue GraphicsQueue() const					{ return mGraphicsQueue; }
+		[[nodiscard]] constexpr VkQueue PresentQueue() const					{ return mPresentQueue; }
+		[[nodiscard]] VmaAllocator Allocator() const							{ return mAllocator; }
 
 		void Init();
 		void Release();
@@ -61,6 +62,7 @@ if ((func) != VK_SUCCESS)			\
 		VkQueue						mGraphicsQueue{};
 		VkQueue						mPresentQueue{};
 		VkDebugUtilsMessengerEXT	mDebugMessenger{};
+		VkPhysicalDeviceProperties  mProperties{};
 		VmaAllocator				mAllocator{};
 	};
 }

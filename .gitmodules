@@ -1,0 +1,3 @@
+[submodule "Lumen/External/Include/stb"]
+	path = Lumen/External/Include/stb
+	url = https://github.com/nothings/stb.git

@@ -296,13 +296,12 @@ namespace Lumen::Graphics::Vulkan
 	 */
 	bool VkDevice::IsDeviceSuitable(VkPhysicalDevice device, QueueFamiliyIndices& indices)
 	{
-		VkPhysicalDeviceProperties properties{};
 		VkPhysicalDeviceFeatures features{};
-		vkGetPhysicalDeviceProperties(device, &properties);
+		vkGetPhysicalDeviceProperties(device, &mProperties);
 		vkGetPhysicalDeviceFeatures(device, &features);
 
 		bool suitable{ true };
-		suitable &= properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+		suitable &= mProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
 		suitable &= FindQueueFamilies(device, indices);
 		suitable &= CheckExtensionSupport(device);
 		
@@ -346,6 +345,7 @@ namespace Lumen::Graphics::Vulkan
 		queueInfo.pQueuePriorities	= &queuePriority;
 
 		VkPhysicalDeviceFeatures enabledFeatures{};
+		enabledFeatures.samplerAnisotropy = true;//todo features settings
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

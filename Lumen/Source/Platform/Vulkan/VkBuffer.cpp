@@ -78,7 +78,6 @@ namespace Lumen::Graphics::Vulkan
 
 	VkBuffer::~VkBuffer()
 	{
-		vmaFreeMemory(VkContext::Get().Device().Allocator(), mAllocation);
 		vkDestroyBuffer(VkContext::Get().LogicalDevice(), mBuffer, nullptr);
 	}
 
@@ -116,9 +115,9 @@ namespace Lumen::Graphics::Vulkan
 		return bindingDescription;
 	}
 
-	std::array<VkVertexInputAttributeDescription, 2> VkVertexBuffer::AttributeDescriptions()
+	std::array<VkVertexInputAttributeDescription, 3> VkVertexBuffer::AttributeDescriptions()
 	{
-		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 		attributeDescriptions[0].binding	= 0;
 		attributeDescriptions[0].location	= 0;
 		attributeDescriptions[0].format		= VK_FORMAT_R32G32_SFLOAT;
@@ -128,6 +127,11 @@ namespace Lumen::Graphics::Vulkan
 		attributeDescriptions[1].location	= 1;
 		attributeDescriptions[1].format		= VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[1].offset		= offsetof(Vertex, Color);
+
+		attributeDescriptions[2].binding	= 0;
+		attributeDescriptions[2].location	= 2;
+		attributeDescriptions[2].format		= VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[2].offset		= offsetof(Vertex, TextureCoordinates);
 
 		return attributeDescriptions;
 	}
@@ -178,11 +182,17 @@ namespace Lumen::Graphics::Vulkan
 			vmaCreateBuffer(VkContext::Get().Device().Allocator(), &createInfo, &allocInfo, &mBuffers[i], &mAllocations[i], nullptr);
 	}
 
+	VkUniformBuffer::~VkUniformBuffer()
+	{
+		for(const auto& buffer : mBuffers)
+			vkDestroyBuffer(VkContext::Get().LogicalDevice(), buffer, nullptr);
+	}
+
 	void VkUniformBuffer::Update(const void* data, u32 frame) const
 	{
-		void* map;
-		vmaMapMemory(VkContext::Get().Device().Allocator(), mAllocations[frame], &map);
-		memcpy(map, data, mSize);
+		void* gpuMem;
+		vmaMapMemory(VkContext::Get().Device().Allocator(), mAllocations[frame], &gpuMem);
+		memcpy(gpuMem, data, mSize);
 		vmaUnmapMemory(VkContext::Get().Device().Allocator(), mAllocations[frame]);
 	}
 }

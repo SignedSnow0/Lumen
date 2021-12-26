@@ -39,6 +39,8 @@ namespace Lumen
 
 	void Application::Shutdown()
 	{
+		Graphics::GraphicsContext::Get().WaitIdle();
+
 		delete renderer;
 	}
 

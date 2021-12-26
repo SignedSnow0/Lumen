@@ -22,6 +22,8 @@ namespace Lumen::Graphics
         static RendererAPI GetRenderAPI() { return sRenderAPI; }
         static void SetRenderAPI(RendererAPI api);
 
+        static GraphicsContext& Get() { return *sInstance; }
+
         virtual void Init() = 0;
        
         virtual void WaitIdle() const = 0;
@@ -29,5 +31,6 @@ namespace Lumen::Graphics
     protected:
         static GraphicsContext* (*sCreateFunc)();
         static RendererAPI sRenderAPI;
+        static GraphicsContext* sInstance;
     };
 }

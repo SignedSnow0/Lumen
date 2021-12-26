@@ -221,6 +221,9 @@ namespace Lumen::Graphics::Vulkan
 			createInfo.pPushConstantRanges		= nullptr;
 
 			VK_ASSERT(vkCreatePipelineLayout(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mLayout), "Failed to create pipeline layout");
+
+			for (auto& layout : descriptorLayouts)//destroys layouts created from shader.DescriptorsLayout()
+				vkDestroyDescriptorSetLayout(VkContext::Get().LogicalDevice(), layout, nullptr);
 		}
 
 		VkGraphicsPipelineCreateInfo createInfo{};

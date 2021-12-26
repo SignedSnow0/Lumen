@@ -8,6 +8,7 @@ namespace Lumen::Graphics
 {
     GraphicsContext* (*GraphicsContext::sCreateFunc)() = nullptr;
     RendererAPI GraphicsContext::sRenderAPI;
+    GraphicsContext* GraphicsContext::sInstance = nullptr;
 
     /**
      * @brief Used to create an instance of graphics context with the appropriate renderer api.\n
@@ -17,7 +18,8 @@ namespace Lumen::Graphics
     GraphicsContext* GraphicsContext::Create()
     {
         assert(sCreateFunc && "No graphics api set!");
-        return sCreateFunc();
+        sInstance = sCreateFunc();
+        return sInstance;
     }
 
     /**

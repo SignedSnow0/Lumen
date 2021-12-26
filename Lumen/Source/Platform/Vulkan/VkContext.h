@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+
 #include "VkDevice.h"
 #include "Graphics/Rhi/GraphicsContext.h"
 #pragma comment(lib, "vulkan-1.lib")
@@ -21,11 +23,14 @@ namespace Lumen::Graphics::Vulkan
 		void Init() override;
 
 		void WaitIdle() const override;
+		[[nodiscard]] VkCommandBuffer StartCommand();
+		void EndCommand(VkCommandBuffer cmd);
 
 		static void SetInterface();
 
 	private:
 		VkDevice mDevice{};
+		VkCommandPool mSingleTimeCommandPool;
 
 		static VkContext* sInstance;
 	};

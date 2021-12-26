@@ -31,7 +31,7 @@ namespace Lumen::Graphics::Vulkan
 		void Bind(Surface* target) const override;
 
 		static VkVertexInputBindingDescription BindingDescription();
-		static std::array<VkVertexInputAttributeDescription, 2> AttributeDescriptions();
+		static std::array<VkVertexInputAttributeDescription, 3> AttributeDescriptions();
 
 		static void SetInterface();
 
@@ -58,6 +58,7 @@ namespace Lumen::Graphics::Vulkan
 	public:
 		VkUniformBuffer() = default;
 		explicit VkUniformBuffer(u32 size);
+		~VkUniformBuffer();
 
 		[[nodiscard]] constexpr u32 Size() const { return mSize; }
 		[[nodiscard]] constexpr ::VkBuffer Buffer(u32 frame) const { return mBuffers[frame]; }

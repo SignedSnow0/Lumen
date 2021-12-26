@@ -2,6 +2,7 @@
 
 #include "Rhi/Buffers.h"
 #include "Rhi/DescriptorSet.h"
+#include "Rhi/Texture.h"
 
 namespace Lumen::Graphics
 {
@@ -9,10 +10,10 @@ namespace Lumen::Graphics
 	{
 		const std::vector<Vertex> vertices =
 		{
-			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
-			{{-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}}
+			{ { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
+			{ {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+			{ {  0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+			{ { -0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
 		};
 		const std::vector<u32> indices =
 		{
@@ -21,6 +22,7 @@ namespace Lumen::Graphics
 		};
 		VertexBuffer* vBuffer{ nullptr };
 		IndexBuffer* iBuffer{ nullptr };
+		Texture* texture{ nullptr };
 	}
 
 	TestRenderer::TestRenderer(Window* target)
@@ -37,11 +39,14 @@ namespace Lumen::Graphics
 		vBuffer = VertexBuffer::Create(vertices.data(), static_cast<u32>(vertices.size()));
 		iBuffer = IndexBuffer::Create(indices.data(), static_cast<u32>(indices.size()));
 
-	
+		texture = Texture::Create(R"(D:\Dev\Lumen\Lumen\Assets\Textures\texture.jpg)");
+		mDescriptorSet->SetTexture(1, texture);
 	}
 
 	TestRenderer::~TestRenderer()
 	{
+		delete texture;
+
 		delete vBuffer;
 		delete iBuffer;
 
@@ -55,7 +60,11 @@ namespace Lumen::Graphics
 	void TestRenderer::Render()
 	{
 		mSurface->Begin();
-		mRenderPass->Begin(mSurface->CurrentFrame());
+		const u32 currentFrame = mSurface->CurrentFrame();
+
+		mDescriptorSet->Update(currentFrame);
+
+		mRenderPass->Begin(currentFrame);
 		mPipeline->Bind();
 
 		constexpr glm::mat4 mat{ 1.0 };
@@ -69,10 +78,9 @@ namespace Lumen::Graphics
 		ubo.View = mat;
 		ubo.Proj = mat;
 
-		u32 currentFrame = mSurface->CurrentFrame();
-		mDescriptorSet->SetUniform(0, &ubo, mSurface->CurrentFrame());
+		mDescriptorSet->UpdateUniform(0, &ubo, currentFrame);
 
-		mPipeline->BindDescriptorSet(*mDescriptorSet, mSurface->CurrentFrame());
+		mPipeline->BindDescriptorSet(*mDescriptorSet, currentFrame);
 
 		vBuffer->Bind(mSurface);
 		iBuffer->Bind(mSurface);
