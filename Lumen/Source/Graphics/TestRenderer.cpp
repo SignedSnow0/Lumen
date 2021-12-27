@@ -29,7 +29,7 @@ namespace Lumen::Graphics
 	{
 		mSurface = Surface::Create(target);
 		mSurface->Init();
-		mRenderPass = RenderPass::Create(mSurface);
+		mRenderPass = RenderPass::Create();
 		mShader = Shader::Create({ { R"(D:\Dev\Lumen\Lumen\Assets\Shaders\vertex.vert)", ShaderStage::Vertex }, { R"(D:\Dev\Lumen\Lumen\Assets\Shaders\fragment.frag)", ShaderStage::Fragment } });
 		mPipeline = Pipeline::Create({ CullMode::None, PolygonMode::Fill, DrawType::Triangle, BlendMode::None, 1920, 1080, mShader, mRenderPass });
 		mPipeline->Init();
@@ -68,7 +68,7 @@ namespace Lumen::Graphics
 
 		mDescriptorSet->Update(currentFrame);
 
-		mRenderPass->Begin(currentFrame);
+		mRenderPass->Begin(currentFrame, mSurface);
 		mPipeline->Bind();
 
 		constexpr glm::mat4 mat{ 1.0 };
@@ -91,13 +91,13 @@ namespace Lumen::Graphics
 
 		iBuffer->Draw(mSurface);
 
+		mRenderPass->End(mSurface);
+
 		mGui->Begin();
 
 		//todo: guidraw
 
 		mGui->End();
-
-		mRenderPass->End();
 
 		mSurface->End();
 	}

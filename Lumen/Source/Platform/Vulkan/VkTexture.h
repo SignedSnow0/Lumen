@@ -14,20 +14,26 @@ namespace Lumen::Graphics::Vulkan
 	class VkTexture : public Texture
 	{
 	public:
+		explicit VkTexture(u32 width, u32 height, b8 renderTarget = true);
 		explicit VkTexture(std::filesystem::path source);
 		~VkTexture() override { VkTexture::Release(); }
 
+		[[nodiscard]] constexpr u32 Width() const { return mWidth; }
+		[[nodiscard]] constexpr u32 Height() const { return mHeight; }
 		[[nodiscard]] constexpr ::VkSampler Sampler() const { return mSampler; }
 		[[nodiscard]] constexpr VkImageView View() const { return mView; }
 		[[nodiscard]] constexpr VkImageLayout Layout() const { return mLayout; }
 
 		void Release() override;
 
+		void Recreate(u32 width, u32 height);
+
 		static void SetInterface();
 
 	private:
 		void LoadImage();
 		void CreateImage(const VkBuffer& buffer, u32 width, u32 height);
+		void CreateEmptyImage(u32 width, u32 height);
 		void CreateView();
 		void CreateSampler();
 
@@ -39,6 +45,7 @@ namespace Lumen::Graphics::Vulkan
 		VmaAllocation			mAllocation{};
 		u32						mWidth{};
 		u32						mHeight{};
-		u32						mMipLevels{};
+		u32						mMipLevels{ 1 };
+		b8						mRenderTarget{};
 	};
 }

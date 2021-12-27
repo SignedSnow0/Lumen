@@ -56,6 +56,8 @@ namespace Lumen::Graphics::Vulkan
 
 	void VkGui::End()
 	{
+		mRenderPass->Begin(mTarget->CurrentFrame());
+
 		ImGui::Render();
 
 		if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -65,6 +67,8 @@ namespace Lumen::Graphics::Vulkan
 		}
 
 		ImGui_ImplVulkan_RenderDrawData(::ImGui::GetDrawData(), mTarget->CommandBuffer());
+
+		mRenderPass->End();
 	}
 
 	void VkGui::SetInterface()
@@ -103,7 +107,7 @@ namespace Lumen::Graphics::Vulkan
 	{
 		Attachment color{};
 		color.AsColor(VK_FORMAT_B8G8R8A8_SRGB);
-		mRenderPass = new VkRenderPass{ { color }, *mTarget };
+		mRenderPass = new VkRenderPass{ { color }, mTarget };
 	}
 
 	void VkGui::InitImgui(const Window* target)

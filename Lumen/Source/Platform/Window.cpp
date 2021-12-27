@@ -22,7 +22,6 @@ namespace Lumen
 			glfwInit();
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);//todo remove this
 		if (!visible)
 			glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 

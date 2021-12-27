@@ -163,6 +163,14 @@ namespace Lumen::Graphics::Vulkan
 		}
 	}
 
+	VkTexture::VkTexture(u32 width, u32 height, b8 renderTarget)
+		: mRenderTarget{ renderTarget }
+	{
+		CreateEmptyImage(width, height);
+		CreateView();
+		CreateSampler();
+	}
+
 	VkTexture::VkTexture(std::filesystem::path source)
 		: mSource{ std::move(source) }
 	{
@@ -177,6 +185,13 @@ namespace Lumen::Graphics::Vulkan
 		vkDestroyImageView(VkContext::Get().LogicalDevice(), mView, nullptr);
 
 		vmaDestroyImage(VkContext::Get().Device().Allocator(), mImage, mAllocation);
+	}
+
+	void VkTexture::Recreate(u32 width, u32 height)
+	{
+		CreateEmptyImage(width, height);
+		CreateView();
+		CreateSampler();
 	}
 
 	void VkTexture::SetInterface()
@@ -202,36 +217,18 @@ namespace Lumen::Graphics::Vulkan
 
 	void VkTexture::CreateImage(const VkBuffer& buffer, u32 width, u32 height)
 	{
+		CreateEmptyImage(width, height);
+
+		TransitionLayout(mImage, mMipLevels, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1);
+
+		VkCommandBuffer cmd = VkContext::Get().StartCommand();
+
 		VkExtent3D extent
 		{
 			width,
 			height,
 			1
 		};
-
-		VkImageCreateInfo createInfo{};
-		createInfo.sType			= VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		createInfo.imageType		= VK_IMAGE_TYPE_2D;
-		createInfo.extent			= extent;
-		createInfo.mipLevels		= mMipLevels;
-		createInfo.arrayLayers		= 1;
-		createInfo.format			= VK_FORMAT_R8G8B8A8_SRGB;
-		createInfo.tiling			= VK_IMAGE_TILING_OPTIMAL;
-		createInfo.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-		createInfo.usage			= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;//src for mipmapping
-		createInfo.sharingMode		= VK_SHARING_MODE_EXCLUSIVE;
-		createInfo.samples			= VK_SAMPLE_COUNT_1_BIT;
-		createInfo.flags			= 0;
-
-		VmaAllocationCreateInfo allocInfo{};
-		allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-
-		VmaAllocationInfo resultInfo{};
-		vmaCreateImage(VkContext::Get().Device().Allocator(), &createInfo, &allocInfo, &mImage, &mAllocation, &resultInfo);
-
-		TransitionLayout(mImage, mMipLevels, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1);
-
-		VkCommandBuffer cmd = VkContext::Get().StartCommand();
 
 		VkBufferImageCopy region{};
 		region.bufferOffset						= 0;
@@ -249,6 +246,36 @@ namespace Lumen::Graphics::Vulkan
 
 		GenerateMipmaps(mImage, VK_FORMAT_R8G8B8A8_SRGB, width, height, mMipLevels);
 		mLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;//layout changed from dst by mipmapping
+	}
+
+	void VkTexture::CreateEmptyImage(u32 width, u32 height)
+	{
+		VkExtent3D extent
+		{
+			width,
+			height,
+			1
+		};
+
+		VkImageCreateInfo createInfo{};
+		createInfo.sType			= VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		createInfo.imageType		= VK_IMAGE_TYPE_2D;
+		createInfo.extent			= extent;
+		createInfo.mipLevels		= mMipLevels;
+		createInfo.arrayLayers		= 1;
+		createInfo.format			= mRenderTarget ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_R8G8B8A8_SRGB;
+		createInfo.tiling			= VK_IMAGE_TILING_OPTIMAL;
+		createInfo.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
+		createInfo.usage			= mRenderTarget ? VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT : VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;//src for mipmapping
+		createInfo.sharingMode		= VK_SHARING_MODE_EXCLUSIVE;
+		createInfo.samples			= VK_SAMPLE_COUNT_1_BIT;
+		createInfo.flags			= 0;
+
+		VmaAllocationCreateInfo allocInfo{};
+		allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+		VmaAllocationInfo resultInfo{};
+		vmaCreateImage(VkContext::Get().Device().Allocator(), &createInfo, &allocInfo, &mImage, &mAllocation, &resultInfo);
 
 		mWidth = width;
 		mHeight = height;
@@ -260,7 +287,7 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.sType							= VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		createInfo.image							= mImage;
 		createInfo.viewType							= VK_IMAGE_VIEW_TYPE_2D;
-		createInfo.format							= VK_FORMAT_R8G8B8A8_SRGB;
+		createInfo.format							= mRenderTarget ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_R8G8B8A8_SRGB;
 		createInfo.subresourceRange.aspectMask		= VK_IMAGE_ASPECT_COLOR_BIT;
 		createInfo.subresourceRange.baseMipLevel	= 0;
 		createInfo.subresourceRange.levelCount		= mMipLevels;
