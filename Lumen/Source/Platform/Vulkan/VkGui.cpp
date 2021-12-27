@@ -1,7 +1,7 @@
 ﻿#include "VkGui.h"
 
 #include <imgui/imgui.h>
-#include <imgui/backends/imgui_impl_vulkan.h>
+#include <imgui/backends/imgui_impl_vulkan_with_textures.h>
 #ifdef _WIN64
 #include <imgui/backends/imgui_impl_glfw.h>
 #endif
@@ -57,6 +57,13 @@ namespace Lumen::Graphics::Vulkan
 	void VkGui::End()
 	{
 		ImGui::Render();
+
+		if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+
 		ImGui_ImplVulkan_RenderDrawData(::ImGui::GetDrawData(), mTarget->CommandBuffer());
 	}
 
@@ -102,7 +109,14 @@ namespace Lumen::Graphics::Vulkan
 	void VkGui::InitImgui(const Window* target)
 	{
 		ImGui::CreateContext();
+
+		ImGuiIO& io{ ImGui::GetIO() };
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
 #ifdef _WIN64
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
 		ImGui_ImplGlfw_InitForVulkan(target->Native(), true);
 #endif
 

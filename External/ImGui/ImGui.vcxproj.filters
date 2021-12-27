@@ -8,7 +8,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="imgui\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="imgui\backends\imgui_impl_vulkan_with_textures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp" />
@@ -17,7 +17,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="imgui\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="imgui\backends\imgui_impl_vulkan_with_textures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
