@@ -24,6 +24,8 @@
     <ClInclude Include="Source\Graphics\Rhi\Buffers.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkTexture.h" />
     <ClInclude Include="Source\Graphics\Rhi\Texture.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkGui.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Gui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
@@ -48,6 +50,8 @@
     <ClCompile Include="Source\Graphics\Rhi\Buffers.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkTexture.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Texture.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkGui.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Gui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

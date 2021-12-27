@@ -4,6 +4,7 @@
 #include "VkSurface.h"
 #include "VkRenderPass.h"
 #include "VkDescriptorSet.h"
+#include "VkGui.h"
 #include "VkPipeline.h"
 #include "VkShader.h"
 
@@ -25,5 +26,6 @@ namespace Lumen::Graphics::Vulkan
 		VkVertexBuffer::SetInterface();
 		VkIndexBuffer::SetInterface();
 		VkTexture::SetInterface();
+		VkGui::SetInterface();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Rhi/Gui.h"
 #include "Rhi/Pipeline.h"
 #include "Rhi/RenderPass.h"
 #include "Rhi/Shader.h"
@@ -20,5 +21,6 @@ namespace Lumen::Graphics
 		Shader* mShader{ nullptr };
 		Pipeline* mPipeline{ nullptr };
 		DescriptorSet* mDescriptorSet{ nullptr };
+		Gui* mGui{ nullptr };
 	};
 }

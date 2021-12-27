@@ -36,6 +36,9 @@ namespace Lumen::Graphics
 		mDescriptorSet = DescriptorSet::Create(mShader, 0);
 		mDescriptorSet->Init();
 
+		mGui = Gui::Create();
+		mGui->Init(target, mSurface);
+
 		vBuffer = VertexBuffer::Create(vertices.data(), static_cast<u32>(vertices.size()));
 		iBuffer = IndexBuffer::Create(indices.data(), static_cast<u32>(indices.size()));
 
@@ -50,6 +53,7 @@ namespace Lumen::Graphics
 		delete vBuffer;
 		delete iBuffer;
 
+		delete mGui;
 		delete mDescriptorSet;
 		delete mPipeline;
 		delete mShader;
@@ -87,7 +91,14 @@ namespace Lumen::Graphics
 
 		iBuffer->Draw(mSurface);
 
+		mGui->Begin();
+
+		//todo: guidraw
+
+		mGui->End();
+
 		mRenderPass->End();
+
 		mSurface->End();
 	}
 }

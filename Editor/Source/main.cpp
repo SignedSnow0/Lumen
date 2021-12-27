@@ -1,5 +1,6 @@
 #include "EditorApplication.h"
 #pragma comment(lib, "Lumen.lib")
+#pragma comment(lib, "ImGui.lib")
 
 void Start()
 {
