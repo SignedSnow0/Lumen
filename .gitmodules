@@ -1,3 +1,6 @@
 [submodule "Lumen/External/Include/stb"]
 	path = Lumen/External/Include/stb
 	url = https://github.com/nothings/stb.git
+[submodule "imgui"]
+	path = External/ImGui/imgui
+	url = https://github.com/SignedSnow0/imgui.git
