@@ -11,7 +11,7 @@ namespace Lumen::Graphics::Vulkan
 		RenderPass* CreateFuncVulkan(Surface* target)
 		{
 			Attachment color{};
-			color.AsColor(VK_FORMAT_B8G8R8A8_SRGB);
+			color.AsColor(VK_FORMAT_B8G8R8A8_SRGB, target ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 			return new VkRenderPass{ { color }, dynamic_cast<VkSurface*>(target) };
 		}
 	}
@@ -20,7 +20,7 @@ namespace Lumen::Graphics::Vulkan
 	 * @brief Fills the structure with default settings for a color attachment
 	 * @param format The attachment`s format used
 	 */
-	void Attachment::AsColor(VkFormat format)
+	void Attachment::AsColor(VkFormat format, VkImageLayout layout)
 	{
 		Description.format			= format;
 		Description.samples			= VK_SAMPLE_COUNT_1_BIT;
@@ -29,7 +29,7 @@ namespace Lumen::Graphics::Vulkan
 		Description.stencilLoadOp	= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		Description.stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		Description.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-		Description.finalLayout		= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		Description.finalLayout		= layout;
 
 		Reference.attachment	= 0;
 		Reference.layout		= VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;

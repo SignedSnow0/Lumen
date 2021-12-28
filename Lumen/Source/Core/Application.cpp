@@ -1,20 +1,31 @@
 ﻿#include "Application.h"
+#include "Application.h"
+#include "Application.h"
 
 #include "Window.h"
-#include "Graphics/TestRenderer.h"
+#include "Graphics/GuiRenderer.h"
+#include "Graphics/DefaultRenderer.h"
 
 namespace Lumen
 {
+	RenderTarget::~RenderTarget()
+	{
+		delete Window;
+		delete Surface;
+	}
+
 	Application::Application(AppInitInfo initInfo)
 		: mInitInfo{ initInfo }
 	{
-		WindowInitInfo info
+		constexpr WindowInitInfo info
 		{
 			"Window",
 			1920,
 			1080
 		};
-		mWindows.emplace_back(info);
+
+		RenderTarget renderTarget{};
+		mWindows.emplace_back(new Window{ info }, nullptr);
 	}
 
 	Application::~Application()
@@ -24,7 +35,7 @@ namespace Lumen
 		mWindows.clear();
 	}
 
-	b8 Application::Initialize()
+	b8 Application::Init()
 	{
 		mShutdown = false;
 
@@ -32,7 +43,13 @@ namespace Lumen
 		mGraphicsContext = Graphics::GraphicsContext::Create();
 		mGraphicsContext->Init();
 
-		renderer = new Graphics::TestRenderer{ &mWindows[0] };
+		for (auto& renderTarget : mWindows)
+		{
+			renderTarget.Surface = Graphics::Surface::Create(renderTarget.Window);
+			renderTarget.Surface->Init();
+		}
+
+		renderer = new Graphics::DefaultRenderer{};
 
 		return true;
 	}
@@ -46,14 +63,27 @@ namespace Lumen
 
 	void Application::Run()
 	{
+		renderer->Render(mWindows[0].Surface);
+	}
+
+	void Application::Begin()
+	{
 		Window::Update();
 
-		renderer->Render();
+		mWindows[0].Surface->Begin();
+	}
 
-		for(u32 i{ 0 }; i < mWindows.size(); i++)
+	void Application::End()
+	{
+		mWindows[0].Surface->End();
+
+		for (u32 i{ 0 }; i < mWindows.size(); i++)
 		{
-			if (mWindows[i].ShouldClose())
+			if (mWindows[i].Window->ShouldClose())
+			{
+				mGraphicsContext->WaitIdle();
 				mWindows.erase(mWindows.begin() + i);
+			}
 		}
 		if (mWindows.empty())
 			mShutdown = true;

@@ -5,9 +5,11 @@
 void Start()
 {
 	EditorApp app{};
-	app.Initialize();
-	app.Run();
-	app.Shutdown();
+	if(app.Init())
+	{
+		app.Run();
+		app.Shutdown();
+	}
 }
 
 #ifdef _DEBUG

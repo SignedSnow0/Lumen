@@ -20,12 +20,13 @@
     <ClInclude Include="Source\Graphics\Rhi\DescriptorSet.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkDescriptorSet.h" />
     <ClInclude Include="Source\Graphics\Rhi\Pipeline.h" />
-    <ClInclude Include="Source\Graphics\TestRenderer.h" />
+    <ClInclude Include="Source\Graphics\DefaultRenderer.h" />
     <ClInclude Include="Source\Graphics\Rhi\Buffers.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkTexture.h" />
     <ClInclude Include="Source\Graphics\Rhi\Texture.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkGui.h" />
     <ClInclude Include="Source\Graphics\Rhi\Gui.h" />
+    <ClInclude Include="Source\Graphics\GuiRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
@@ -46,12 +47,13 @@
     <ClCompile Include="Source\Graphics\Rhi\DescriptorSet.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkDescriptorSet.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Pipeline.cpp" />
-    <ClCompile Include="Source\Graphics\TestRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\DefaultRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Buffers.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkTexture.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Texture.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkGui.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Gui.cpp" />
+    <ClCompile Include="Source\Graphics\GuiRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

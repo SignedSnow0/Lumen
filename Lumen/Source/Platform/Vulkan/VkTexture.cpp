@@ -223,7 +223,7 @@ namespace Lumen::Graphics::Vulkan
 
 		VkCommandBuffer cmd = VkContext::Get().StartCommand();
 
-		VkExtent3D extent
+		const VkExtent3D extent
 		{
 			width,
 			height,
@@ -266,7 +266,8 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.format			= mRenderTarget ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_R8G8B8A8_SRGB;
 		createInfo.tiling			= VK_IMAGE_TILING_OPTIMAL;
 		createInfo.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-		createInfo.usage			= mRenderTarget ? VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT : VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;//src for mipmapping
+		createInfo.usage			= mRenderTarget ? VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+													: VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;//src for mipmapping
 		createInfo.sharingMode		= VK_SHARING_MODE_EXCLUSIVE;
 		createInfo.samples			= VK_SAMPLE_COUNT_1_BIT;
 		createInfo.flags			= 0;
@@ -276,6 +277,10 @@ namespace Lumen::Graphics::Vulkan
 
 		VmaAllocationInfo resultInfo{};
 		vmaCreateImage(VkContext::Get().Device().Allocator(), &createInfo, &allocInfo, &mImage, &mAllocation, &resultInfo);
+
+		if(mRenderTarget)
+			TransitionLayout(mImage, mMipLevels, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
+		mLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		mWidth = width;
 		mHeight = height;

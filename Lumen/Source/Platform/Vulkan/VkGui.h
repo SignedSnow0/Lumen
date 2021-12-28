@@ -1,5 +1,8 @@
 ﻿#pragma once
+#include <vector>
+
 #include <vulkan/vulkan.h>
+#include <imgui/imgui.h>
 
 #include "Graphics/Rhi/Gui.h"
 
@@ -29,6 +32,7 @@ namespace Lumen::Graphics::Vulkan
 
 		void Begin() override;
 		void End() override;
+		void SetViewportImages(RenderPass* scene) override;
 
 		static void SetInterface();
 
@@ -37,6 +41,7 @@ namespace Lumen::Graphics::Vulkan
 		void CreateRenderPass();
 		void InitImgui(const Window* target);
 
+		std::vector<ImTextureID> mSceneTextures{};
 		VkSurface* mTarget{ nullptr };
 		VkDescriptorPool mPool{};
 		VkRenderPass* mRenderPass{ nullptr };

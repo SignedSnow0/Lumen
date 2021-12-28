@@ -19,7 +19,10 @@ namespace Lumen
 	Window::Window(const WindowInitInfo& initInfo, bool visible)
 	{
 		if (!glfwInitialized)
+		{
 			glfwInit();
+			glfwInitialized = true;
+		}
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		if (!visible)

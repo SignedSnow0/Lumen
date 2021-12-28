@@ -1,4 +1,4 @@
-﻿#include "TestRenderer.h"
+﻿#include "DefaultRenderer.h"
 
 #include "Rhi/Buffers.h"
 #include "Rhi/DescriptorSet.h"
@@ -25,19 +25,14 @@ namespace Lumen::Graphics
 		Texture* texture{ nullptr };
 	}
 
-	TestRenderer::TestRenderer(Window* target)
+	DefaultRenderer::DefaultRenderer()
+		: mRenderPass(RenderPass::Create())
 	{
-		mSurface = Surface::Create(target);
-		mSurface->Init();
-		mRenderPass = RenderPass::Create();
 		mShader = Shader::Create({ { R"(D:\Dev\Lumen\Lumen\Assets\Shaders\vertex.vert)", ShaderStage::Vertex }, { R"(D:\Dev\Lumen\Lumen\Assets\Shaders\fragment.frag)", ShaderStage::Fragment } });
 		mPipeline = Pipeline::Create({ CullMode::None, PolygonMode::Fill, DrawType::Triangle, BlendMode::None, 1920, 1080, mShader, mRenderPass });
 		mPipeline->Init();
 		mDescriptorSet = DescriptorSet::Create(mShader, 0);
 		mDescriptorSet->Init();
-
-		mGui = Gui::Create();
-		mGui->Init(target, mSurface);
 
 		vBuffer = VertexBuffer::Create(vertices.data(), static_cast<u32>(vertices.size()));
 		iBuffer = IndexBuffer::Create(indices.data(), static_cast<u32>(indices.size()));
@@ -46,29 +41,26 @@ namespace Lumen::Graphics
 		mDescriptorSet->SetTexture(1, texture);
 	}
 
-	TestRenderer::~TestRenderer()
+	DefaultRenderer::~DefaultRenderer()
 	{
 		delete texture;
 
 		delete vBuffer;
 		delete iBuffer;
 
-		delete mGui;
 		delete mDescriptorSet;
 		delete mPipeline;
 		delete mShader;
 		delete mRenderPass;
-		delete mSurface;
 	}
 
-	void TestRenderer::Render()
+	void DefaultRenderer::Render(Surface* surface)
 	{
-		mSurface->Begin();
-		const u32 currentFrame = mSurface->CurrentFrame();
+		const u32 currentFrame = surface->CurrentFrame();
 
 		mDescriptorSet->Update(currentFrame);
 
-		mRenderPass->Begin(currentFrame, mSurface);
+		mRenderPass->Begin(currentFrame, surface);
 		mPipeline->Bind();
 
 		constexpr glm::mat4 mat{ 1.0 };
@@ -86,19 +78,11 @@ namespace Lumen::Graphics
 
 		mPipeline->BindDescriptorSet(*mDescriptorSet, currentFrame);
 
-		vBuffer->Bind(mSurface);
-		iBuffer->Bind(mSurface);
+		vBuffer->Bind(surface);
+		iBuffer->Bind(surface);
 
-		iBuffer->Draw(mSurface);
+		iBuffer->Draw(surface);
 
-		mRenderPass->End(mSurface);
-
-		mGui->Begin();
-
-		//todo: guidraw
-
-		mGui->End();
-
-		mSurface->End();
+		mRenderPass->End(surface);
 	}
 }

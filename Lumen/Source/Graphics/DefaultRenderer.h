@@ -7,20 +7,20 @@
 
 namespace Lumen::Graphics
 {
-	class TestRenderer
+	class DefaultRenderer
 	{
 	public:
-		explicit TestRenderer(Window* target);
-		~TestRenderer();
+		explicit DefaultRenderer();
+		~DefaultRenderer();
 
-		void Render();
+		[[nodiscard]] constexpr RenderPass* GetRenderPass() const { return mRenderPass; }
+
+		void Render(Surface* surface);
 
 	private:
-		Surface* mSurface{ nullptr };
 		RenderPass* mRenderPass{ nullptr };
 		Shader* mShader{ nullptr };
 		Pipeline* mPipeline{ nullptr };
 		DescriptorSet* mDescriptorSet{ nullptr };
-		Gui* mGui{ nullptr };
 	};
 }

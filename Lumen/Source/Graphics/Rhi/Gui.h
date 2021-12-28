@@ -7,6 +7,7 @@ namespace Lumen
 
 namespace Lumen::Graphics
 {
+	class RenderPass;
 	class Surface;
 
 	class Gui
@@ -20,6 +21,7 @@ namespace Lumen::Graphics
 
 		virtual void Begin() = 0;
 		virtual void End() = 0;
+		virtual void SetViewportImages(RenderPass* scene) = 0;
 
 	protected:
 		static Gui* (*sCreateFunc)();

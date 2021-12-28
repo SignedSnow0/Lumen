@@ -32,6 +32,6 @@ namespace Lumen
 		static void Update();
 
 	private:
-		void* mNative;
+		void* mNative{ nullptr };
 	};
 }

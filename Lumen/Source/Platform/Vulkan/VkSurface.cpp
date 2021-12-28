@@ -52,7 +52,7 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.sType			= VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		createInfo.queueFamilyIndex = VkContext::Get().Device().GraphicsFamily();
 		createInfo.flags			= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		VK_ASSERT(vkCreateCommandPool(VkContext::Get().Device().Device(), &createInfo, nullptr, &mCommandPool), "Failed to create command pool")
+		VK_ASSERT(vkCreateCommandPool(VkContext::Get().Device().Device(), &createInfo, nullptr, &mCommandPool), "Failed to create command pool");
 
 		CreateCommandBuffers();
 		CreateSyncObjects();
@@ -89,7 +89,7 @@ namespace Lumen::Graphics::Vulkan
 	 */
 	void VkSurface::Begin()
 	{
-		VK_ASSERT(vkWaitForFences(VkContext::Get().LogicalDevice(), 1, &mFrames[mCurrentFrame].InFlight, true, UINT64_MAX), "Failed to wait for fence")
+		VK_ASSERT(vkWaitForFences(VkContext::Get().LogicalDevice(), 1, &mFrames[mCurrentFrame].InFlight, true, UINT64_MAX), "Failed to wait for fence");
 
 		const VkResult result = vkAcquireNextImageKHR(VkContext::Get().LogicalDevice(), mSwapchain, UINT64_MAX, mFrames[mCurrentFrame].ImageAvailable, nullptr, &mImageIndex);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -291,7 +291,7 @@ namespace Lumen::Graphics::Vulkan
 			createInfo.subresourceRange.baseArrayLayer	= 0;
 			createInfo.subresourceRange.layerCount		= 1;
 
-			VK_ASSERT(vkCreateImageView(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mFrames[i].ImageView), "Failed to create swapchain image view")
+			VK_ASSERT(vkCreateImageView(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mFrames[i].ImageView), "Failed to create swapchain image view");
 		}
 	}
 
@@ -327,9 +327,9 @@ namespace Lumen::Graphics::Vulkan
 
 		for (u32 i{ 0 }; i < BufferCount; i++)
 		{
-			VK_ASSERT(vkCreateSemaphore(VkContext::Get().LogicalDevice(), &semaphoreInfo, nullptr, &mFrames[i].ImageAvailable), "Failed to create semaphore")
-			VK_ASSERT(vkCreateSemaphore(VkContext::Get().LogicalDevice(), &semaphoreInfo, nullptr, &mFrames[i].RenderFinished), "Failed to create semaphore")
-			VK_ASSERT(vkCreateFence(VkContext::Get().LogicalDevice(), &fenceInfo, nullptr, &mFrames[i].InFlight), "Failed to create fence")
+			VK_ASSERT(vkCreateSemaphore(VkContext::Get().LogicalDevice(), &semaphoreInfo, nullptr, &mFrames[i].ImageAvailable), "Failed to create semaphore");
+			VK_ASSERT(vkCreateSemaphore(VkContext::Get().LogicalDevice(), &semaphoreInfo, nullptr, &mFrames[i].RenderFinished), "Failed to create semaphore");
+			VK_ASSERT(vkCreateFence(VkContext::Get().LogicalDevice(), &fenceInfo, nullptr, &mFrames[i].InFlight), "Failed to create fence");
 		}
 	}
 

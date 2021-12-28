@@ -1,5 +1,6 @@
 #include "VkDevice.h"
 
+#include <cassert>
 #include <fstream>
 #include <set>
 #include <vector>
@@ -40,10 +41,11 @@ namespace Lumen::Graphics::Vulkan
 
 			if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
 			{
-#ifdef _DEBUG
-				std::cerr << "[Validation layer]: " << pCallbackData->pMessage << std::endl;
 				std::string out = "[Validation layer: ] ";
 				out.append(pCallbackData->pMessage);
+#ifdef _DEBUG
+				std::cerr << out << std::endl;
+				
 #endif
 				if (std::ofstream log{ ".FrostEngine/ValidationLayer.txt", std::ios::out | (reset ? std::ios::trunc : std::ios::app) }; log.is_open())
 				{
@@ -274,7 +276,7 @@ namespace Lumen::Graphics::Vulkan
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 				indices.Graphics = i;
 
-			VK_ASSERT(vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &supported), "Failed to query surface support")
+			VK_ASSERT(vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &supported), "Failed to query surface support");
 			if (supported)
 				indices.Present = i;
 

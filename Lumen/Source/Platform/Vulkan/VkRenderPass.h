@@ -15,7 +15,7 @@ namespace Lumen::Graphics::Vulkan
 		VkSubpassDescription	Subpass{};
 		VkSubpassDependency		Dependency{};
 
-		void AsColor(VkFormat format);
+		void AsColor(VkFormat format, VkImageLayout layout);
 	};
 
 	class VkRenderPass final : public RenderPass
@@ -27,7 +27,7 @@ namespace Lumen::Graphics::Vulkan
 		[[nodiscard]] constexpr u32 Width() const			{ return mSize.first; }
 		[[nodiscard]] constexpr u32 Height() const			{ return mSize.second; }
 		[[nodiscard]] constexpr ::VkRenderPass Get() const	{ return mRenderPass; }
-
+		[[nodiscard]] VkTexture* Texture(u32 frame) const { return mTarget ? nullptr : mTextures[frame]; }
 		void Init() override;
 		void Release() override;
 

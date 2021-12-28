@@ -3,7 +3,7 @@
 void Start()
 {
 	EditorApp app{};
-	app.Initialize();
+	app.Init();
 	app.Run();
 	app.Shutdown();
 }

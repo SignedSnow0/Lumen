@@ -8,6 +8,7 @@
 #include "VkContext.h"
 #include "VkRenderPass.h"
 #include "VkSurface.h"
+#include "VkTexture.h"
 #include "Core/Window.h"
 
 namespace Lumen::Graphics::Vulkan
@@ -40,6 +41,7 @@ namespace Lumen::Graphics::Vulkan
 	void VkGui::Release()
 	{
 		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
 
 		delete mRenderPass;
 		vkDestroyDescriptorPool(VkContext::Get().LogicalDevice(), mPool, nullptr);
@@ -50,6 +52,17 @@ namespace Lumen::Graphics::Vulkan
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGui::DockSpaceOverViewport();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
+		if(ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+		{
+			
+			ImGui::Image(mSceneTextures[mTarget->CurrentFrame()], ImGui::GetWindowSize());
+		}
+		ImGui::End();
+		ImGui::PopStyleVar();
 
 		ImGui::ShowDemoWindow();
 	}
@@ -69,6 +82,18 @@ namespace Lumen::Graphics::Vulkan
 		ImGui_ImplVulkan_RenderDrawData(::ImGui::GetDrawData(), mTarget->CommandBuffer());
 
 		mRenderPass->End();
+	}
+
+	void VkGui::SetViewportImages(RenderPass* scene)
+	{
+		const auto renderPass = dynamic_cast<VkRenderPass*>(scene);
+		mSceneTextures.resize(VkSurface::BufferCount);
+
+		for(u32 i{ 0 }; i < VkSurface::BufferCount; i++)
+		{
+			const VkTexture* texture = renderPass->Texture(i);
+			mSceneTextures[i] = ImGui_ImplVulkan_AddTexture(texture->Sampler(), texture->View(), texture->Layout());
+		}
 	}
 
 	void VkGui::SetInterface()
@@ -106,7 +131,7 @@ namespace Lumen::Graphics::Vulkan
 	void VkGui::CreateRenderPass()
 	{
 		Attachment color{};
-		color.AsColor(VK_FORMAT_B8G8R8A8_SRGB);
+		color.AsColor(VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 		mRenderPass = new VkRenderPass{ { color }, mTarget };
 	}
 
