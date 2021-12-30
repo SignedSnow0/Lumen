@@ -10,9 +10,9 @@ namespace Lumen::Graphics
 	{
 		const std::vector<Vertex> vertices =
 		{
-			{ { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
-			{ {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
-			{ {  0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+			{ { -0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f } },
+			{ {  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
+			{ {  0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
 			{ { -0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
 		};
 		const std::vector<u32> indices =
@@ -28,7 +28,7 @@ namespace Lumen::Graphics
 	DefaultRenderer::DefaultRenderer()
 		: mRenderPass(RenderPass::Create())
 	{
-		mShader = Shader::Create({ { R"(D:\Dev\Lumen\Lumen\Assets\Shaders\vertex.vert)", ShaderStage::Vertex }, { R"(D:\Dev\Lumen\Lumen\Assets\Shaders\fragment.frag)", ShaderStage::Fragment } });
+		mShader = Shader::Create({ { (Shader::ShadersPath() / "vertex.vert").string(), ShaderStage::Vertex }, { (Shader::ShadersPath() / "fragment.frag").string(), ShaderStage::Fragment } });
 		mPipeline = Pipeline::Create({ CullMode::None, PolygonMode::Fill, DrawType::Triangle, BlendMode::None, 1920, 1080, mShader, mRenderPass });
 		mPipeline->Init();
 		mDescriptorSet = DescriptorSet::Create(mShader, 0);
@@ -37,7 +37,7 @@ namespace Lumen::Graphics
 		vBuffer = VertexBuffer::Create(vertices.data(), static_cast<u32>(vertices.size()));
 		iBuffer = IndexBuffer::Create(indices.data(), static_cast<u32>(indices.size()));
 
-		texture = Texture::Create(R"(D:\Dev\Lumen\Lumen\Assets\Textures\texture.jpg)");
+		texture = Texture::Create(Texture::TexturesPath() / "texture.jpg");
 		mDescriptorSet->SetTexture(1, texture);
 	}
 

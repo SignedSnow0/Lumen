@@ -1,6 +1,8 @@
 ﻿#pragma once
+#include <filesystem>
 #include <unordered_map>
 
+#include "Core/Application.h"
 #include "Core/Types.h"
 
 namespace Lumen::Graphics
@@ -19,6 +21,8 @@ namespace Lumen::Graphics
 	public:
 		static Shader* Create(const std::unordered_map<std::string, ShaderStage>& sources);
 		virtual ~Shader() = default;
+
+		[[nodiscard]] static std::filesystem::path ShadersPath() { return Application::Get()->AssetsPath() / "Shaders"; }
 
 		virtual void Init() = 0;
 		virtual void Release() = 0;

@@ -8,6 +8,8 @@
 
 namespace Lumen
 {
+	Application* Application::sInstance = nullptr;
+
 	RenderTarget::~RenderTarget()
 	{
 		delete Window;
@@ -26,6 +28,8 @@ namespace Lumen
 
 		RenderTarget renderTarget{};
 		mWindows.emplace_back(new Window{ info }, nullptr);
+
+		sInstance = this;
 	}
 
 	Application::~Application()

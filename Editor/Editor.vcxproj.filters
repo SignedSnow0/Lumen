@@ -3,9 +3,17 @@
   <ItemGroup>
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\EditorApplication.cpp" />
+    <ClCompile Include="Source\Controls\SceneView.cpp" />
+    <ClCompile Include="Source\Controls\EntityView.cpp" />
+    <ClCompile Include="Source\Controls\ResourcesView.cpp" />
+    <ClCompile Include="Source\Controls\ToolbarView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EditorApplication.h" />
+    <ClInclude Include="Source\Controls\SceneView.h" />
+    <ClInclude Include="Source\Controls\EntityView.h" />
+    <ClInclude Include="Source\Controls\ResourcesView.h" />
+    <ClInclude Include="Source\Controls\ToolbarView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

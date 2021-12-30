@@ -58,8 +58,7 @@ namespace Lumen::Graphics::Vulkan
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		if(ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 		{
-			
-			ImGui::Image(mSceneTextures[mTarget->CurrentFrame()], ImGui::GetWindowSize());
+			ImGui::Image(mSceneTextures[mTarget->CurrentFrame()], ImGui::GetWindowSize(), { 1, 0 }, { 0, 1 });
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -160,5 +159,9 @@ namespace Lumen::Graphics::Vulkan
 		initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
 		ImGui_ImplVulkan_Init(&initInfo, mRenderPass->Get());
+
+		io.Fonts->AddFontFromFileTTF(R"(D:\Dev\Lumen\Lumen\Assets\Fonts\FireSans\FiraSans-Regular.ttf)", 15);
+		mBoldFont = io.Fonts->AddFontFromFileTTF(R"(D:\Dev\Lumen\Lumen\Assets\Fonts\FireSans\FiraSans-Bold.ttf)", 15);
+		mItalicFont = io.Fonts->AddFontFromFileTTF(R"(D:\Dev\Lumen\Lumen\Assets\Fonts\FireSans\FiraSans-Italic.ttf)", 15);
 	}
 }

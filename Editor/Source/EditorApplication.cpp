@@ -1,8 +1,16 @@
 ﻿#include "EditorApplication.h"
 
+#include "Controls/EntityView.h"
+#include "Controls/ResourcesView.h"
+#include "Controls/SceneView.h"
+#include "Controls/ToolbarView.h"
+
+EditorApp* EditorApp::sInstance = nullptr;
+
 EditorApp::EditorApp()
 	:	Application({ Lumen::Graphics::RendererAPI::Vulkan })
 {
+	sInstance = this;
 }
 
 EditorApp::~EditorApp()
@@ -29,10 +37,16 @@ void EditorApp::Run()
 	while (!Closing())
 	{
 		Begin();
-
 		Application::Run();
 
-		mGui->Render();
+		mGui->Begin();
+
+		mToolbarView->Render();
+		mSceneView->Render();
+		mResourcesView->Render();
+		mEntityView->Render();
+
+		mGui->End();
 
 		End();
 	}

@@ -60,7 +60,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lumen\;$(SolutionDir)Lumen\Source\;$(SolutionDir)Lumen\External\Include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lumen\;$(SolutionDir)Lumen\Source\;$(SolutionDir)Lumen\External\Include\;$(SolutionDir)External\ImGui\</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
@@ -77,7 +77,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lumen\;$(SolutionDir)Lumen\Source\;$(SolutionDir)Lumen\External\Include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lumen\;$(SolutionDir)Lumen\Source\;$(SolutionDir)Lumen\External\Include\;$(SolutionDir)External\ImGui\</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -90,10 +90,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Controls\EntityView.cpp" />
+    <ClCompile Include="Source\Controls\ResourcesView.cpp" />
+    <ClCompile Include="Source\Controls\SceneView.cpp" />
+    <ClCompile Include="Source\Controls\ToolbarView.cpp" />
     <ClCompile Include="Source\EditorApplication.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Controls\EntityView.h" />
+    <ClInclude Include="Source\Controls\ResourcesView.h" />
+    <ClInclude Include="Source\Controls\SceneView.h" />
+    <ClInclude Include="Source\Controls\ToolbarView.h" />
     <ClInclude Include="Source\EditorApplication.h" />
   </ItemGroup>
   <ItemGroup>

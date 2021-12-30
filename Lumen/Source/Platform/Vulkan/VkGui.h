@@ -27,6 +27,9 @@ namespace Lumen::Graphics::Vulkan
 		VkGui() = default;
 		~VkGui() override { VkGui::Release(); }
 
+		ImFont* BoldFont() override { return mBoldFont; }
+		ImFont* ItalicFont() override { return mItalicFont; }
+
 		void Init(const Window* target, Surface* surface) override;
 		void Release() override;
 
@@ -41,6 +44,8 @@ namespace Lumen::Graphics::Vulkan
 		void CreateRenderPass();
 		void InitImgui(const Window* target);
 
+		ImFont* mBoldFont{ nullptr };
+		ImFont* mItalicFont{ nullptr };
 		std::vector<ImTextureID> mSceneTextures{};
 		VkSurface* mTarget{ nullptr };
 		VkDescriptorPool mPool{};

@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <vector>
 
 #include "Types.h"
@@ -34,11 +35,15 @@ namespace Lumen
 		virtual ~Application();
 
 		[[nodiscard]] constexpr b8 Closing() const { return mShutdown; }
+		[[nodiscard]] std::filesystem::path EnginePath() const { return mEnginePath; }
+		[[nodiscard]] std::filesystem::path AssetsPath() const { return mEnginePath / "Assets"; }
 
 		virtual b8 Init();
 
 		virtual void Shutdown();
 		virtual void Run();
+
+		static Application* Get() { return sInstance; }
 
 	protected:
 		void Begin();
@@ -50,10 +55,13 @@ namespace Lumen
 	private:
 		AppInitInfo mInitInfo{};
 		b8 mShutdown{ false };
-	
+		std::filesystem::path mEnginePath{ std::filesystem::current_path().parent_path() += "\\Lumen\\" };
+
 		std::vector<RenderTarget> mWindows{};
 		Graphics::GraphicsContext* mGraphicsContext{ nullptr };
 
 		Graphics::DefaultRenderer* renderer{ nullptr };
+
+		static Application* sInstance;
 	};
 }

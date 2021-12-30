@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+struct ImFont;
+
 namespace Lumen
 {
 	class Window;
@@ -15,6 +17,9 @@ namespace Lumen::Graphics
 	public:
 		static Gui* Create();
 		virtual ~Gui() = default;
+
+		virtual ImFont* BoldFont() = 0;
+		virtual ImFont* ItalicFont() = 0;
 
 		virtual void Init(const Window* target, Surface* surface) = 0;
 		virtual void Release() = 0;

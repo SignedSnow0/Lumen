@@ -263,7 +263,7 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.extent			= extent;
 		createInfo.mipLevels		= mMipLevels;
 		createInfo.arrayLayers		= 1;
-		createInfo.format			= mRenderTarget ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_R8G8B8A8_SRGB;
+		createInfo.format			= VK_FORMAT_R8G8B8A8_SRGB;
 		createInfo.tiling			= VK_IMAGE_TILING_OPTIMAL;
 		createInfo.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
 		createInfo.usage			= mRenderTarget ? VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
@@ -279,7 +279,7 @@ namespace Lumen::Graphics::Vulkan
 		vmaCreateImage(VkContext::Get().Device().Allocator(), &createInfo, &allocInfo, &mImage, &mAllocation, &resultInfo);
 
 		if(mRenderTarget)
-			TransitionLayout(mImage, mMipLevels, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
+			TransitionLayout(mImage, mMipLevels, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 		mLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		mWidth = width;
@@ -292,7 +292,7 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.sType							= VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		createInfo.image							= mImage;
 		createInfo.viewType							= VK_IMAGE_VIEW_TYPE_2D;
-		createInfo.format							= mRenderTarget ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_R8G8B8A8_SRGB;
+		createInfo.format							= VK_FORMAT_R8G8B8A8_SRGB;
 		createInfo.subresourceRange.aspectMask		= VK_IMAGE_ASPECT_COLOR_BIT;
 		createInfo.subresourceRange.baseMipLevel	= 0;
 		createInfo.subresourceRange.levelCount		= mMipLevels;

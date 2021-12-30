@@ -17,10 +17,13 @@ namespace Lumen::Graphics
 		delete mGui;
 	}
 
-	void GuiRenderer::Render()
+	void GuiRenderer::Begin()
 	{
 		mGui->Begin();
+	}
 
+	void GuiRenderer::End()
+	{
 		mGui->End();
 	}
 }

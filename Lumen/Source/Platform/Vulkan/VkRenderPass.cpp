@@ -11,7 +11,7 @@ namespace Lumen::Graphics::Vulkan
 		RenderPass* CreateFuncVulkan(Surface* target)
 		{
 			Attachment color{};
-			color.AsColor(VK_FORMAT_B8G8R8A8_SRGB, target ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			color.AsColor(target ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_R8G8B8A8_SRGB, target ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 			return new VkRenderPass{ { color }, dynamic_cast<VkSurface*>(target) };
 		}
 	}

@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include "Rhi/Gui.h"
+
+struct ImFont;
 
 namespace Lumen
 {
@@ -20,7 +23,11 @@ namespace Lumen::Graphics
 		explicit GuiRenderer(Window* target, Surface* surface, RenderPass* scene);
 		~GuiRenderer();
 
-		void Render();
+		[[nodiscard]] ImFont* BoldFont() const { return mGui->BoldFont(); }
+		[[nodiscard]] ImFont* ItalicFont() const { return mGui->ItalicFont(); }
+
+		void Begin();
+		void End();
 
 	private:
 		Surface* mSurface{ nullptr };
