@@ -1,6 +1,8 @@
 ﻿#include "ToolbarView.h"
 
-#include "imgui/imgui.h"
+#include "../EditorApplication.h"
+
+#include <imgui/imgui.h>
 
 void ToolbarView::Render()
 {
@@ -10,7 +12,10 @@ void ToolbarView::Render()
 		{
 			ImGui::MenuItem("Create");
 			ImGui::MenuItem("Open");
-			ImGui::MenuItem("Save");
+			if(ImGui::MenuItem("Save"))
+			{
+				EditorApp::Get()->Save();
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Actions"))

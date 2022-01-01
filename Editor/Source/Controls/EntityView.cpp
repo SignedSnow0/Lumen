@@ -6,7 +6,7 @@ void EntityView::Render()
 {
 	if (ImGui::Begin("Entity##View"))
 	{
-
+		
 	}
 	ImGui::End();
 }

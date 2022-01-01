@@ -63,7 +63,7 @@ namespace Lumen::Graphics::Vulkan
 		ImGui::End();
 		ImGui::PopStyleVar();
 
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 	}
 
 	void VkGui::End()

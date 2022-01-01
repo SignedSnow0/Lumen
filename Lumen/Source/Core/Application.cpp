@@ -1,24 +1,19 @@
 ﻿#include "Application.h"
-#include "Application.h"
-#include "Application.h"
 
 #include "Window.h"
-#include "Graphics/GuiRenderer.h"
 #include "Graphics/DefaultRenderer.h"
+#include "Utils/Serializer.h"
 
 namespace Lumen
 {
 	Application* Application::sInstance = nullptr;
 
-	RenderTarget::~RenderTarget()
+	Application::Application(const AppInitInfo& initInfo)
 	{
-		delete Window;
-		delete Surface;
-	}
+		mProject.Name = initInfo.Name;
+		mProject.Path = initInfo.Path;
+		mProject.Api = initInfo.Api;
 
-	Application::Application(AppInitInfo initInfo)
-		: mInitInfo{ initInfo }
-	{
 		constexpr WindowInitInfo info
 		{
 			"Window",
@@ -26,7 +21,7 @@ namespace Lumen
 			1080
 		};
 
-		RenderTarget renderTarget{};
+		Graphics::RenderTarget renderTarget{};
 		mWindows.emplace_back(new Window{ info }, nullptr);
 
 		sInstance = this;
@@ -43,7 +38,7 @@ namespace Lumen
 	{
 		mShutdown = false;
 
-		Graphics::GraphicsContext::SetRenderAPI(mInitInfo.Api);
+		Graphics::GraphicsContext::SetRenderAPI(mProject.Api);
 		mGraphicsContext = Graphics::GraphicsContext::Create();
 		mGraphicsContext->Init();
 
@@ -54,6 +49,8 @@ namespace Lumen
 		}
 
 		renderer = new Graphics::DefaultRenderer{};
+
+		mProject.Scene = new Scene{};
 
 		return true;
 	}
@@ -91,5 +88,16 @@ namespace Lumen
 		}
 		if (mWindows.empty())
 			mShutdown = true;
+	}
+
+	void Application::Save()
+	{
+		Utils::Serializer serializer{ &mProject };
+		serializer.Save(mProject.Path / (mProject.Name + ".lumen"));
+	}
+
+	void Application::Load()
+	{
+		
 	}
 }

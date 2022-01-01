@@ -27,6 +27,12 @@
     <ClInclude Include="Source\Platform\Vulkan\VkGui.h" />
     <ClInclude Include="Source\Graphics\Rhi\Gui.h" />
     <ClInclude Include="Source\Graphics\GuiRenderer.h" />
+    <ClInclude Include="Source\Core\Scene.h" />
+    <ClInclude Include="Source\Core\Entity.h" />
+    <ClInclude Include="Source\Core\Components.h" />
+    <ClInclude Include="Source\Utils\Serializer.h" />
+    <ClInclude Include="Source\Core\Project.h" />
+    <ClInclude Include="Source\Graphics\RenderTarget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
@@ -54,6 +60,12 @@
     <ClCompile Include="Source\Platform\Vulkan\VkGui.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Gui.cpp" />
     <ClCompile Include="Source\Graphics\GuiRenderer.cpp" />
+    <ClCompile Include="Source\Core\Scene.cpp" />
+    <ClCompile Include="Source\Core\Entity.cpp" />
+    <ClCompile Include="Source\Core\Components.cpp" />
+    <ClCompile Include="Source\Utils\Serializer.cpp" />
+    <ClCompile Include="Source\Core\Project.cpp" />
+    <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
