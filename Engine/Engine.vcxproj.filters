@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Lumen.h" />
+    <ClInclude Include="Source\Core\Application.h" />
+    <ClInclude Include="Source\Core\Types.h" />
+    <ClInclude Include="Source\Core\Window.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkContext.h" />
+    <ClInclude Include="Source\Graphics\Rhi\GraphicsContext.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkInterface.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkDevice.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkPipeline.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkRenderPass.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkShader.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkSurface.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Surface.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkBuffer.h" />
+    <ClInclude Include="Source\Graphics\Rhi\RenderPass.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Shader.h" />
+    <ClInclude Include="Source\Graphics\Rhi\DescriptorSet.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkDescriptorSet.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Pipeline.h" />
+    <ClInclude Include="Source\Graphics\DefaultRenderer.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Buffers.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkTexture.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Texture.h" />
+    <ClInclude Include="Source\Platform\Vulkan\VkGui.h" />
+    <ClInclude Include="Source\Graphics\Rhi\Gui.h" />
+    <ClInclude Include="Source\Graphics\GuiRenderer.h" />
+    <ClInclude Include="Source\Core\Scene.h" />
+    <ClInclude Include="Source\Core\Entity.h" />
+    <ClInclude Include="Source\Core\Components.h" />
+    <ClInclude Include="Source\Utils\Serializer.h" />
+    <ClInclude Include="Source\Core\Project.h" />
+    <ClInclude Include="Source\Graphics\RenderTarget.h" />
+    <ClInclude Include="Source\Graphics\SceneRenderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Core\Application.cpp" />
+    <ClCompile Include="Source\Platform\Window.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\GraphicsContext.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkContext.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkInterface.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkDevice.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkPipeline.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkRenderPass.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkShader.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkSurface.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Surface.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\vma.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\RenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\DescriptorSet.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkDescriptorSet.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Pipeline.cpp" />
+    <ClCompile Include="Source\Graphics\DefaultRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Buffers.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkTexture.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Texture.cpp" />
+    <ClCompile Include="Source\Platform\Vulkan\VkGui.cpp" />
+    <ClCompile Include="Source\Graphics\Rhi\Gui.cpp" />
+    <ClCompile Include="Source\Graphics\GuiRenderer.cpp" />
+    <ClCompile Include="Source\Core\Scene.cpp" />
+    <ClCompile Include="Source\Core\Entity.cpp" />
+    <ClCompile Include="Source\Core\Components.cpp" />
+    <ClCompile Include="Source\Utils\Serializer.cpp" />
+    <ClCompile Include="Source\Core\Project.cpp" />
+    <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
+    <ClCompile Include="Source\Graphics\SceneRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

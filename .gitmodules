@@ -4,3 +4,6 @@
 [submodule "imgui"]
 	path = External/ImGui/imgui
 	url = https://github.com/SignedSnow0/imgui.git
+[submodule "Engine/External/mono"]
+	path = Engine/External/mono
+	url = https://github.com/Claudio-Marchini/mono.git
