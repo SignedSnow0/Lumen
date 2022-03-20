@@ -62,14 +62,14 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)External\Include\;$(VULKAN_SDK)\Include\;$(SolutionDir)External\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)External\Include\;$(VULKAN_SDK)\Include\;$(SolutionDir)External\ImGui\;$(ProjectDir)External\mono\include\mono-2.0\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)External\Lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)External\Lib\;$(ProjectDir)External\mono\lib\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -100,6 +100,7 @@
     <ClInclude Include="Source\Core\Entity.h" />
     <ClInclude Include="Source\Core\Project.h" />
     <ClInclude Include="Source\Core\Scene.h" />
+    <ClInclude Include="Source\Core\Script\ScriptManager.h" />
     <ClInclude Include="Source\Core\Types.h" />
     <ClInclude Include="Lumen.h" />
     <ClInclude Include="Source\Core\Window.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="Source\Core\Entity.cpp" />
     <ClCompile Include="Source\Core\Project.cpp" />
     <ClCompile Include="Source\Core\Scene.cpp" />
+    <ClCompile Include="Source\Core\Script\ScriptManager.cpp" />
     <ClCompile Include="Source\Graphics\GuiRenderer.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\DescriptorSet.cpp" />

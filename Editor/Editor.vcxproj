@@ -60,14 +60,18 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\;$(SolutionDir)Engine\Source\;$(SolutionDir)Engine\External\Include\;$(SolutionDir)External\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\;$(SolutionDir)Engine\Source\;$(SolutionDir)Engine\External\Include\;$(SolutionDir)External\ImGui\;$(SolutionDir)Engine\External\mono\include\mono-2.0\</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Engine\External\Lib\;$(VULKAN_SDK)\Lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Engine\External\Lib\;$(VULKAN_SDK)\Lib;$(SolutionDir)Engine\External\mono\lib\</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(SolutionDir)Engine\External\mono\lib\mono-2.0-sgen.dll $(OutDir) /d
+xcopy $(SolutionDir)Engine\External\mono\lib\mono\4.5\ $(OutDir)..\lib\mono\4.5\ /d</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

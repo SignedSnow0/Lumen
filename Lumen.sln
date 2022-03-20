@@ -11,6 +11,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{3CB362DA-C25E-4BC6-ADB8-912EB3290F09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2BBBB406-B123-4F22-A359-629E34DE5970} = {2BBBB406-B123-4F22-A359-629E34DE5970}
+		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F} = {6B6E7543-8769-4FC4-A59B-34AEF3E7794F}
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3} = {D2C4BA71-930C-405D-862E-0CC4EFE953F3}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{0A2ED510-F45A-48F8-A659-3FF668F9218F}"
@@ -22,7 +24,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "External\ImGui\ImG
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{70502E9C-FA38-4955-8BE0-5C3B4FD9351D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenScript", "LumenScript\LumenScript.csproj", "{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenScript", "LumenScript\LumenScript.csproj", "{D2C4BA71-930C-405D-862E-0CC4EFE953F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,14 +66,14 @@ Global
 		{2BBBB406-B123-4F22-A359-629E34DE5970}.Release|x64.Build.0 = Release|x64
 		{2BBBB406-B123-4F22-A359-629E34DE5970}.Release|x86.ActiveCfg = Release|Win32
 		{2BBBB406-B123-4F22-A359-629E34DE5970}.Release|x86.Build.0 = Release|Win32
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Debug|x64.Build.0 = Debug|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Debug|x86.Build.0 = Debug|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Release|x64.ActiveCfg = Release|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Release|x64.Build.0 = Release|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Release|x86.ActiveCfg = Release|Any CPU
-		{6B6E7543-8769-4FC4-A59B-34AEF3E7794F}.Release|x86.Build.0 = Release|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Release|x64.Build.0 = Release|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2C4BA71-930C-405D-862E-0CC4EFE953F3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

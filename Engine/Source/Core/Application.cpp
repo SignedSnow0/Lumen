@@ -18,8 +18,8 @@ namespace Lumen
 		constexpr WindowInitInfo info
 		{
 			"Window",
-			1080,
-			720
+			1920,
+			1080
 		};
 
 		Graphics::RenderTarget renderTarget{};
@@ -55,12 +55,16 @@ namespace Lumen
 
 		if (std::filesystem::exists(mProject.Path))
 			Load();
+
+		mScriptManager.Init();
 		
 		return true;
 	}
 
 	void Application::Shutdown()
 	{
+		mScriptManager.Shutdown();
+		
 		Graphics::GraphicsContext::Get().WaitIdle();
 		
 		delete mRenderer;

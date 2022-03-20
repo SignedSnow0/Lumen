@@ -7,6 +7,7 @@
 #include "Types.h"
 #include "Graphics/RenderTarget.h"
 #include "Graphics/Rhi/GraphicsContext.h"
+#include "Script/ScriptManager.h"
 
 namespace Lumen
 {
@@ -56,6 +57,7 @@ namespace Lumen
 		std::vector<Graphics::RenderTarget>	mWindows{};
 		Graphics::GraphicsContext*			mGraphicsContext{ nullptr };
 		Graphics::SceneRenderer*			mRenderer{ nullptr };
+		ScriptManager						mScriptManager{};
 		
 		static Application* sInstance;
 	};
