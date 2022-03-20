@@ -96,6 +96,7 @@
     <ClCompile Include="Source\Controls\ToolbarView.cpp" />
     <ClCompile Include="Source\EditorApplication.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Controls\EntityView.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="Source\Controls\SceneView.h" />
     <ClInclude Include="Source\Controls\ToolbarView.h" />
     <ClInclude Include="Source\EditorApplication.h" />
+    <ClInclude Include="Source\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

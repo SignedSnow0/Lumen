@@ -10,6 +10,7 @@ namespace Lumen
 	{
 	public:
 		Entity() = default;
+		explicit Entity(entt::entity entity, Scene* scene);
 		~Entity() = default;
 
 		template<typename ... TComp>
@@ -41,9 +42,9 @@ namespace Lumen
 			mScene->mRegistry.remove<TComp ...>(mEntity);
 		}
 
-	private:
-		explicit Entity(entt::entity entity, Scene* scene);
+		[[nodiscard]] u32 Id() const { return static_cast<u32>(mEntity); }
 
+	private:
 		Scene*			mScene{ nullptr };
 		entt::entity	mEntity{ static_cast<entt::entity>(-1) };
 

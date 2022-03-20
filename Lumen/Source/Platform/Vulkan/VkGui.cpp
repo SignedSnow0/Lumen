@@ -159,9 +159,11 @@ namespace Lumen::Graphics::Vulkan
 		initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
 		ImGui_ImplVulkan_Init(&initInfo, mRenderPass->Get());
-
-		io.Fonts->AddFontFromFileTTF(R"(D:\Dev\Lumen\Lumen\Assets\Fonts\FireSans\FiraSans-Regular.ttf)", 15);
-		mBoldFont = io.Fonts->AddFontFromFileTTF(R"(D:\Dev\Lumen\Lumen\Assets\Fonts\FireSans\FiraSans-Bold.ttf)", 15);
-		mItalicFont = io.Fonts->AddFontFromFileTTF(R"(D:\Dev\Lumen\Lumen\Assets\Fonts\FireSans\FiraSans-Italic.ttf)", 15);
+		
+		const auto& assets{ Application::Get()->AssetsPath() };
+		const auto font = io.Fonts->AddFontFromFileTTF((assets / "Fonts\\FiraSans\\FiraSans-Regular.ttf").string().c_str(), 15);
+		io.FontDefault = font;
+		mBoldFont = io.Fonts->AddFontFromFileTTF((assets / "Fonts\\FiraSans\\FiraSans-Bold.ttf").string().c_str(), 15);
+		mItalicFont = io.Fonts->AddFontFromFileTTF((assets / "Fonts\\FiraSans\\FiraSans-Italic.ttf").string().c_str(), 15);
 	}
 }

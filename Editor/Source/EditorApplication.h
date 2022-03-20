@@ -2,10 +2,10 @@
 #include <filesystem>
 #include <Lumen.h>
 
-class ToolbarView;
-class EntityView;
-class ResourcesView;
-class SceneView;
+#include "Controls/EntityView.h"
+#include "Controls/ResourcesView.h"
+#include "Controls/SceneView.h"
+#include "Controls/ToolbarView.h"
 
 class EditorApp : public Lumen::Application
 {
@@ -22,10 +22,10 @@ public:
 	static EditorApp* Get() { return sInstance; }
 
 private:
-	SceneView* mSceneView{};
-	ResourcesView* mResourcesView{};
-	EntityView* mEntityView{};
-	ToolbarView* mToolbarView{};
+	EntityView mEntityView{ &mSceneView };
+	SceneView mSceneView{};
+	ResourcesView mResourcesView{};
+	ToolbarView mToolbarView{};
 	std::filesystem::path mProjectPath{};
 
 	Lumen::Graphics::GuiRenderer* mGui{ nullptr };

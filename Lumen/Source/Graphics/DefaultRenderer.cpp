@@ -1,5 +1,7 @@
 ﻿#include "DefaultRenderer.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Rhi/Buffers.h"
 #include "Rhi/DescriptorSet.h"
 #include "Rhi/Texture.h"
@@ -54,35 +56,41 @@ namespace Lumen::Graphics
 		delete mRenderPass;
 	}
 
-	void DefaultRenderer::Render(Surface* surface)
+	void DefaultRenderer::Begin(Surface* surface)
 	{
-		const u32 currentFrame = surface->CurrentFrame();
+		mBoundSurface = surface;
+		mCurrentFrame = mBoundSurface->CurrentFrame();
 
-		mDescriptorSet->Update(currentFrame);
+		mDescriptorSet->Update(mCurrentFrame);
 
-		mRenderPass->Begin(currentFrame, surface);
+		mRenderPass->Begin(mCurrentFrame, mBoundSurface);
 		mPipeline->Bind();
+	}
 
-		constexpr glm::mat4 mat{ 1.0 };
+	void DefaultRenderer::Render(const glm::mat4& model)
+	{
+		static constexpr glm::mat4 mat{ 1.0 };
 		static struct UBO
 		{
-			glm::mat4 Model;
 			glm::mat4 View;
 			glm::mat4 Proj;
 		} ubo;
-		ubo.Model = mat;
 		ubo.View = mat;
 		ubo.Proj = mat;
 
-		mDescriptorSet->UpdateUniform(0, &ubo, currentFrame);
+		mDescriptorSet->UpdateUniform(0, &ubo, mCurrentFrame);
+		
+		mPipeline->SetPushConstant(0, glm::value_ptr(model));
+		mPipeline->BindDescriptorSet(*mDescriptorSet, mCurrentFrame);
 
-		mPipeline->BindDescriptorSet(*mDescriptorSet, currentFrame);
+		vBuffer->Bind(mBoundSurface);
+		iBuffer->Bind(mBoundSurface);
 
-		vBuffer->Bind(surface);
-		iBuffer->Bind(surface);
+		iBuffer->Draw(mBoundSurface);
+	}
 
-		iBuffer->Draw(surface);
-
-		mRenderPass->End(surface);
+	void DefaultRenderer::End()
+	{
+		mRenderPass->End(mBoundSurface);
 	}
 }

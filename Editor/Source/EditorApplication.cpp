@@ -1,10 +1,5 @@
 ﻿#include "EditorApplication.h"
 
-#include "Controls/EntityView.h"
-#include "Controls/ResourcesView.h"
-#include "Controls/SceneView.h"
-#include "Controls/ToolbarView.h"
-
 EditorApp* EditorApp::sInstance = nullptr;
 
 EditorApp::EditorApp()
@@ -25,9 +20,6 @@ b8 EditorApp::Init()
 	{
 		mGui = new Lumen::Graphics::GuiRenderer{ GetRenderTarget(0)->Window, GetRenderTarget(0)->Surface, GetDefaultRenderer()->GetRenderPass() };
 
-		auto e = GetScene()->CreateEntity();
-		e.AddComponent<Lumen::Components::Transform>();
-
 		return true;
 	}
 
@@ -44,10 +36,10 @@ void EditorApp::Run()
 
 		mGui->Begin();
 
-		mToolbarView->Render();
-		mSceneView->Render();
-		mResourcesView->Render();
-		mEntityView->Render();
+		mToolbarView.Render();
+		mSceneView.Render();
+		mResourcesView.Render();
+		mEntityView.Render();
 
 		mGui->End();
 

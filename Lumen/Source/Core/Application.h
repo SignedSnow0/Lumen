@@ -47,7 +47,7 @@ namespace Lumen
 		void End();
 
 		[[nodiscard]] constexpr Graphics::RenderTarget* GetRenderTarget(u32 index) { return &mWindows[index]; }
-		[[nodiscard]] constexpr Graphics::DefaultRenderer* GetDefaultRenderer() const { return renderer; }
+		[[nodiscard]] Graphics::DefaultRenderer* GetDefaultRenderer() const;
 
 	private:
 		Project								mProject{};
@@ -55,8 +55,8 @@ namespace Lumen
 		std::filesystem::path				mEnginePath{ std::filesystem::current_path().parent_path() += "\\Lumen\\" };
 		std::vector<Graphics::RenderTarget>	mWindows{};
 		Graphics::GraphicsContext*			mGraphicsContext{ nullptr };
-		Graphics::DefaultRenderer*			renderer{ nullptr };
-
+		Graphics::SceneRenderer*			mRenderer{ nullptr };
+		
 		static Application* sInstance;
 	};
 }

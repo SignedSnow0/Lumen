@@ -211,7 +211,7 @@ namespace Lumen::Graphics::Vulkan
 				mDescriptorSets[set].mUniforms.insert({ binding, uBuffer });
 			}
 		}
-
+		
 		for (const spirv_cross::Resource& resource : resources.sampled_images)
 		{
 			u32 set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
@@ -238,6 +238,22 @@ namespace Lumen::Graphics::Vulkan
 				VkSampler vkSampler{ layoutBinding, name, stage };
 				mDescriptorSets[set].mSamplers.insert({ binding, vkSampler });
 			}
+		}
+
+		for (const spirv_cross::Resource& resource : resources.push_constant_buffers)
+		{
+			auto& type = compiler.get_type(resource.base_type_id);
+			u32 size{ static_cast<u32>(compiler.get_declared_struct_size(type)) };
+			u32 offset{ 0 };
+			if (!mPushConstants.empty())
+				offset = mPushConstants.back().offset + mPushConstants.back().size;
+			
+			VkPushConstantRange pushConstant;
+			pushConstant.offset = offset;
+			pushConstant.size = size;
+			pushConstant.stageFlags = stage;
+
+			mPushConstants.push_back(pushConstant);
 		}
 	}
 }

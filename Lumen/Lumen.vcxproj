@@ -114,6 +114,7 @@
     <ClInclude Include="Source\Graphics\Rhi\Buffers.h" />
     <ClInclude Include="Source\Graphics\Rhi\Texture.h" />
     <ClInclude Include="Source\Graphics\DefaultRenderer.h" />
+    <ClInclude Include="Source\Graphics\SceneRenderer.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkBuffer.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkContext.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkDescriptorSet.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Source\Graphics\Rhi\Buffers.cpp" />
     <ClCompile Include="Source\Graphics\Rhi\Texture.cpp" />
     <ClCompile Include="Source\Graphics\DefaultRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\SceneRenderer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkBuffer.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkContext.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\VkDescriptorSet.cpp" />

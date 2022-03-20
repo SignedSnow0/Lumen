@@ -1,12 +1,38 @@
 ﻿#include "EntityView.h"
+#include <imgui/imgui.h>
+#include "../Utils.h"
 
-#include "imgui/imgui.h"
+using namespace Lumen;
+
+namespace
+{
+	void DrawTransform(Components::Transform& transform)
+	{
+		ImGui::Text("Transform component");
+		ImGui::Indent();
+		DrawVec3("Translation", transform.Translation);
+		DrawVec3("Rotation", transform.Rotation);
+		DrawVec3("Scale", transform.Scale, glm::vec3{ 1.0f });
+		ImGui::Unindent();
+	}
+}
+
+EntityView::EntityView(SceneView* sceneView)
+	: mSceneView{ sceneView }
+{
+}
 
 void EntityView::Render()
 {
 	if (ImGui::Begin("Entity##View"))
 	{
-		
+		if (const auto e = mSceneView->SelectedEntity(); e)
+		{
+			if (auto* transform = e->GetComponents<Components::Transform>(); transform)
+			{
+				DrawTransform(*transform);
+			}
+		}
 	}
 	ImGui::End();
 }

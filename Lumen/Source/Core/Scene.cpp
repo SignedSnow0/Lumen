@@ -6,8 +6,9 @@ namespace Lumen
 {
 	Entity Scene::CreateEntity()
 	{
-		const Entity e{ mRegistry.create(), this };
-		return e;
+		Entity* e = new Entity{ mRegistry.create(), this };
+		mEntities.emplace_back(e);
+		return *e;
 	}
 
 	bool Scene::GetEntity(u32 id, Entity& entity)
@@ -24,12 +25,21 @@ namespace Lumen
 
 		entity.mEntity = static_cast<entt::entity>(found ? id : -1);
 		entity.mScene = this;
-
+		
 		return found;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		for (u32 i{ 0 }; i < mEntities.size(); i++)
+		{
+			if (mEntities[i]->mEntity == entity.mEntity)
+			{
+				delete mEntities[i];
+				mEntities.erase(mEntities.begin() + i);
+				break;
+			}
+		}
 		mRegistry.destroy(entity.mEntity);
 	}
 }

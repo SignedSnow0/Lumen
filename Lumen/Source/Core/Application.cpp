@@ -1,8 +1,9 @@
 ﻿#include "Application.h"
 
 #include "Window.h"
-#include "Graphics/DefaultRenderer.h"
+#include "Graphics/Rhi/Surface.h"
 #include "Utils/Serializer.h"
+#include "Graphics/SceneRenderer.h"
 
 namespace Lumen
 {
@@ -47,24 +48,23 @@ namespace Lumen
 			renderTarget.Surface = Graphics::Surface::Create(renderTarget.Window);
 			renderTarget.Surface->Init();
 		}
-
-		renderer = new Graphics::DefaultRenderer{};
-
+		
 		mProject.Scene = new Scene{};
 
+		mRenderer = new Graphics::SceneRenderer{ mProject.Scene };
+		
 		return true;
 	}
 
 	void Application::Shutdown()
 	{
 		Graphics::GraphicsContext::Get().WaitIdle();
-
-		delete renderer;
+		
+		delete mRenderer;
 	}
 
 	void Application::Run()
 	{
-		renderer->Render(mWindows[0].Surface);
 	}
 
 	void Application::Begin()
@@ -76,6 +76,8 @@ namespace Lumen
 
 	void Application::End()
 	{
+		mRenderer->Render(mWindows[0]);
+
 		mWindows[0].Surface->End();
 
 		for (u32 i{ 0 }; i < mWindows.size(); i++)
@@ -99,5 +101,10 @@ namespace Lumen
 	void Application::Load()
 	{
 		
+	}
+
+	Graphics::DefaultRenderer* Application::GetDefaultRenderer() const
+	{
+		return mRenderer->GetDefaultRenderer();
 	}
 }

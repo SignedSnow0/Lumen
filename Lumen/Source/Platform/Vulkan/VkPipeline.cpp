@@ -57,7 +57,7 @@ namespace Lumen::Graphics::Vulkan
 			}
 			//todo blendmode
 
-			return new VkPipeline{ shader, settings, renderPass };
+			return new VkPipeline{ &shader, settings, renderPass };
 		}
 	}
 
@@ -144,10 +144,10 @@ namespace Lumen::Graphics::Vulkan
 		DynamicState.pDynamicStates		= DynamicStates.data();
 	}
 
-	VkPipeline::VkPipeline(const VkShader& shader, const PipelineSettings& settings, VkRenderPass* renderPass)
-		: mRenderPass{ renderPass }
+	VkPipeline::VkPipeline(const VkShader* shader, const PipelineSettings& settings, VkRenderPass* renderPass)
+		: mRenderPass{ renderPass }, mShader{ shader }
 	{
-		CreatePipeline(shader, settings);
+		CreatePipeline(*shader, settings);
 	}
 
 	/**
@@ -184,6 +184,17 @@ namespace Lumen::Graphics::Vulkan
 		vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mLayout, vkSet->SetIndex(), 1, &dSet, 0, nullptr);
 	}
 
+	void VkPipeline::SetPushConstant(u32 index, const void* data)
+	{
+		if (index < mShader->PushConstants().size())
+		{
+			VkCommandBuffer cmd = VkSurface::Bound()->CommandBuffer();
+			
+			const auto& [stageFlags, offset, size] = mShader->PushConstants()[index];
+			vkCmdPushConstants(cmd, mLayout, stageFlags, offset, size, data);
+		}
+	}
+
 	void VkPipeline::SetInterface()
 	{
 		sCreateFunc = CreateFuncVulkan;
@@ -212,13 +223,14 @@ namespace Lumen::Graphics::Vulkan
 	{
 		{
 			const auto descriptorLayouts{ shader.DescriptorsLayout() };
-				
+			const auto pushConstants{ shader.PushConstants() };
+			
 			VkPipelineLayoutCreateInfo createInfo{};
 			createInfo.sType					= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 			createInfo.setLayoutCount			= static_cast<u32>(descriptorLayouts.size());
 			createInfo.pSetLayouts				= descriptorLayouts.data();
-			createInfo.pushConstantRangeCount	= 0;
-			createInfo.pPushConstantRanges		= nullptr;
+			createInfo.pushConstantRangeCount	= static_cast<u32>(pushConstants.size());
+			createInfo.pPushConstantRanges		= pushConstants.data();
 
 			VK_ASSERT(vkCreatePipelineLayout(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mLayout), "Failed to create pipeline layout");
 

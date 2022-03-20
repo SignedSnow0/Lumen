@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <glm/glm.hpp>
 #include "Rhi/Gui.h"
 #include "Rhi/Pipeline.h"
 #include "Rhi/RenderPass.h"
@@ -15,9 +16,13 @@ namespace Lumen::Graphics
 
 		[[nodiscard]] constexpr RenderPass* GetRenderPass() const { return mRenderPass; }
 
-		void Render(Surface* surface);
-
+		void Begin(Surface* surface);
+		void Render(const glm::mat4& model);
+		void End();
+		
 	private:
+		Surface* mBoundSurface{ nullptr };
+		u32 mCurrentFrame{};
 		RenderPass* mRenderPass{ nullptr };
 		Shader* mShader{ nullptr };
 		Pipeline* mPipeline{ nullptr };

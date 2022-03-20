@@ -69,7 +69,8 @@ namespace Lumen::Graphics
 
         virtual void Bind() = 0;
         virtual void BindDescriptorSet(const DescriptorSet& set, u32 frame) = 0;
-
+		virtual void SetPushConstant(u32 index, const void* data) = 0;
+		
 	protected:
         static Pipeline* (*sCreateFunc)(const PipelineInitInfo&);
 	};

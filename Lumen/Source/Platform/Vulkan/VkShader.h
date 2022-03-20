@@ -23,7 +23,8 @@ namespace Lumen::Graphics::Vulkan
 		[[nodiscard]] const std::vector<VkPipelineShaderStageCreateInfo>& PipelineStages() const	{ return mPipelineInfos; }
 		[[nodiscard]] const VkDescriptorSet& DescriptorSet(u32 setIndex) const						{ return mDescriptorSets.at(setIndex); }
 		[[nodiscard]] std::vector<VkDescriptorSetLayout> DescriptorsLayout() const;
-
+		[[nodiscard]] const std::vector<VkPushConstantRange>& PushConstants() const { return mPushConstants; }
+		
 		void Init() override;
 		void Release() override;
 
@@ -37,5 +38,6 @@ namespace Lumen::Graphics::Vulkan
 		std::vector<VkPipelineShaderStageCreateInfo>	mPipelineInfos{};
 		
 		std::map<setLocation, VkDescriptorSet>			mDescriptorSets{};
+		std::vector<VkPushConstantRange>				mPushConstants{};
 	};
 }

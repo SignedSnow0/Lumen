@@ -28,7 +28,7 @@ namespace Lumen::Graphics::Vulkan
 	{
 	public:
 		VkPipeline() = default;
-		explicit VkPipeline(const VkShader& shader, const PipelineSettings& settings, VkRenderPass* renderPass);
+		explicit VkPipeline(const VkShader* shader, const PipelineSettings& settings, VkRenderPass* renderPass);
 		~VkPipeline() override { VkPipeline::Release(); }
 
 		void Init() override;
@@ -36,12 +36,14 @@ namespace Lumen::Graphics::Vulkan
 
 		void Bind() override;
 		void BindDescriptorSet(const DescriptorSet& set, u32 frame) override;
-
+		void SetPushConstant(u32 index, const void* data) override;
+		
 		static void SetInterface();
 
 	private:
 		void CreatePipeline(const VkShader& shader, const PipelineSettings& settings);
 
+		const VkShader*		mShader{ nullptr };
 		VkRenderPass*		mRenderPass{ nullptr };
 		VkPipelineLayout	mLayout{};
 		::VkPipeline		mPipeline{};
