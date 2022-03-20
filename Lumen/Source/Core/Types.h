@@ -16,3 +16,5 @@ typedef uint32_t b32;
 
 typedef float f32;
 typedef double f64;
+
+typedef char c8;

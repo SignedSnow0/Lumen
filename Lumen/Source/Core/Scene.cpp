@@ -8,6 +8,7 @@ namespace Lumen
 	{
 		Entity* e = new Entity{ mRegistry.create(), this };
 		mEntities.emplace_back(e);
+		e->AddComponent<Components::Transform>();
 		return *e;
 	}
 

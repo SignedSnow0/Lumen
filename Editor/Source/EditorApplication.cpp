@@ -3,7 +3,7 @@
 EditorApp* EditorApp::sInstance = nullptr;
 
 EditorApp::EditorApp()
-	: Application({ "Test", R"(D:\Dev\Lumen\TestProject\)", Lumen::Graphics::RendererAPI::Vulkan })
+	: Application({ "Test", R"(C:\Dev\Lumen\TestProject\)", Lumen::Graphics::RendererAPI::Vulkan })
 {
 	sInstance = this;
 }

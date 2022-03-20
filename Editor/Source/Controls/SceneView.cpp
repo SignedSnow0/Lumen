@@ -13,16 +13,22 @@ void SceneView::Render()
 		if (ImGui::Button("Create entity"))
 		{
 			auto e{ scene->CreateEntity() };
-			e.AddComponent<Components::Transform>();
+			e.AddComponent<Components::Tag>();
 		}
 
 		u32 i{ 0 };
 		for (const auto e : scene->Entities())
 		{
-			std::string label{"Entity "};
-			label.append(std::to_string(i));
+			auto* name{ e->GetComponents<Components::Tag>() };
+			std::string label{ "Entity##" };
+			if (name)
+				label = name->Name + "##" + std::to_string(i);
+			else
+				label += std::to_string(i);
+			
 			if (ImGui::Selectable(label.c_str(), mSelectedEntity ? mSelectedEntity->Id() == e->Id() : false))
 				mSelectedEntity = e;
+			
 			i++;
 		}
 	}

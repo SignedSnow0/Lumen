@@ -42,8 +42,6 @@ namespace Lumen::Utils
 			case Graphics::RendererAPI::Metal: 
 				out << "Metal";
 				break;
-			default:
-				out << "Vulkan";
 			}
 
 			return out;
@@ -88,13 +86,22 @@ namespace Lumen::Utils
 		out << YAML::BeginMap;
 			out << YAML::Key << "Entity" << YAML::Value << static_cast<u32>(entity.mEntity);
 
-			if (const auto transform = entity.GetComponents<Components::Transform>())
+			if (const auto transform = entity.GetComponents<Components::Transform>(); transform)
 			{
 				out << YAML::Key << "TransformComponent" << YAML::BeginMap;
 
 					out << YAML::Key << "Position" << YAML::Value << transform->Translation;
 					out << YAML::Key << "Rotation" << YAML::Value << transform->Rotation;
 					out << YAML::Key << "Scale" << YAML::Value << transform->Scale;
+
+				out << YAML::EndMap;
+			}
+
+			if (const auto tag = entity.GetComponents<Components::Tag>(); tag)
+			{
+				out << YAML::Key << "TagComponent" << YAML::BeginMap;
+
+				out << YAML::Key << "Name" << YAML::Value << tag->Name;
 
 				out << YAML::EndMap;
 			}

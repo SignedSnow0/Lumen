@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <string>
 #include <glm/glm.hpp>
 
 #include "Types.h"
@@ -27,6 +28,11 @@ namespace Lumen::Components
 		glm::vec3 Scale{ 1.0f };
 
 		inline static const char* ComponentName = "Transform";
+	};
+
+	struct Tag : Component
+	{
+		std::string Name{ "Empty entity" };
 	};
 
 	struct Mesh : Component

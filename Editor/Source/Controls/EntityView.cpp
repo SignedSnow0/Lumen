@@ -28,6 +28,16 @@ void EntityView::Render()
 	{
 		if (const auto e = mSceneView->SelectedEntity(); e)
 		{
+			if (auto* tag = e->GetComponents<Components::Tag>(); tag)
+			{
+				ImGui::Text("Name: ");
+				ImGui::SameLine();
+				char buf[256]{ 0 };
+				strcpy_s(buf, 256, tag->Name.c_str());
+				ImGui::InputText("##TagComponent", buf, 256);
+				tag->Name = buf;
+			}
+			
 			if (auto* transform = e->GetComponents<Components::Transform>(); transform)
 			{
 				DrawTransform(*transform);

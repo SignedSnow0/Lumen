@@ -1,15 +1,14 @@
 ﻿#include "VkGui.h"
-
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_vulkan_with_textures.h>
-#ifdef _WIN64
-#include <imgui/backends/imgui_impl_glfw.h>
-#endif
 #include "VkContext.h"
 #include "VkRenderPass.h"
 #include "VkSurface.h"
 #include "VkTexture.h"
 #include "Core/Window.h"
+#ifdef _WIN64
+#include <imgui/backends/imgui_impl_glfw.h>
+#endif
 
 namespace Lumen::Graphics::Vulkan
 {
