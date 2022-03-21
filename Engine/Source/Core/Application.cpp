@@ -18,8 +18,8 @@ namespace Lumen
 		constexpr WindowInitInfo info
 		{
 			"Window",
-			1920,
-			1080
+			1080,
+			720
 		};
 
 		Graphics::RenderTarget renderTarget{};

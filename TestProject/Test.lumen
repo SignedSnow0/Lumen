@@ -5,8 +5,8 @@ Project:
   Entities:
     - Entity: 0
       TransformComponent:
-        Translation: [-0.5, 0, 0]
+        Translation: [0, 0, 0]
         Rotation: [0, 0, 0]
         Scale: [1, 1, 1]
       TagComponent:
-        Name: Empty entity
+        Name: Entity

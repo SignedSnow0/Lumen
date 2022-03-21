@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Core/Types.h"
 #include <mono/metadata/assembly.h>
+#include <mono/jit/jit.h>
 
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
@@ -13,11 +14,10 @@ namespace Lumen
         void Shutdown();
 
     private:
-        MonoAssembly* mAssembly{ nullptr };
-    };
+        void BindCalls();
 
-    namespace Script
-    { 
-        void HelloBack();
-    }
+        MonoDomain*     mDomain{ nullptr };
+        MonoAssembly*   mAssembly{ nullptr };
+        MonoImage*      mImage{ nullptr };
+    };
 }

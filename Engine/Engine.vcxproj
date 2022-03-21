@@ -100,6 +100,7 @@
     <ClInclude Include="Source\Core\Entity.h" />
     <ClInclude Include="Source\Core\Project.h" />
     <ClInclude Include="Source\Core\Scene.h" />
+    <ClInclude Include="Source\Core\Script\EntityApi.h" />
     <ClInclude Include="Source\Core\Script\ScriptManager.h" />
     <ClInclude Include="Source\Core\Types.h" />
     <ClInclude Include="Lumen.h" />
@@ -136,6 +137,7 @@
     <ClCompile Include="Source\Core\Entity.cpp" />
     <ClCompile Include="Source\Core\Project.cpp" />
     <ClCompile Include="Source\Core\Scene.cpp" />
+    <ClCompile Include="Source\Core\Script\EntityApi.cpp" />
     <ClCompile Include="Source\Core\Script\ScriptManager.cpp" />
     <ClCompile Include="Source\Graphics\GuiRenderer.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
