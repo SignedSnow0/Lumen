@@ -1,6 +1,7 @@
 ﻿#include "EntityApi.h"
 
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 #include <mono/metadata/assembly.h>
 
 #include "Core/Application.h"
@@ -18,7 +19,6 @@ namespace Lumen::Script
         mono_add_internal_call(ENTITY_BASE"CreateEntity", (const void*)Create);
         BIND_FUNC(Exists, uint)
         mono_add_internal_call(ENTITY_BASE"AddComponent", (const void*)AddComponent);
-        mono_add_internal_call("Lumen.Components.Transform::GetTranslation(uint)", (const void*)GetTranslation);
     }
 
     u32 EntityApi::Create()
@@ -47,15 +47,5 @@ namespace Lumen::Script
             else if (strcmp(comp, "Tag") == 0)
                 e.AddComponent<Components::Tag>();
         }
-    }
-
-    glm::vec3 EntityApi::GetTranslation(u32 id)
-    {
-        if (Entity e; Application::Get()->GetScene()->GetEntity(id, e))
-        {
-            return e.GetComponents<Components::Transform>()->Translation;
-        }
-
-        return glm::vec3{ 0 };
     }
 }

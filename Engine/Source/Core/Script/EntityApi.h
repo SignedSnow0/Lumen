@@ -11,11 +11,11 @@ namespace Lumen::Script
     {
     public:
         static void BindCalls();
-        
+
+    private:
         static u32 Create();
         static b8 Exists(u32 id);
         static void AddComponent(u32 id, MonoString* compName);
-        static glm::vec3 GetTranslation(u32 id);
     };
     
 }

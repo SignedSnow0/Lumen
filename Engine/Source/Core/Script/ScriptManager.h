@@ -15,6 +15,7 @@ namespace Lumen
 
     private:
         void BindCalls();
+        void LoadScripts();
 
         MonoDomain*     mDomain{ nullptr };
         MonoAssembly*   mAssembly{ nullptr };

@@ -39,4 +39,11 @@ namespace Lumen::Components
 	{
 		inline static const char* ComponentName = "Mesh";
 	};
+
+	struct Script : Component
+	{
+		std::string ScriptName{ nullptr };
+		
+		inline static const char* ComponentName = "Script";
+	};
 }
