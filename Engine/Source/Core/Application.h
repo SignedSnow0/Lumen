@@ -33,7 +33,8 @@ namespace Lumen
 		[[nodiscard]] std::filesystem::path EnginePath() const { return mEnginePath; }
 		[[nodiscard]] std::filesystem::path AssetsPath() const { return mEnginePath / "Assets"; }
 		[[nodiscard]] Scene* GetScene() const { return mProject.Scene; }
-
+		[[nodiscard]] const ScriptManager& GetScriptManager() const { return mScriptManager; }
+		
 		virtual b8 Init();
 
 		virtual void Shutdown();
@@ -50,8 +51,8 @@ namespace Lumen
 		[[nodiscard]] constexpr Graphics::RenderTarget* GetRenderTarget(u32 index) { return &mWindows[index]; }
 		[[nodiscard]] Graphics::DefaultRenderer* GetDefaultRenderer() const;
 
-	private:
 		Project								mProject{};
+	private:
 		b8									mShutdown{ false };
 		std::filesystem::path				mEnginePath{ std::filesystem::current_path().parent_path() += "\\Engine\\" };
 		std::vector<Graphics::RenderTarget>	mWindows{};

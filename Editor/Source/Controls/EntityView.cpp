@@ -1,5 +1,7 @@
 ﻿#include "EntityView.h"
 #include <imgui/imgui.h>
+
+#include "../EditorApplication.h"
 #include "../Utils.h"
 
 using namespace Lumen;
@@ -28,6 +30,14 @@ void EntityView::Render()
 	{
 		if (const auto e = mSceneView->SelectedEntity(); e)
 		{
+			if (ImGui::BeginMenu("Add component"))
+			{
+				if (ImGui::MenuItem(Components::Script::ComponentName))
+					e->AddComponent<Components::Script>();
+				
+				ImGui::EndMenu();
+			}
+			
 			if (auto* tag = e->GetComponents<Components::Tag>(); tag)
 			{
 				ImGui::Text("Name: ");
@@ -41,6 +51,30 @@ void EntityView::Render()
 			if (auto* transform = e->GetComponents<Components::Transform>(); transform)
 			{
 				DrawTransform(*transform);
+			}
+
+			if (auto* script = e->GetComponents<Components::Script>(); script)
+			{
+				ImGui::Text("Script component");
+				ImGui::Indent();
+
+				auto& scripts{ EditorApp::Get()->GetScriptManager().Scripts() };
+				ImGui::Text("Script class: ");
+				ImGui::SameLine();
+				if (ImGui::BeginMenu(script->ScriptName.c_str()))
+				{
+					for (auto& [name, _] : scripts)
+					{
+						if (ImGui::MenuItem(name.c_str()))
+						{
+							script->ScriptName = name;	
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+				
+				ImGui::Unindent();
 			}
 		}
 	}

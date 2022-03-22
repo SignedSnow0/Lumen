@@ -1,6 +1,5 @@
 ﻿#include "ScriptManager.h"
 
-#include <iostream>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
@@ -44,7 +43,6 @@ namespace Lumen
 
     void ScriptManager::LoadScripts()
     {
-        std::vector<MonoClass*> scripts;
         const MonoTableInfo* tableInfo{ mono_image_get_table_info(mImage, MONO_TABLE_TYPEDEF) };
 
         const s32 rows{ mono_table_info_get_rows(tableInfo) };
@@ -56,7 +54,6 @@ namespace Lumen
             const char* name{ mono_metadata_string_heap(mImage, cols[MONO_TYPEDEF_NAME]) };
             const char* nameSpace{ mono_metadata_string_heap(mImage, cols[MONO_TYPEDEF_NAMESPACE]) };
             monoClass = mono_class_from_name(mImage, nameSpace, name);
-            scripts.push_back(monoClass);
             
             if (MonoClass* baseClass = mono_class_get_parent(monoClass); baseClass)
             {

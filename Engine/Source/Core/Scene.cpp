@@ -36,7 +36,6 @@ namespace Lumen
 		{
 			if (mEntities[i]->mEntity == entity.mEntity)
 			{
-				delete mEntities[i];
 				mEntities.erase(mEntities.begin() + i);
 				break;
 			}

@@ -13,4 +13,6 @@ public:
 
 private:
 	Lumen::Entity* mSelectedEntity{ nullptr };
+
+	friend class ToolbarView;
 };

@@ -12,6 +12,8 @@ namespace Lumen
         b8 Init();
         void Shutdown();
 
+        [[nodiscard]] const std::unordered_map<std::string, MonoClass*>& Scripts() const { return mScripts; }
+        
     private:
         void BindCalls();
         void LoadScripts();

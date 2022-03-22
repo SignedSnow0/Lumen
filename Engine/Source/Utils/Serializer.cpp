@@ -151,11 +151,13 @@ namespace Lumen::Utils
 			return;
 
 		pData = pData["Project"];
+		
+		mProject->Path = pData["Path"].as<std::string>();
+		mProject->Name = pData["Name"].as<std::string>();
 
-		Project project{};
-		project.Path = pData["Path"].as<std::string>();
-		project.Name = pData["Name"].as<std::string>();
-
+		mProject->Scene->Entities().clear();
+		mProject->Scene->mRegistry.clear();
+		
 		auto entities = pData["Entities"];
 		if (!entities)
 			return;
@@ -173,7 +175,7 @@ namespace Lumen::Utils
 
 			if (auto tag = entity["TagComponent"]; tag)
 			{
-				auto tc = newEntity.AddComponent<Components::Tag>();
+				auto& tc = newEntity.AddComponent<Components::Tag>();
 				tc.Name = tag["Name"].as<std::string>();
 			}
 		}
