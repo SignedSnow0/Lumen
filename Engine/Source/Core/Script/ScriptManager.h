@@ -1,9 +1,8 @@
 ﻿#pragma once
-#include "Core/Types.h"
-#include <mono/metadata/assembly.h>
-#include <mono/jit/jit.h>
+#include <unordered_map>
 
-#pragma comment(lib, "mono-2.0-sgen.lib")
+#include "Core/Types.h"
+#include <mono/jit/jit.h>
 
 namespace Lumen
 {
@@ -16,7 +15,8 @@ namespace Lumen
     private:
         void BindCalls();
         void LoadScripts();
-
+        
+        std::unordered_map<std::string, MonoClass*> mScripts{};
         MonoDomain*     mDomain{ nullptr };
         MonoAssembly*   mAssembly{ nullptr };
         MonoImage*      mImage{ nullptr };

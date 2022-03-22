@@ -1,11 +1,14 @@
 ﻿#include "ScriptManager.h"
 
 #include <iostream>
+#include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
 #include "ComponentsApi.h"
 #include "EntityApi.h"
 #include "Core/Application.h"
+
+#pragma comment(lib, "mono-2.0-sgen.lib")
 
 namespace Lumen
 {
@@ -55,13 +58,12 @@ namespace Lumen
             monoClass = mono_class_from_name(mImage, nameSpace, name);
             scripts.push_back(monoClass);
             
-            void* iter{ nullptr };
-            MonoClass* baseClass{ nullptr };
-            while((baseClass = mono_class_get_nested_types(monoClass, &iter)) != nullptr)
+            if (MonoClass* baseClass = mono_class_get_parent(monoClass); baseClass)
             {
                 const char* baseName = mono_class_get_name(baseClass);
+                if (strcmp(baseName, "Script") == 0)
+                    mScripts.insert({ name, monoClass });
             }
-            
         }
     }
 }

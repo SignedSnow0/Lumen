@@ -40,6 +40,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Assets\Test2.cs" />
         <Compile Include="Assets\TestScript.cs" />
         <Compile Include="Components\Transform.cs" />
         <Compile Include="Core\Entity.cs" />
