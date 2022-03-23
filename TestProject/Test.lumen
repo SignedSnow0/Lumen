@@ -3,10 +3,12 @@ Project:
   Name: Test
   GraphicsApi: Vulkan
   Entities:
-    - Entity: 0
+    - Entity: 1048576
       TransformComponent:
         Translation: [0, 0, 0]
         Rotation: [0, 0, 0]
         Scale: [1, 1, 1]
       TagComponent:
         Name: Entity
+      ScriptComponent:
+        Script: TestScript

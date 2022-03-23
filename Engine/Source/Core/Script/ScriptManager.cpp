@@ -6,10 +6,12 @@
 #include "ComponentsApi.h"
 #include "EntityApi.h"
 #include "Core/Application.h"
+#include "Core/Components.h"
+#include "Core/Entity.h"
 
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
-namespace Lumen
+namespace Lumen::Script
 {
     b8 ScriptManager::Init()
     {
@@ -21,7 +23,7 @@ namespace Lumen
             return false;
 
         mImage = mono_assembly_get_image(mAssembly);
-        if(!mImage)
+        if (!mImage)
             return false;
 
         BindCalls();
@@ -33,6 +35,28 @@ namespace Lumen
     void ScriptManager::Shutdown()
     {
         mono_jit_cleanup(mDomain);
+    }
+
+    void ScriptManager::Start(Scene* scene)
+    {
+        mScene = scene;
+
+        for (auto id : mScene->mRegistry.view<Components::Script>())
+        {
+            Entity e{ id, mScene };
+            const auto* script = e.GetComponents<Components::Script>();
+            if (strcmp(script->ScriptName.c_str(), "Script") != 0)
+            {
+                MonoObject* instance = mono_object_new(mDomain, mScripts.at(script->ScriptName));
+                ScriptInstance s{ mScripts.at(script->ScriptName), mDomain, e };
+                mInstances.emplace_back(s);
+            }
+        }
+
+        for (auto& instance : mInstances)
+        {
+            instance.Start();
+        }
     }
 
     void ScriptManager::BindCalls()

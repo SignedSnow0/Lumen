@@ -33,7 +33,7 @@ namespace Lumen
 		[[nodiscard]] std::filesystem::path EnginePath() const { return mEnginePath; }
 		[[nodiscard]] std::filesystem::path AssetsPath() const { return mEnginePath / "Assets"; }
 		[[nodiscard]] Scene* GetScene() const { return mProject.Scene; }
-		[[nodiscard]] const ScriptManager& GetScriptManager() const { return mScriptManager; }
+		[[nodiscard]] Script::ScriptManager& GetScriptManager() { return mScriptManager; }
 		
 		virtual b8 Init();
 
@@ -58,7 +58,7 @@ namespace Lumen
 		std::vector<Graphics::RenderTarget>	mWindows{};
 		Graphics::GraphicsContext*			mGraphicsContext{ nullptr };
 		Graphics::SceneRenderer*			mRenderer{ nullptr };
-		ScriptManager						mScriptManager{};
+		Script::ScriptManager				mScriptManager{};
 		
 		static Application* sInstance;
 	};

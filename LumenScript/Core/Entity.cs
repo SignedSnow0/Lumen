@@ -22,10 +22,10 @@ namespace Lumen
             Components.Add(new Transform(this));
         }
         
-        private Entity(uint id)
+        public Entity(uint id)
         {
             _id = id;
-            AddComponent<Transform>();
+            Components.Add(new Transform(this));
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -35,6 +35,6 @@ namespace Lumen
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void AddComponent(uint id, string compName);
         
-        private uint _id;
+        private readonly uint _id;
     }
 }

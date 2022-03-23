@@ -4,7 +4,10 @@
 #include "Core/Types.h"
 #include <mono/jit/jit.h>
 
-namespace Lumen
+#include "ScriptInstance.h"
+#include "Core/Scene.h"
+
+namespace Lumen::Script
 {
     class ScriptManager
     {
@@ -12,12 +15,16 @@ namespace Lumen
         b8 Init();
         void Shutdown();
 
+        void Start(Scene* scene);
+        
         [[nodiscard]] const std::unordered_map<std::string, MonoClass*>& Scripts() const { return mScripts; }
         
     private:
         void BindCalls();
         void LoadScripts();
         
+        Scene* mScene{ nullptr };
+        std::vector<ScriptInstance> mInstances{};
         std::unordered_map<std::string, MonoClass*> mScripts{};
         MonoDomain*     mDomain{ nullptr };
         MonoAssembly*   mAssembly{ nullptr };

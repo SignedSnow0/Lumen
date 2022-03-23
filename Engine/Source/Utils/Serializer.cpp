@@ -178,6 +178,12 @@ namespace Lumen::Utils
 				auto& tc = newEntity.AddComponent<Components::Tag>();
 				tc.Name = tag["Name"].as<std::string>();
 			}
+
+			if (auto script = entity["ScriptComponent"]; script)
+			{
+				auto& sc = newEntity.AddComponent<Components::Script>();
+				sc.ScriptName = script["Script"].as<std::string>();
+			}
 		}
 	}
 
@@ -202,6 +208,15 @@ namespace Lumen::Utils
 				out << YAML::Key << "TagComponent" << YAML::BeginMap;
 
 				out << YAML::Key << "Name" << YAML::Value << tag->Name;
+
+				out << YAML::EndMap;
+			}
+
+			if (const auto script = entity.GetComponents<Components::Script>(); script)
+			{
+				out << YAML::Key << "ScriptComponent" << YAML::BeginMap;
+
+				out << YAML::Key << "Script" << YAML::Value << script->ScriptName;
 
 				out << YAML::EndMap;
 			}

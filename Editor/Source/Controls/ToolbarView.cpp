@@ -29,10 +29,14 @@ void ToolbarView::Render()
 				auto& project{ EditorApp::Get()->GetProject() };
 				Lumen::Utils::Serializer serializer{ &project };
 				scenePlaying ? serializer.Load(project.Path / tempFile) : serializer.Save(project.Path / tempFile);
-				if (-scenePlaying)
+				if (scenePlaying)
 				{
 					EditorApp::Get()->GetSceneView().mSelectedEntity = nullptr;
 					std::filesystem::remove(project.Path / tempFile);
+				}
+				else
+				{
+					EditorApp::Get()->GetScriptManager().Start(EditorApp::Get()->GetScene());
 				}
 			}
 			ImGui::EndMenu();

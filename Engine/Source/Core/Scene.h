@@ -19,6 +19,11 @@ namespace Lumen
 		class Serializer;
 	}
 
+	namespace Script
+	{
+		class ScriptManager;
+	}
+	
 	class Scene
 	{
 	public:
@@ -37,5 +42,6 @@ namespace Lumen
 		friend class Entity;
 		friend class Utils::Serializer;
 		friend class Graphics::SceneRenderer;
+		friend class Script::ScriptManager;
 	};
 }

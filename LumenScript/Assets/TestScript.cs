@@ -7,6 +7,7 @@ namespace Lumen
     {
         public override void Start()
         {
+            System.Console.WriteLine("Hello world");
             var translation = (entity.Components[0] as Transform)!.Translation;
             translation.X += 1.0f;
             (entity.Components[0] as Transform)!.SetTranslation(translation);

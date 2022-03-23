@@ -9,6 +9,10 @@
         
         public virtual void Update()
         { }
-        
+
+        private void SetEntity(uint id)
+        {
+            entity = new Entity(id);
+        }
     }
 }
