@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <glm/vec3.hpp>
+
 #include "Core/Types.h"
 
 namespace Lumen::Script
@@ -9,13 +11,13 @@ namespace Lumen::Script
         static void BindCalls();
 
     private:
-        static void* GetTranslation(u32 id);
+        static glm::vec3 GetTranslation(u32 id);
         static void SetTranslation(u32 id, float x, float y, float z);
         
-        static void* GetRotation(u32 id);
+        static glm::vec3 GetRotation(u32 id);
         static void SetRotation(u32 id, float x, float y, float z);
 
-        static void* GetScale(u32 id);
+        static glm::vec3 GetScale(u32 id);
         static void SetScale(u32 id, float x, float y, float z);
     };
 }

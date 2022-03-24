@@ -22,4 +22,9 @@ namespace Lumen::Script
     {
         mono_runtime_invoke(mStart, mInstance, nullptr, nullptr);
     }
+
+    void ScriptInstance::Update()
+    {
+        mono_runtime_invoke(mUpdate, mInstance, nullptr, nullptr);
+    }
 }

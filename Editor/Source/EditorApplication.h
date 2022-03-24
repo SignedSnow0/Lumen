@@ -21,13 +21,10 @@ public:
 
 	[[nodiscard]] Lumen::Project& GetProject() { return mProject; }
 	[[nodiscard]] SceneView& GetSceneView() { return mSceneView; }
-	[[nodiscard]] b8 IsPlaying() const { return mIsPlaying; }
-	void SetPlaying(const b8 value) { mIsPlaying = value; } 
 	
 	static EditorApp* Get() { return sInstance; }
 
 private:
-	b8 mIsPlaying{ false };
 	EntityView mEntityView{ &mSceneView };
 	SceneView mSceneView{};
 	ResourcesView mResourcesView{};

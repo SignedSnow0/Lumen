@@ -1,20 +1,18 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Lumen.Math
 {
-    [StructLayout(LayoutKind.Explicit)]
-    public class Vector2
+    public struct Vector2
     {
-        [FieldOffset(0)]
         public float X;
-        [FieldOffset(0)]
-        public float U;
-        
-        [FieldOffset(4)]
         public float Y;
-        [FieldOffset(4)]
-        public float V;
 
+        public float U { get => X; set => X = value; }
+        public float V { get => Y; set => Y = value; }
+        
         public Vector2(float scalar)
         {
             X = Y = scalar;
@@ -27,30 +25,22 @@ namespace Lumen.Math
         }
     }
     
-    [StructLayout(LayoutKind.Explicit)]
-    public class Vector3
+    public struct Vector3
     {
-        [FieldOffset(0)]
+        public int Count => 3;
+
         public float X;
-        [FieldOffset(0)]
-        public float R;
-        [FieldOffset(0)]
-        public float U;
-        
-        [FieldOffset(4)]
         public float Y;
-        [FieldOffset(4)]
-        public float G;
-        [FieldOffset(4)]
-        public float V;
-        
-        [FieldOffset(8)]
         public float Z;
-        [FieldOffset(8)]
-        public float B;
-        [FieldOffset(8)]
-        public float W;
+
+        public float R { get => X; set => X = value; }
+        public float G { get => Y; set => Y = value; }
+        public float B { get => Z; set => Z = value; }
         
+        public float U { get => X; set => X = value; }
+        public float V { get => Y; set => Y = value; }
+        public float W { get => Z; set => Z = value; }
+
         public Vector3(float scalar)
         {
             X = Y = Z = scalar;
@@ -64,28 +54,17 @@ namespace Lumen.Math
         }
     }
     
-    [StructLayout(LayoutKind.Explicit)]
-    public class Vector4
+    public struct Vector4
     {
-        [FieldOffset(0)]
         public float X;
-        [FieldOffset(0)]
-        public float R;
-        
-        [FieldOffset(4)]
         public float Y;
-        [FieldOffset(4)]
-        public float G;
-        
-        [FieldOffset(8)]
         public float Z;
-        [FieldOffset(8)]
-        public float B;
-        
-        [FieldOffset(12)]
         public float W;
-        [FieldOffset(12)]
-        public float A;
+
+        public float R { get => X; set => X = value; }
+        public float G { get => Y; set => Y = value; }
+        public float B { get => Z; set => Z = value; }
+        public float A { get => W; set => W = value; }
 
         public Vector4(float scalar)
         {

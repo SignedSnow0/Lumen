@@ -79,6 +79,12 @@ namespace Lumen
 		Window::Update();
 
 		mWindows[0].Surface->Begin();
+
+		if (mIsPlaying)
+		{
+			mScriptManager.Update();
+		}
+		
 	}
 
 	void Application::End()

@@ -41,7 +41,7 @@ namespace Lumen::Script
     {
         mScene = scene;
 
-        for (auto id : mScene->mRegistry.view<Components::Script>())
+        for (const auto id : mScene->mRegistry.view<Components::Script>())
         {
             Entity e{ id, mScene };
             const auto* script = e.GetComponents<Components::Script>();
@@ -57,6 +57,19 @@ namespace Lumen::Script
         {
             instance.Start();
         }
+    }
+
+    void ScriptManager::Update()
+    {
+        for (auto& instance : mInstances)
+        {
+            instance.Update();
+        }
+    }
+
+    void ScriptManager::Stop()
+    {
+        mInstances.clear();
     }
 
     void ScriptManager::BindCalls()

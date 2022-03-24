@@ -1,5 +1,6 @@
 ﻿#include "ComponentsApi.h"
 
+#include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Core/Application.h"
@@ -11,25 +12,26 @@ namespace Lumen::Script
 {
     void ComponentsApi::BindCalls()
     {
-        mono_add_internal_call(COMPONENTS_BASE"Transform::GetTranslation", (const void*)GetTranslation);
-        mono_add_internal_call(COMPONENTS_BASE"Transform::SetTranslation", (const void*)SetTranslation);
+        mono_add_internal_call(COMPONENTS_BASE"Transform::GetTranslation", (void*)GetTranslation);
+        mono_add_internal_call(COMPONENTS_BASE"Transform::SetTranslation", (void*)SetTranslation);
         
-        mono_add_internal_call(COMPONENTS_BASE"Transform::GetRotation", (const void*)GetTranslation);
-        mono_add_internal_call(COMPONENTS_BASE"Transform::SetRotation", (const void*)SetRotation);
+        mono_add_internal_call(COMPONENTS_BASE"Transform::GetRotation", (void*)GetTranslation);
+        mono_add_internal_call(COMPONENTS_BASE"Transform::SetRotation", (void*)SetRotation);
         
-        mono_add_internal_call(COMPONENTS_BASE"Transform::GetScale", (const void*)GetTranslation);
-        mono_add_internal_call(COMPONENTS_BASE"Transform::SetScale", (const void*)SetScale);
+        mono_add_internal_call(COMPONENTS_BASE"Transform::GetScale", (void*)GetTranslation);
+        mono_add_internal_call(COMPONENTS_BASE"Transform::SetScale", (void*)SetScale);
     }
 
-    void* ComponentsApi::GetTranslation(u32 id)
+    glm::vec3 ComponentsApi::GetTranslation(u32 id)
     {
         if (Entity e; Application::Get()->GetScene()->GetEntity(id, e))
         {
-            return glm::value_ptr(e.GetComponents<Components::Transform>()->Translation);
+            const auto& vec{ e.GetComponents<Components::Transform>()->Translation };
+                       
+            return vec;
         }
-        
-        glm::vec3 val{0.0f};
-        return glm::value_ptr(val);
+
+        return glm::vec3{ 0.0f };
     }
 
     void ComponentsApi::SetTranslation(u32 id, float x, float y, float z)
@@ -43,15 +45,16 @@ namespace Lumen::Script
         }
     }
 
-    void* ComponentsApi::GetRotation(u32 id)
+    glm::vec3 ComponentsApi::GetRotation(u32 id)
     {
         if (Entity e; Application::Get()->GetScene()->GetEntity(id, e))
         {
-            return glm::value_ptr(e.GetComponents<Components::Transform>()->Rotation);
+            const auto& vec{ e.GetComponents<Components::Transform>()->Rotation };
+           
+            return vec;
         }
 
-        glm::vec3 val{0.0f};
-        return glm::value_ptr(val);
+        return glm::vec3{ 0.0f };
     }
 
     void ComponentsApi::SetRotation(u32 id, float x, float y, float z)
@@ -65,15 +68,16 @@ namespace Lumen::Script
         }
     }
 
-    void* ComponentsApi::GetScale(u32 id)
+    glm::vec3 ComponentsApi::GetScale(u32 id)
     {
         if (Entity e; Application::Get()->GetScene()->GetEntity(id, e))
         {
-            return glm::value_ptr(e.GetComponents<Components::Transform>()->Scale);
+            const auto& vec{ e.GetComponents<Components::Transform>()->Scale };
+           
+            return vec;
         }
-        
-        glm::vec3 val{0.0f};
-        return glm::value_ptr(val);
+
+        return glm::vec3{ 0.0f };
     }
 
     void ComponentsApi::SetScale(u32 id, float x, float y, float z)

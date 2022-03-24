@@ -1,4 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using GlmSharp;
 using Lumen.Math;
 
 namespace Lumen.Components
@@ -29,7 +32,7 @@ namespace Lumen.Components
         public void SetRotation(Vector3 translation) => SetRotation(_owner.Id, translation.X, translation.Y, translation.Z);
         public void SetScale(Vector3 translation) => SetScale(_owner.Id, translation.X, translation.Y, translation.Z);
 
-        [MethodImpl(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)] 
         private static extern void SetTranslation(uint entityId, float x, float y, float z);
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern Vector3 GetTranslation(uint entityId);

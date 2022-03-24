@@ -16,6 +16,8 @@ namespace Lumen::Script
         void Shutdown();
 
         void Start(Scene* scene);
+        void Update();
+        void Stop();
         
         [[nodiscard]] const std::unordered_map<std::string, MonoClass*>& Scripts() const { return mScripts; }
         

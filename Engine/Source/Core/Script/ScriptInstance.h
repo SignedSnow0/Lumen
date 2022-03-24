@@ -12,6 +12,7 @@ namespace Lumen::Script
         explicit ScriptInstance(MonoClass* monoClass, MonoDomain* monoDomain, Entity& owner);
 
         void Start();
+        void Update();
         
     private:
         MonoClass* mClass{ nullptr };
