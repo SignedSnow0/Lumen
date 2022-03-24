@@ -1,31 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 using Lumen.Components;
 
 namespace Lumen
 {
     public class Entity
     {
-        public uint Id { get => _id; }
-        public List<Component> Components { get; } = new List<Component>();
+        public uint Id { get; }
 
         public static Entity Create() => new Entity(CreateEntity());
         public static Entity? Get(uint id) => Exists(id) ? new Entity(id) : null;
         public static Entity GetOrCreate(uint id) => Exists(id) ? new Entity(id) : new Entity(CreateEntity());
+
+        public Entity()
+        {
+            Id = uint.MaxValue;
+        }
+
+        public Entity(uint id)
+        {
+            Id = id;
+        }
         
         public void AddComponent<T>()
             where T : Component
         {
-            AddComponent(_id, typeof(T).Name);
-            Components.Add(new Transform(this));
+            AddComponent(Id, typeof(T).Name);
         }
-        
-        public Entity(uint id)
+
+        public T? GetComponent<T>()
+            where T : Component, new()
         {
-            _id = id;
-            Components.Add(new Transform(this));
+            if (HasComponent<T>())
+            {
+                return new T
+                {
+                    Owner = this
+                };
+            }
+
+            return null;
+        }
+
+        public bool HasComponent<T>()
+            where T : Component
+        {
+            return HasComponent(Id, typeof(T).Name);
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -34,7 +53,7 @@ namespace Lumen
         private static extern bool Exists(uint id);
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void AddComponent(uint id, string compName);
-        
-        private readonly uint _id;
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern bool HasComponent(uint id, string compName);
     }
 }

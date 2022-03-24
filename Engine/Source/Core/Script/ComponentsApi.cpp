@@ -1,6 +1,5 @@
 ﻿#include "ComponentsApi.h"
 
-#include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Core/Application.h"

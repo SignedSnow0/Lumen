@@ -16,7 +16,7 @@ namespace Lumen
 		template<typename ... TComp>
 		[[nodiscard]] bool HasComponents() const
 		{
-			static_assert(std::is_base_of_v<Components::Component, TComp>, "TComp must inherit from Component");
+			static_assert(std::is_base_of_v<Components::Component, TComp ...>, "TComp must inherit from Component");
 			return mScene->mRegistry.all_of<TComp ...>(mEntity);
 		}
 

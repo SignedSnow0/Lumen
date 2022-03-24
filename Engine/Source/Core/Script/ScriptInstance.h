@@ -13,11 +13,12 @@ namespace Lumen::Script
 
         void Start();
         void Update();
-        
+    
     private:
-        MonoClass* mClass{ nullptr };
+        MonoClass*  mClass{ nullptr };
         MonoObject* mInstance{ nullptr };
         MonoMethod* mStart{ nullptr };
         MonoMethod* mUpdate{ nullptr };
+        MonoObject* mException{ nullptr };
     };    
 }

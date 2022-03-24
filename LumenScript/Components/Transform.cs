@@ -1,36 +1,22 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using GlmSharp;
+﻿using System.Runtime.CompilerServices;
 using Lumen.Math;
 
 namespace Lumen.Components
 {
-    public class Component
+    public abstract class Component
     {
-        public Entity Owner { get => _owner; }
-        
-        protected Component(Entity owner)
-        {
-            _owner = owner;
-        }
-
-        protected readonly Entity _owner;
+        public Entity Owner { get; set; } = new Entity();
     }
 
     public class Transform : Component
     {
-        public Vector3 Translation => GetTranslation(_owner.Id);
-        public Vector3 Rotation => GetRotation(_owner.Id);
-        public Vector3 Scale => GetScale(_owner.Id);
+        public Vector3 Translation => GetTranslation(Owner.Id);
+        public Vector3 Rotation => GetRotation(Owner.Id);
+        public Vector3 Scale => GetScale(Owner.Id);
 
-        public Transform(Entity owner) 
-            : base(owner)
-        { }
-        
-        public void SetTranslation(Vector3 translation) => SetTranslation(_owner.Id, translation.X, translation.Y, translation.Z);
-        public void SetRotation(Vector3 translation) => SetRotation(_owner.Id, translation.X, translation.Y, translation.Z);
-        public void SetScale(Vector3 translation) => SetScale(_owner.Id, translation.X, translation.Y, translation.Z);
+        public void SetTranslation(Vector3 translation) => SetTranslation(Owner.Id, translation.X, translation.Y, translation.Z);
+        public void SetRotation(Vector3 translation) => SetRotation(Owner.Id, translation.X, translation.Y, translation.Z);
+        public void SetScale(Vector3 translation) => SetScale(Owner.Id, translation.X, translation.Y, translation.Z);
 
         [MethodImpl(MethodImplOptions.InternalCall)] 
         private static extern void SetTranslation(uint entityId, float x, float y, float z);

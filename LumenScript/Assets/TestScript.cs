@@ -1,7 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using Lumen.Components;
+﻿using Lumen.Components;
 using Lumen.Core;
-using Lumen.Math;
 
 namespace Lumen
 {
@@ -9,13 +7,19 @@ namespace Lumen
     {
         public override void Start()
         {
-            var translation = (entity.Components[0] as Transform)!.Translation;
-            System.Console.WriteLine($"Received value: {translation.X}, {translation.Y}, {translation.Z}");
+            
         }
 
         public override void Update()
         {
-            
+            var translation = entity.GetComponent<Transform>()!.Translation;
+            translation.X += 0.01f;
+            entity.GetComponent<Transform>()!.SetTranslation(translation);
+        }
+
+        ~TestScript()
+        {
+            System.Console.WriteLine("Test script destroyed");
         }
     }
 }

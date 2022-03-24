@@ -2,8 +2,8 @@
 {
     public class Script
     {
-        public Entity entity;
-        
+        public Entity entity { get; private set; }  = new Entity();
+
         public virtual void Start()
         { }
         
@@ -13,6 +13,11 @@
         private void SetEntity(uint id)
         {
             entity = new Entity(id);
+        }
+
+        ~Script()
+        {
+            System.Console.WriteLine("Script destroyed");
         }
     }
 }

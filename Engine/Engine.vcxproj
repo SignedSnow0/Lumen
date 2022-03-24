@@ -61,7 +61,6 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <ExceptionHandling>false</ExceptionHandling>
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)External\Include\;$(VULKAN_SDK)\Include\;$(SolutionDir)External\ImGui\;$(ProjectDir)External\mono\include\mono-2.0\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -82,7 +81,6 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)External\Include\;$(VULKAN_SDK)\Include\;$(SolutionDir)External\ImGui\</AdditionalIncludeDirectories>
-      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>

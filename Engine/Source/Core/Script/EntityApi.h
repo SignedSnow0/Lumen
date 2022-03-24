@@ -16,6 +16,7 @@ namespace Lumen::Script
         static u32 Create();
         static b8 Exists(u32 id);
         static void AddComponent(u32 id, MonoString* compName);
+        static b8 HasComponent(u32 id, MonoString* compName);
     };
     
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-namespace Lumen.Math
+﻿namespace Lumen.Math
 {
     public struct Vector2
     {

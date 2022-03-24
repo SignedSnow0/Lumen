@@ -47,12 +47,11 @@ namespace Lumen::Script
             const auto* script = e.GetComponents<Components::Script>();
             if (strcmp(script->ScriptName.c_str(), "Script") != 0)
             {
-                MonoObject* instance = mono_object_new(mDomain, mScripts.at(script->ScriptName));
                 ScriptInstance s{ mScripts.at(script->ScriptName), mDomain, e };
                 mInstances.emplace_back(s);
             }
         }
-
+        
         for (auto& instance : mInstances)
         {
             instance.Start();

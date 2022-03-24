@@ -120,7 +120,7 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.sType			= VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		createInfo.flags			= VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		createInfo.maxSets			= 1000;
-		createInfo.poolSizeCount	= std::size(poolSizes);
+		createInfo.poolSizeCount	= static_cast<u32>(std::size(poolSizes));
 		createInfo.pPoolSizes		= poolSizes;
 
 		VK_ASSERT(vkCreateDescriptorPool(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mPool), "Failed to create imgui descriptor pool");
