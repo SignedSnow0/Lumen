@@ -142,10 +142,21 @@ namespace Lumen::Graphics::Vulkan
 		DynamicState.sType				= VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		DynamicState.dynamicStateCount	= static_cast<u32>(DynamicStates.size());
 		DynamicState.pDynamicStates		= DynamicStates.data();
+
+		DepthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		DepthStencil.depthTestEnable = VK_TRUE;
+		DepthStencil.depthWriteEnable = VK_TRUE;
+		DepthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+		DepthStencil.depthBoundsTestEnable = VK_FALSE;
+		DepthStencil.minDepthBounds = 0.0f;
+		DepthStencil.maxDepthBounds = 1.0f;
+		DepthStencil.stencilTestEnable = VK_FALSE;
+		DepthStencil.front = {};
+		DepthStencil.back = {};
 	}
 
 	VkPipeline::VkPipeline(const VkShader* shader, const PipelineSettings& settings, VkRenderPass* renderPass)
-		: mRenderPass{ renderPass }, mShader{ shader }
+		: mShader{shader}, mRenderPass{renderPass}
 	{
 		CreatePipeline(*shader, settings);
 	}
@@ -247,7 +258,7 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.pViewportState		= &settings.ViewportState;
 		createInfo.pRasterizationState	= &settings.Rasterizer;
 		createInfo.pMultisampleState	= &settings.Multisampling;
-		createInfo.pDepthStencilState	= nullptr;
+		createInfo.pDepthStencilState	= &settings.DepthStencil;
 		createInfo.pColorBlendState		= &settings.ColorBlending;
 		createInfo.pDynamicState		= &settings.DynamicState;
 		createInfo.layout				= mLayout;

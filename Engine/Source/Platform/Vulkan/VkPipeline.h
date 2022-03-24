@@ -20,7 +20,8 @@ namespace Lumen::Graphics::Vulkan
 		VkPipelineColorBlendStateCreateInfo		ColorBlending{};
 		std::vector<VkDynamicState>				DynamicStates{};
 		VkPipelineDynamicStateCreateInfo		DynamicState{};
-
+		VkPipelineDepthStencilStateCreateInfo	DepthStencil{};
+		
 		void DefaultSettings(u32 width, u32 height);
 	};
 

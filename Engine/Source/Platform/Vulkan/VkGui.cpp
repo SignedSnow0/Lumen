@@ -89,7 +89,7 @@ namespace Lumen::Graphics::Vulkan
 
 		for(u32 i{ 0 }; i < VkSurface::BufferCount; i++)
 		{
-			const VkTexture* texture = renderPass->Texture(i);
+			const VkTexture* texture = renderPass->ColorImage(i);
 			mSceneTextures[i] = ImGui_ImplVulkan_AddTexture(texture->Sampler(), texture->View(), texture->Layout());
 		}
 	}
@@ -128,7 +128,7 @@ namespace Lumen::Graphics::Vulkan
 
 	void VkGui::CreateRenderPass()
 	{
-		Attachment color{};
+		VkAttachment color{};
 		color.AsColor(VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 		mRenderPass = new VkRenderPass{ { color }, mTarget };
 	}

@@ -8,26 +8,25 @@ namespace Lumen::Graphics::Vulkan
 {
 	class VkTexture;
 
-	struct Attachment
+	struct VkAttachment
 	{
 		VkAttachmentDescription	Description{};
 		VkAttachmentReference	Reference{};
-		VkSubpassDescription	Subpass{};
-		VkSubpassDependency		Dependency{};
 
 		void AsColor(VkFormat format, VkImageLayout layout);
+		void AsDepth(VkFormat format, VkImageLayout layout);
 	};
 
 	class VkRenderPass final : public RenderPass
 	{
 	public:
-		explicit VkRenderPass(std::vector<Attachment> attachments, VkSurface* target = nullptr);
+		explicit VkRenderPass(const std::vector<VkAttachment>& attachments, VkSurface* target = nullptr);
 		~VkRenderPass() override { VkRenderPass::Release(); }
 
 		[[nodiscard]] constexpr u32 Width() const			{ return mSize.first; }
 		[[nodiscard]] constexpr u32 Height() const			{ return mSize.second; }
 		[[nodiscard]] constexpr ::VkRenderPass Get() const	{ return mRenderPass; }
-		[[nodiscard]] VkTexture* Texture(u32 frame) const { return mTarget ? nullptr : mTextures[frame]; }
+		[[nodiscard]] VkTexture* ColorImage(u32 frame) const { return mTarget ? nullptr : mColorTextures[frame]; }
 		void Init() override;
 		void Release() override;
 
@@ -41,9 +40,10 @@ namespace Lumen::Graphics::Vulkan
 		void CreateFramebuffers(u32 width, u32 height);
 
 		std::pair<u32, u32>				mSize{};
-		const std::vector<Attachment>	mAttachments{};
+		std::vector<VkAttachment>		mAttachments{};
 
-		std::vector<VkTexture*>			mTextures{};
+		std::vector<VkTexture*>			mColorTextures{};
+		std::vector<VkTexture*>			mDepthTextures{};
 		VkSurface*						mTarget{ nullptr };
 		std::vector<VkFramebuffer>		mFramebuffers{};
 		::VkRenderPass					mRenderPass{};

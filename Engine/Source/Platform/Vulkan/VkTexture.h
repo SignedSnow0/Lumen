@@ -11,10 +11,19 @@ namespace Lumen::Graphics::Vulkan
 {
 	class VkBuffer;
 
+	enum class TextureUsage : u32
+	{
+		RenderTarget = 0,
+		DepthTarget,
+		Image,
+		
+		Count
+	};
+	
 	class VkTexture : public Texture
 	{
 	public:
-		explicit VkTexture(u32 width, u32 height, b8 renderTarget = true);
+		explicit VkTexture(u32 width, u32 height, TextureUsage usage);
 		explicit VkTexture(std::filesystem::path source);
 		~VkTexture() override { VkTexture::Release(); }
 
@@ -46,6 +55,6 @@ namespace Lumen::Graphics::Vulkan
 		u32						mWidth{};
 		u32						mHeight{};
 		u32						mMipLevels{ 1 };
-		b8						mRenderTarget{};
+		TextureUsage			mUsage{ TextureUsage::Image };
 	};
 }

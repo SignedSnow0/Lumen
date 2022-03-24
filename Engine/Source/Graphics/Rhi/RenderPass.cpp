@@ -4,11 +4,11 @@
 
 namespace Lumen::Graphics
 {
-	RenderPass* (*RenderPass::sCreateFunc)(Surface*) = nullptr;
+	RenderPass* (*RenderPass::sCreateFunc)(const std::vector<Attachment>&, Surface*) = nullptr;
 
-	RenderPass* RenderPass::Create(Surface* target)
+	RenderPass* RenderPass::Create(const std::vector<Attachment>& attachments, Surface* target)
 	{
 		assert(sCreateFunc && "No graphics api set!");
-		return sCreateFunc(target);
+		return sCreateFunc(attachments, target);
 	}
 }

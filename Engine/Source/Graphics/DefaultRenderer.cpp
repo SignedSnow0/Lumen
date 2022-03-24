@@ -12,15 +12,20 @@ namespace Lumen::Graphics
 	{
 		const std::vector<Vertex> vertices =
 		{
-			{ { -0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f } },
-			{ {  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
-			{ {  0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
-			{ { -0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
+			{ { -0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f } },
+			{ {  0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
+			{ {  0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
+			{ { -0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } },
+
+			{ { -0.5f, -0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f } },
+			{ {  0.5f, -0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
+			{ {  0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
+			{ { -0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
 		};
 		const std::vector<u32> indices =
 		{
-			0, 1, 2,
-			2, 3, 0
+			0, 1, 2, 2, 3, 0,
+			4, 5, 6, 6, 7, 4
 		};
 		VertexBuffer* vBuffer{ nullptr };
 		IndexBuffer* iBuffer{ nullptr };
@@ -28,8 +33,11 @@ namespace Lumen::Graphics
 	}
 
 	DefaultRenderer::DefaultRenderer()
-		: mRenderPass(RenderPass::Create())
 	{
+		Attachment color{ AttachmentUsage::Color, AttachmentFormat::R8G8B8A8Srgb };
+		Attachment depth{ AttachmentUsage::Depth, AttachmentFormat::D32SFloat };
+		mRenderPass = RenderPass::Create({ color, depth });
+		
 		mShader = Shader::Create({ { (Shader::ShadersPath() / "vertex.vert").string(), ShaderStage::Vertex }, { (Shader::ShadersPath() / "fragment.frag").string(), ShaderStage::Fragment } });
 		mPipeline = Pipeline::Create({ CullMode::None, PolygonMode::Fill, DrawType::Triangle, BlendMode::None, 1920, 1080, mShader, mRenderPass });
 		mPipeline->Init();
@@ -75,9 +83,10 @@ namespace Lumen::Graphics
 			glm::mat4 View;
 			glm::mat4 Proj;
 		} ubo;
-		ubo.View = mat;
-		ubo.Proj = mat;
-
+		ubo.View = glm::lookAt(glm::vec3{ 2.0f }, glm::vec3{ 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
+		ubo.Proj = glm::perspective(glm::radians(45.0f), 1920 / 1080.0f, 0.1f, 10.0f);
+		ubo.Proj[1][1] *= -1.0f;
+		
 		mDescriptorSet->UpdateUniform(0, &ubo, mCurrentFrame);
 		
 		mPipeline->SetPushConstant(0, glm::value_ptr(model));

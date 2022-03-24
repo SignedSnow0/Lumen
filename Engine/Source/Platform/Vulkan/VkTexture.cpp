@@ -12,6 +12,11 @@ namespace Lumen::Graphics::Vulkan
 {
 	namespace 
 	{
+		b8 HasStencilComponent(VkFormat format)
+		{
+			return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+		}
+
 		void TransitionLayout(VkImage image, u32 mipLevels, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 layerCount)
 		{
 			VkCommandBuffer cmd = VkContext::Get().StartCommand();
@@ -31,8 +36,8 @@ namespace Lumen::Graphics::Vulkan
 			barrier.srcAccessMask					= 0;
 			barrier.dstAccessMask					= 0;
 
-			VkPipelineStageFlags sourceStage;
-			VkPipelineStageFlags destinationStage;
+			VkPipelineStageFlags sourceStage{};
+			VkPipelineStageFlags destinationStage{};
 
 			if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
 			{
@@ -73,6 +78,18 @@ namespace Lumen::Graphics::Vulkan
 
 				sourceStage			= VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 				destinationStage	= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			}
+			else if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+			{
+				barrier.srcAccessMask = 0;
+				barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+				sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+				destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+				
+				barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+				if (HasStencilComponent(format))
+					barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 			}
 			else
 			{
@@ -163,8 +180,8 @@ namespace Lumen::Graphics::Vulkan
 		}
 	}
 
-	VkTexture::VkTexture(u32 width, u32 height, b8 renderTarget)
-		: mRenderTarget{ renderTarget }
+	VkTexture::VkTexture(u32 width, u32 height, TextureUsage usage)
+		: mUsage{ usage }
 	{
 		CreateEmptyImage(width, height);
 		CreateView();
@@ -263,14 +280,27 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.extent			= extent;
 		createInfo.mipLevels		= mMipLevels;
 		createInfo.arrayLayers		= 1;
-		createInfo.format			= VK_FORMAT_R8G8B8A8_SRGB;
 		createInfo.tiling			= VK_IMAGE_TILING_OPTIMAL;
 		createInfo.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-		createInfo.usage			= mRenderTarget ? VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
-													: VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;//src for mipmapping
 		createInfo.sharingMode		= VK_SHARING_MODE_EXCLUSIVE;
 		createInfo.samples			= VK_SAMPLE_COUNT_1_BIT;
 		createInfo.flags			= 0;
+
+		switch (mUsage)
+		{
+			case TextureUsage::RenderTarget:
+				createInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+				createInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+				break;
+			case TextureUsage::DepthTarget:
+				createInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+				createInfo.format = VK_FORMAT_D32_SFLOAT;
+				break;
+			case TextureUsage::Image:
+				createInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+				createInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+				break;
+		}
 
 		VmaAllocationCreateInfo allocInfo{};
 		allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
@@ -278,10 +308,17 @@ namespace Lumen::Graphics::Vulkan
 		VmaAllocationInfo resultInfo{};
 		vmaCreateImage(VkContext::Get().Device().Allocator(), &createInfo, &allocInfo, &mImage, &mAllocation, &resultInfo);
 
-		if(mRenderTarget)
+		if (mUsage == TextureUsage::RenderTarget)
+		{
 			TransitionLayout(mImage, mMipLevels, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
-		mLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
+			mLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (mUsage == TextureUsage::DepthTarget)
+		{
+			TransitionLayout(mImage, mMipLevels, VK_FORMAT_D32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+			mLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		}
+		
 		mWidth = width;
 		mHeight = height;
 	}
@@ -292,13 +329,29 @@ namespace Lumen::Graphics::Vulkan
 		createInfo.sType							= VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		createInfo.image							= mImage;
 		createInfo.viewType							= VK_IMAGE_VIEW_TYPE_2D;
-		createInfo.format							= VK_FORMAT_R8G8B8A8_SRGB;
-		createInfo.subresourceRange.aspectMask		= VK_IMAGE_ASPECT_COLOR_BIT;
 		createInfo.subresourceRange.baseMipLevel	= 0;
 		createInfo.subresourceRange.levelCount		= mMipLevels;
 		createInfo.subresourceRange.baseArrayLayer	= 0;
 		createInfo.subresourceRange.layerCount		= 1;
 
+		switch (mUsage)
+		{
+		case TextureUsage::RenderTarget:
+			createInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+			createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+			break;
+		case TextureUsage::DepthTarget:
+			createInfo.format = VK_FORMAT_D32_SFLOAT;
+			createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			break;
+		case TextureUsage::Image:
+			createInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+			createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			break;
+		}
+
+		
 		VK_ASSERT(vkCreateImageView(VkContext::Get().LogicalDevice(), &createInfo, nullptr, &mView), "Failed to create image view!");
 	}
 
