@@ -108,3 +108,60 @@ b8 DrawVec2(const std::string& label, glm::vec2& vec, const glm::vec2& defaultVa
     
     return modified;
 }
+
+void FileExplorer::SetCurrentPath(const std::filesystem::path path)
+{
+    mCurrentPath = path;
+}
+
+void FileExplorer::Draw()
+{
+    if (ImGui::Button("<"))
+    {
+        mCurrentPath = mCurrentPath.parent_path();
+    }
+
+    std::vector<std::filesystem::path> subPaths;
+    std::filesystem::path parent = mCurrentPath;
+    while (parent != mCurrentPath.root_path())
+    {
+        subPaths.push_back(parent);
+        parent = parent.parent_path();
+    }
+
+    ImGui::SameLine();
+    if(ImGui::Button(mCurrentPath.root_path().string().substr(0, 2).c_str()))
+    {
+        mCurrentPath = mCurrentPath.root_path();
+    }
+    for(auto path = subPaths.rbegin(); path != subPaths.rend(); ++path)
+    {
+        const u64 start{ path->string().find_last_of('\\') };
+        std::string folder = path->string().substr(start + 1);
+        ImGui::SameLine();
+        if (ImGui::Button(folder.c_str()))
+        {
+            mCurrentPath = *path;
+        }		
+    }
+
+    std::filesystem::path availablePath{};
+    for (const auto& dir : std::filesystem::directory_iterator{ mCurrentPath })
+    {
+        if (dir.is_directory())
+        {
+            availablePath = dir.path();
+            if (ImGui::Selectable(availablePath.string().c_str(), false, ImGuiSelectableFlags_DontClosePopups))
+            {
+                mSelectedPath = availablePath;
+            }
+            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+            {
+                mSelectedPath = availablePath;
+                mCurrentPath = availablePath;
+            }
+        }
+    }
+    ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
+    ImGui::Text(mSelectedPath.string().c_str());
+}

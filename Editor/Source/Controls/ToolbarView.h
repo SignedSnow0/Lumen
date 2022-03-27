@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include <Lumen.h>
+
+#include "../Utils.h"
 
 class ToolbarView
 {
@@ -9,5 +12,8 @@ public:
 	void Render();
 
 private:
+	void CreateDialog();
 
+	b8 mFileOpen{ false };
+	FileExplorer mFileExplorer{};
 };

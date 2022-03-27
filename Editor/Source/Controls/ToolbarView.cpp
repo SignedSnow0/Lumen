@@ -5,14 +5,18 @@
 #include <imgui/imgui.h>
 
 void ToolbarView::Render()
-{
+{	
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("Project"))
 		{
-			ImGui::MenuItem("Create");
+			if (ImGui::MenuItem("Create"))
+			{
+				mFileOpen = true;
+			}
+			
 			ImGui::MenuItem("Open");
-			if(ImGui::MenuItem("Save"))
+			if (ImGui::MenuItem("Save"))
 			{
 				EditorApp::Get()->Save();
 			}
@@ -47,5 +51,33 @@ void ToolbarView::Render()
 		}
 
 		ImGui::EndMainMenuBar();
+	}
+
+	CreateDialog();
+}
+
+void ToolbarView::CreateDialog()
+{
+	if (mFileOpen)
+	{
+		ImGui::OpenPopup("Select a location");
+		mFileOpen = false;
+		if (!std::filesystem::exists(mFileExplorer.GetCurrentPath()))
+		{
+			mFileExplorer.SetCurrentPath("C:\\");
+		}
+	}
+
+	if (ImGui::BeginPopupModal("Select a location"))
+	{
+		mFileExplorer.Draw();
+		
+		if (ImGui::Button("Create"))
+			ImGui::CloseCurrentPopup();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+			ImGui::CloseCurrentPopup();
+		
+		ImGui::EndPopup();
 	}
 }
