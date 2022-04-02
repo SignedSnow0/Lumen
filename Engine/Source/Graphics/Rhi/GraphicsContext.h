@@ -1,36 +1,53 @@
 #pragma once
-#include "Core/Types.h"
+#include "GraphicsTypes.h"
 
 namespace Lumen::Graphics
 {
-    enum class RendererAPI : u32
-    {
-        Opengl = 0, //Unsupported
-        Vulkan,
-        Direct3D, //Unsupported
-    	Metal, //Unsupported
-
-    	Count
-    };
-
 	class GraphicsContext
 	{
     public:
+        GraphicsContext() = delete;
+	    GraphicsContext(const GraphicsContext&) = delete;
+        GraphicsContext(GraphicsContext&&) = delete;
+	    GraphicsContext& operator=(const GraphicsContext&) = delete;
+        GraphicsContext& operator=(GraphicsContext&&) = delete;
+	    
+        /**
+         * \brief Creates a new graphics context
+         * \return The new graphics context
+         */
         static GraphicsContext* Create();
         virtual ~GraphicsContext() = default;
 
-        static RendererAPI GetRenderAPI() { return sRenderAPI; }
-        static void SetRenderAPI(RendererAPI api);
+        /**
+         * \return The set graphics api
+         */
+        static RendererApi GetRenderApi();
+        /**
+         * \brief Sets the graphics api
+         * \param api Api to set
+         */
+        static void SetRenderApi(RendererApi api);
 
-        static GraphicsContext& Get() { return *sInstance; }
+        /**
+         * \brief Gets the current graphics context
+         * \return The current graphics context
+         */
+        static GraphicsContext& Get();
 
+        /**
+         * \brief Initializes the graphics context resources
+         */
         virtual void Init() = 0;
        
+        /**
+         * \brief Waits for the gpu operations to finish
+         */
         virtual void WaitIdle() const = 0;
 
     protected:
         static GraphicsContext* (*sCreateFunc)();
-        static RendererAPI sRenderAPI;
+        static RendererApi sRenderAPI;
         static GraphicsContext* sInstance;
     };
 }

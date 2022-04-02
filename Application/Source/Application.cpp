@@ -13,7 +13,7 @@ EditorApp::~EditorApp()
 
 void EditorApp::Run()
 {
-	while (!Closing())
+	while (!GetClosing())
 	{
 		Application::Run();
 

@@ -104,11 +104,11 @@
     <ClInclude Include="Source\Core\Script\ScriptManager.h" />
     <ClInclude Include="Source\Core\Types.h" />
     <ClInclude Include="Lumen.h" />
-    <ClInclude Include="Source\Core\Window.h" />
     <ClInclude Include="Source\Graphics\GuiRenderer.h" />
     <ClInclude Include="Source\Graphics\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\Rhi\DescriptorSet.h" />
     <ClInclude Include="Source\Graphics\Rhi\GraphicsContext.h" />
+    <ClInclude Include="Source\Graphics\Rhi\GraphicsTypes.h" />
     <ClInclude Include="Source\Graphics\Rhi\Gui.h" />
     <ClInclude Include="Source\Graphics\Rhi\Pipeline.h" />
     <ClInclude Include="Source\Graphics\Rhi\RenderPass.h" />
@@ -129,6 +129,7 @@
     <ClInclude Include="Source\Platform\Vulkan\VkShader.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkSurface.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkTexture.h" />
+    <ClInclude Include="Source\Platform\Window.h" />
     <ClInclude Include="Source\Utils\Serializer.h" />
   </ItemGroup>
   <ItemGroup>

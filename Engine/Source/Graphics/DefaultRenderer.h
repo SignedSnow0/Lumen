@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <glm/glm.hpp>
-#include "Rhi/Gui.h"
 #include "Rhi/Pipeline.h"
 #include "Rhi/RenderPass.h"
 #include "Rhi/Shader.h"

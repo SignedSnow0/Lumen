@@ -15,10 +15,10 @@ namespace Lumen::Script
 {
     b8 ScriptManager::Init()
     {
-        mono_set_dirs((Application::Get()->AssetsPath().parent_path() / R"(External\mono\lib)").string().c_str(), ".");
+        mono_set_dirs((Application::Get()->GetAssetsPath().parent_path() / R"(External\mono\lib)").string().c_str(), ".");
         mDomain = mono_jit_init("Editor");
 
-        mAssembly = mono_domain_assembly_open(mDomain,(Application::Get()->AssetsPath().parent_path().parent_path() / R"(bin\Debug\LumenScript.dll)").string().c_str());
+        mAssembly = mono_domain_assembly_open(mDomain,(Application::Get()->GetAssetsPath().parent_path().parent_path() / R"(bin\Debug\LumenScript.dll)").string().c_str());
         if (!mAssembly)
             return false;
 

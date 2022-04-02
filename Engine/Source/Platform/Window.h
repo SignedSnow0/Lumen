@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Types.h"
+#include "Core/Types.h"
 
+#ifdef _WIN64
 struct GLFWwindow;
+#endif
 
 namespace Lumen
 {
@@ -19,15 +21,8 @@ namespace Lumen
 		explicit Window(const WindowInitInfo& initInfo, bool visible = true);
 		~Window();
 
-		[[nodiscard]] b8 ShouldClose() const;
-		[[nodiscard]] decltype(auto) Native() const
-		{
-#ifdef _WIN64
-			return static_cast<GLFWwindow*>(mNative);
-#else
-#error "Unsupported platform"
-#endif
-		}
+		b8 ShouldClose() const;
+		decltype(auto) Native() const;
 
 		static void Update();
 

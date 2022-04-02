@@ -27,8 +27,8 @@ namespace Lumen::Graphics::Vulkan
 		VkGui() = default;
 		~VkGui() override { VkGui::Release(); }
 
-		ImFont* BoldFont() override { return mBoldFont; }
-		ImFont* ItalicFont() override { return mItalicFont; }
+		ImFont* GetBoldFont() override { return mBoldFont; }
+		ImFont* GetItalicFont() override { return mItalicFont; }
 
 		void Init(const Window* target, Surface* surface) override;
 		void Release() override;

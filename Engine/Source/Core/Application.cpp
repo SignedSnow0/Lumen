@@ -1,9 +1,7 @@
 ﻿#include "Application.h"
-
 #include "Window.h"
-#include "Graphics/Rhi/Surface.h"
-#include "Utils/Serializer.h"
 #include "Graphics/SceneRenderer.h"
+#include "Utils/Serializer.h"
 
 namespace Lumen
 {
@@ -35,11 +33,25 @@ namespace Lumen
 		mWindows.clear();
 	}
 
+	b8 Application::GetClosing() const { return mShutdown; }
+
+	std::filesystem::path Application::GetEnginePath() const { return mEnginePath; }
+
+	std::filesystem::path Application::GetAssetsPath() const { return mEnginePath / "Assets"; }
+
+	Scene* Application::GetScene() const { return mProject.Scene; }
+
+	Script::ScriptManager& Application::GetScriptManager() { return mScriptManager; }
+
+	b8 Application::GetIsPlaying() const { return mIsPlaying; }
+
+	void Application::SetPlaying(const b8 value) { mIsPlaying = value; } 
+
 	b8 Application::Init()
 	{
 		mShutdown = false;
 
-		Graphics::GraphicsContext::SetRenderAPI(mProject.Api);
+		Graphics::GraphicsContext::SetRenderApi(mProject.Api);
 		mGraphicsContext = Graphics::GraphicsContext::Create();
 		mGraphicsContext->Init();
 
@@ -104,6 +116,8 @@ namespace Lumen
 		if (mWindows.empty())
 			mShutdown = true;
 	}
+
+	Graphics::RenderTarget* Application::GetRenderTarget(const u32 index) { return &mWindows[index]; }
 
 	void Application::Save()
 	{

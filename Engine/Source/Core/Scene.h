@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <vector>
-
 #include <entt/entt.hpp>
 
 #include "Types.h"

@@ -159,7 +159,7 @@ namespace Lumen::Graphics::Vulkan
 
 		ImGui_ImplVulkan_Init(&initInfo, mRenderPass->Get());
 		
-		const auto& assets{ Application::Get()->AssetsPath() };
+		const auto& assets{ Application::Get()->GetAssetsPath() };
 		const auto font = io.Fonts->AddFontFromFileTTF((assets / "Fonts\\FiraSans\\FiraSans-Regular.ttf").string().c_str(), 15);
 		io.FontDefault = font;
 		mBoldFont = io.Fonts->AddFontFromFileTTF((assets / "Fonts\\FiraSans\\FiraSans-Bold.ttf").string().c_str(), 15);

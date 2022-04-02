@@ -3,7 +3,7 @@
 EditorApp* EditorApp::sInstance = nullptr;
 
 EditorApp::EditorApp()
-	: Application({ "Test", R"(C:\Dev\Lumen\TestProject\)", Lumen::Graphics::RendererAPI::Vulkan })
+	: Application({ "Test", R"(C:\Dev\Lumen\TestProject\)", Lumen::Graphics::RendererApi::Vulkan })
 {
 	sInstance = this;
 }
@@ -29,7 +29,7 @@ b8 EditorApp::Init()
 
 void EditorApp::Run()
 {
-	while (!Closing())
+	while (!GetClosing())
 	{
 		Begin();
 		Application::Run();

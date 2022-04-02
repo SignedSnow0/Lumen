@@ -13,7 +13,7 @@ namespace Lumen.Components
         public Vector3 Translation => GetTranslation(Owner.Id);
         public Vector3 Rotation => GetRotation(Owner.Id);
         public Vector3 Scale => GetScale(Owner.Id);
-
+        
         public void SetTranslation(Vector3 translation) => SetTranslation(Owner.Id, translation.X, translation.Y, translation.Z);
         public void SetRotation(Vector3 translation) => SetRotation(Owner.Id, translation.X, translation.Y, translation.Z);
         public void SetScale(Vector3 translation) => SetScale(Owner.Id, translation.X, translation.Y, translation.Z);

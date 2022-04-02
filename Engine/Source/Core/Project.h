@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <filesystem>
+#include <string>
 
 #include "Scene.h"
 #include "Graphics/Rhi/GraphicsContext.h"
@@ -11,7 +12,7 @@ namespace Lumen
 	public:
 		std::string				Name{};
 		std::filesystem::path	Path{};
-		Graphics::RendererAPI	Api{ Graphics::RendererAPI::Count };
+		Graphics::RendererApi	Api{ Graphics::RendererApi::Count };
 		Scene*					Scene{ nullptr };
 	};
 }

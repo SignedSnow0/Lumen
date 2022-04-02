@@ -26,7 +26,7 @@ void SceneView::Render()
 			else
 				label += std::to_string(i);
 			
-			if (ImGui::Selectable(label.c_str(), mSelectedEntity ? mSelectedEntity->Id() == e->Id() : false))
+			if (ImGui::Selectable(label.c_str(), mSelectedEntity ? mSelectedEntity->GetId() == e->GetId() : false))
 				mSelectedEntity = e;
 			
 			i++;

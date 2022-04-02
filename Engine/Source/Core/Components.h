@@ -1,17 +1,15 @@
 ﻿#pragma once
+#include "Types.h"
+
 #include <string>
 #include <glm/glm.hpp>
-
-#include "Types.h"
 
 namespace Lumen::Components
 {
 	enum class ComponentType : u32
 	{
 		Transform,
-		Mesh,
-
-		Count
+		Mesh
 	};
 
 	struct Component
@@ -21,7 +19,7 @@ namespace Lumen::Components
 
 	struct Transform : Component
 	{
-		[[nodiscard]] glm::mat4 GetTransform() const;
+		glm::mat4 GetTransform() const;
 
 		glm::vec3 Translation{ 0.0f };
 		glm::vec3 Rotation{ 0.0f };

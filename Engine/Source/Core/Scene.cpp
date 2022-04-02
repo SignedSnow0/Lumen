@@ -1,12 +1,13 @@
 ﻿#include "Scene.h"
 
+#include "Components.h"
 #include "Entity.h"
 
 namespace Lumen
 {
 	Entity Scene::CreateEntity()
 	{
-		Entity* e = new Entity{ mRegistry.create(), this };
+		auto e = new Entity{ mRegistry.create(), this };
 		mEntities.emplace_back(e);
 		e->AddComponent<Components::Transform>();
 		return *e;

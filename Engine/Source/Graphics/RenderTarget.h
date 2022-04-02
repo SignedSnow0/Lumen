@@ -1,19 +1,14 @@
 ﻿#pragma once
-
-namespace Lumen
-{
-	class Window;
-}
+#include "Platform/Window.h"
+#include "Rhi/Surface.h"
 
 namespace Lumen::Graphics
 {
-	class Surface;
-
 	struct RenderTarget
 	{
 		~RenderTarget();
 
 		Window* Window{ nullptr };
-		Graphics::Surface* Surface{ nullptr };
+		Surface* Surface{ nullptr };
 	};
 }

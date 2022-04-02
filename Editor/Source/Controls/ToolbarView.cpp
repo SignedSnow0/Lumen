@@ -24,7 +24,7 @@ void ToolbarView::Render()
 		}
 		if (ImGui::BeginMenu("Actions"))
 		{
-			const b8 scenePlaying{ EditorApp::Get()->IsPlaying() };
+			const b8 scenePlaying{ EditorApp::Get()->GetIsPlaying() };
 			if (ImGui::MenuItem(scenePlaying ? "Stop" : "Play"))
 			{
 				static const char* tempFile{ "$Temp$.lumen" };
@@ -55,6 +55,7 @@ void ToolbarView::Render()
 
 	CreateDialog();
 }
+
 
 void ToolbarView::CreateDialog()
 {

@@ -27,14 +27,14 @@ namespace Lumen::Script
 
     u32 EntityApi::Create()
     {
-        return Application::Get()->GetScene()->CreateEntity().Id();
+        return Application::Get()->GetScene()->CreateEntity().GetId();
     }
 
     b8 EntityApi::Exists(u32 id)
     {
         for (const auto* e : Application::Get()->GetScene()->Entities())
         {
-            if (e->Id() == id)
+            if (e->GetId() == id)
                 return true;
         }
         return false;

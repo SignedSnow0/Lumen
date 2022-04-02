@@ -1,26 +1,17 @@
 #pragma once
-#include <filesystem>
-#include <vector>
-
 #include "Project.h"
 #include "Scene.h"
-#include "Types.h"
+#include "Graphics/DefaultRenderer.h"
 #include "Graphics/RenderTarget.h"
-#include "Graphics/Rhi/GraphicsContext.h"
 #include "Script/ScriptManager.h"
 
 namespace Lumen
 {
-	namespace Graphics
-	{
-		class DefaultRenderer;
-	}
-
 	struct AppInitInfo
 	{
 		std::string Name{};
 		std::filesystem::path Path{};
-		Graphics::RendererAPI Api{};
+		Graphics::RendererApi Api{};
 	};
 
 	class Application
@@ -29,18 +20,19 @@ namespace Lumen
 		explicit Application(const AppInitInfo& initInfo);
 		virtual ~Application();
 
-		[[nodiscard]] constexpr b8 Closing() const { return mShutdown; }
-		[[nodiscard]] std::filesystem::path EnginePath() const { return mEnginePath; }
-		[[nodiscard]] std::filesystem::path AssetsPath() const { return mEnginePath / "Assets"; }
-		[[nodiscard]] Scene* GetScene() const { return mProject.Scene; }
-		[[nodiscard]] Script::ScriptManager& GetScriptManager() { return mScriptManager; }
-		[[nodiscard]] b8 IsPlaying() const { return mIsPlaying; }
-		void SetPlaying(const b8 value) { mIsPlaying = value; } 
+		b8 GetClosing() const;
+		std::filesystem::path GetEnginePath() const;
+		std::filesystem::path GetAssetsPath() const;
+		Scene* GetScene() const;
+		Script::ScriptManager& GetScriptManager();
+		b8 GetIsPlaying() const;
+		void SetPlaying(b8 value);
 		
 		virtual b8 Init();
-
 		virtual void Shutdown();
+		
 		virtual void Run();
+		
 		void Save();
 		void Load();
 
@@ -50,18 +42,19 @@ namespace Lumen
 		void Begin();
 		void End();
 
-		[[nodiscard]] constexpr Graphics::RenderTarget* GetRenderTarget(u32 index) { return &mWindows[index]; }
-		[[nodiscard]] Graphics::DefaultRenderer* GetDefaultRenderer() const;
+		Graphics::RenderTarget* GetRenderTarget(u32 index);
+		Graphics::DefaultRenderer* GetDefaultRenderer() const;
 
-		Project								mProject{};
+		Project	mProject{};
+		
 	private:
-		b8									mShutdown{ false };
-		b8									mIsPlaying{ false };
-		std::filesystem::path				mEnginePath{ std::filesystem::current_path().parent_path() += "\\Engine\\" };
+		b8 mShutdown{ false };
+		b8 mIsPlaying{ false };
+		std::filesystem::path mEnginePath{ std::filesystem::current_path().parent_path() += "\\Engine\\" };
 		std::vector<Graphics::RenderTarget>	mWindows{};
-		Graphics::GraphicsContext*			mGraphicsContext{ nullptr };
-		Graphics::SceneRenderer*			mRenderer{ nullptr };
-		Script::ScriptManager				mScriptManager{};
+		Graphics::GraphicsContext* mGraphicsContext{ nullptr };
+		Graphics::SceneRenderer* mRenderer{ nullptr };
+		Script::ScriptManager mScriptManager{};
 		
 		static Application* sInstance;
 	};

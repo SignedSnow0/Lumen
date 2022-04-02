@@ -15,7 +15,7 @@ namespace Lumen::Script
         
         MonoClass* parent{ mono_class_get_parent(mClass) };
         MonoMethod* setup{ mono_class_get_method_from_name(parent, "SetEntity", 1) };
-        u32 id{ owner.Id() };
+        u32 id{ owner.GetId() };
         void* params[] = { &id };
         mono_runtime_invoke(setup, mInstance, params, nullptr);
     }

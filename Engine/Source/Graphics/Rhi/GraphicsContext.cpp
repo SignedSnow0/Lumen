@@ -7,7 +7,7 @@
 namespace Lumen::Graphics
 {
     GraphicsContext* (*GraphicsContext::sCreateFunc)() = nullptr;
-    RendererAPI GraphicsContext::sRenderAPI;
+    RendererApi GraphicsContext::sRenderAPI;
     GraphicsContext* GraphicsContext::sInstance = nullptr;
 
     /**
@@ -22,25 +22,27 @@ namespace Lumen::Graphics
         return sInstance;
     }
 
+    RendererApi GraphicsContext::GetRenderApi() { return sRenderAPI; }
+
     /**
      * @brief Sets the render api to the one passed as argument
      * @param api The graphics api to set
      */
-    void GraphicsContext::SetRenderAPI(RendererAPI api)
+    void GraphicsContext::SetRenderApi(RendererApi api)
     {
         sRenderAPI = api;
 
         switch (sRenderAPI)
         {
-        case RendererAPI::Vulkan:
+        case RendererApi::Vulkan:
             Vulkan::SetApiInterface();
             break;
-        case RendererAPI::Opengl:
-        case RendererAPI::Direct3D:
-        case RendererAPI::Metal:
-        case RendererAPI::Count:
-            assert(false && "Unsupported graphics api set!");
+        case RendererApi::Opengl:
+        case RendererApi::Direct3D:
+        case RendererApi::Metal:
             break;
         }
     }
+
+    GraphicsContext& GraphicsContext::Get() { return *sInstance; }
 }

@@ -1,30 +1,37 @@
 ﻿#pragma once
-#include <filesystem>
-#include <unordered_map>
-
 #include "Core/Application.h"
-#include "Core/Types.h"
 
 namespace Lumen::Graphics
 {
-	enum class ShaderStage : u32
-	{
-		Vertex = 0,
-		Fragment,
-		Compute,
-
-		Count
-	};
-
 	class Shader
 	{
 	public:
+		Shader() = delete;
+		Shader(const Shader&) = delete;
+		Shader(Shader&&) = delete;
+		Shader& operator=(const Shader&) = delete;
+		Shader& operator=(Shader&&) = delete;
+
+		/**
+		 * @brief Creates a new Shader instance
+		 * @param sources Code sources to compile the shader with (path, stage)
+		 * @return The new Shader instance
+		 */
 		static Shader* Create(const std::unordered_map<std::string, ShaderStage>& sources);
 		virtual ~Shader() = default;
 
-		[[nodiscard]] static std::filesystem::path ShadersPath() { return Application::Get()->AssetsPath() / "Shaders"; }
+		/**
+		 * @brief Returns the default shaders folder
+		 */
+		static std::filesystem::path GetShadersPath() { return Application::Get()->GetAssetsPath() / "Shaders"; }
 
+		/**
+		 * @brief Initializes the shader resources
+		 */
 		virtual void Init() = 0;
+		/**
+		 * @brief Releases the shader resources
+		 */
 		virtual void Release() = 0;
 
 	protected:

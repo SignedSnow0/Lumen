@@ -37,17 +37,21 @@ namespace Lumen::Graphics
 		Attachment color{ AttachmentUsage::Color, AttachmentFormat::R8G8B8A8Srgb };
 		Attachment depth{ AttachmentUsage::Depth, AttachmentFormat::D32SFloat };
 		mRenderPass = RenderPass::Create({ color, depth });
-		
-		mShader = Shader::Create({ { (Shader::ShadersPath() / "vertex.vert").string(), ShaderStage::Vertex }, { (Shader::ShadersPath() / "fragment.frag").string(), ShaderStage::Fragment } });
+
+		std::unordered_map<std::string, ShaderStage> shaderSources{ { (Shader::GetShadersPath() / "vertex.vert").string(), ShaderStage::Vertex },
+																	{ (Shader::GetShadersPath() / "fragment.frag").string(), ShaderStage::Fragment } };
+		mShader = Shader::Create(shaderSources);
+
 		mPipeline = Pipeline::Create({ CullMode::None, PolygonMode::Fill, DrawType::Triangle, BlendMode::None, 1920, 1080, mShader, mRenderPass });
 		mPipeline->Init();
+
 		mDescriptorSet = DescriptorSet::Create(mShader, 0);
 		mDescriptorSet->Init();
 
 		vBuffer = VertexBuffer::Create(vertices.data(), static_cast<u32>(vertices.size()));
 		iBuffer = IndexBuffer::Create(indices.data(), static_cast<u32>(indices.size()));
 
-		texture = Texture::Create(Texture::TexturesPath() / "texture.jpg");
+		texture = Texture::Create(Texture::GetTexturesPath() / "texture.jpg");
 		mDescriptorSet->SetTexture(1, texture);
 	}
 

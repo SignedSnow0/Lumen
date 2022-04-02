@@ -1,4 +1,4 @@
-#include "Core/Window.h"
+#include "Window.h"
 
 #ifdef _WIN64
 #include <GLFW/glfw3.h>
@@ -50,6 +50,8 @@ namespace Lumen
 	 */
 	b8 Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow*>(mNative)); }
 
+	decltype(auto) Window::Native() const { return static_cast<GLFWwindow*>(mNative); }
+	
 	/**
 	 * @brief Updates all the windows by polling native events and messages.
 	 */

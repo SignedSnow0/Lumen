@@ -88,20 +88,20 @@ namespace Lumen::Utils
 			return out;
 		}
 
-		YAML::Emitter& operator<<(YAML::Emitter& out, const Graphics::RendererAPI& v)
+		YAML::Emitter& operator<<(YAML::Emitter& out, const Graphics::RendererApi& v)
 		{
 			switch (v)
 			{
-			case Graphics::RendererAPI::Opengl: 
+			case Graphics::RendererApi::Opengl: 
 				out << "Opengl";
 				break;
-			case Graphics::RendererAPI::Vulkan:
+			case Graphics::RendererApi::Vulkan:
 				out << "Vulkan";
 				break;
-			case Graphics::RendererAPI::Direct3D: 
+			case Graphics::RendererApi::Direct3D: 
 				out << "Direct3D";
 				break;
-			case Graphics::RendererAPI::Metal: 
+			case Graphics::RendererApi::Metal: 
 				out << "Metal";
 				break;
 			}
