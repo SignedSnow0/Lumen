@@ -1,11 +1,16 @@
 ﻿#pragma once
-#include "Rhi/Pipeline.h"
-#include "Rhi/RenderPass.h"
-#include "Rhi/Shader.h"
-#include "Rhi/Surface.h"
+#include <glm/glm.hpp>
+
+#include "Core/Types.h"
 
 namespace Lumen::Graphics
 {
+	class Surface;
+	class RenderPass;
+	class Shader;
+	class Pipeline;
+	class DescriptorSet;
+	
 	class DefaultRenderer
 	{
 	public:

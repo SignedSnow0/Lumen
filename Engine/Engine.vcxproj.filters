@@ -4,7 +4,6 @@
     <ClInclude Include="Lumen.h" />
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\Types.h" />
-    <ClInclude Include="Source\Core\Window.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkContext.h" />
     <ClInclude Include="Source\Graphics\Rhi\GraphicsContext.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkInterface.h" />
@@ -34,6 +33,12 @@
     <ClInclude Include="Source\Core\Project.h" />
     <ClInclude Include="Source\Graphics\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\SceneRenderer.h" />
+    <ClInclude Include="Source\Core\Script\ComponentsApi.h" />
+    <ClInclude Include="Source\Core\Script\EntityApi.h" />
+    <ClInclude Include="Source\Core\Script\ScriptInstance.h" />
+    <ClInclude Include="Source\Core\Script\ScriptManager.h" />
+    <ClInclude Include="Source\Graphics\Rhi\GraphicsTypes.h" />
+    <ClInclude Include="Source\Platform\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
@@ -68,6 +73,10 @@
     <ClCompile Include="Source\Core\Project.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\SceneRenderer.cpp" />
+    <ClCompile Include="Source\Core\Script\ComponentsApi.cpp" />
+    <ClCompile Include="Source\Core\Script\EntityApi.cpp" />
+    <ClCompile Include="Source\Core\Script\ScriptInstance.cpp" />
+    <ClCompile Include="Source\Core\Script\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

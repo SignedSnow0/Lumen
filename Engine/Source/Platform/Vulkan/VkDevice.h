@@ -10,16 +10,16 @@ namespace Lumen::Graphics::Vulkan
 {
 #ifdef _DEBUG
 #include <cassert>
-#define VK_ASSERT(func, msg)		\
-if ((func) != VK_SUCCESS)			\
-{									\
-	assert(false && (msg));			\
+#define VK_ASSERT(func, msg)\
+if ((func) != VK_SUCCESS)\
+{\
+	assert(false && (msg));\
 }
 #else
 #define VK_ASSERT(func, msg) func
 #endif
 
-	struct QueueFamiliyIndices
+	struct QueueFamilyIndices
 	{
 		std::optional<u32> Graphics;
 		std::optional<u32> Present;
@@ -31,17 +31,17 @@ if ((func) != VK_SUCCESS)			\
 	{
 	public:
 		VkDevice() = default;
-		~VkDevice() { Release(); }
+		~VkDevice();
 
-		[[nodiscard]] constexpr VkPhysicalDeviceProperties Properties() const	{ return mProperties; }
-		[[nodiscard]] constexpr u32 GraphicsFamily() const						{ return mIndices.Graphics.value(); }
-		[[nodiscard]] constexpr u32 PresentFamily() const						{ return mIndices.Present.value(); }
-		[[nodiscard]] constexpr ::VkDevice Device() const						{ return mDevice; }
-		[[nodiscard]] constexpr VkPhysicalDevice PhysicalDevice() const			{ return mPhysicalDevice; }
-		[[nodiscard]] constexpr VkInstance Instance() const						{ return mInstance; }
-		[[nodiscard]] constexpr VkQueue GraphicsQueue() const					{ return mGraphicsQueue; }
-		[[nodiscard]] constexpr VkQueue PresentQueue() const					{ return mPresentQueue; }
-		[[nodiscard]] VmaAllocator Allocator() const							{ return mAllocator; }
+		[[nodiscard]] VkPhysicalDeviceProperties Properties() const;
+		[[nodiscard]] u32 GraphicsFamily() const;
+		[[nodiscard]] u32 PresentFamily() const;
+		[[nodiscard]] ::VkDevice Device() const;
+		[[nodiscard]] VkPhysicalDevice PhysicalDevice() const;
+		[[nodiscard]] VkInstance Instance() const;
+		[[nodiscard]] VkQueue GraphicsQueue() const;
+		[[nodiscard]] VkQueue PresentQueue() const;
+		[[nodiscard]] VmaAllocator Allocator() const;
 
 		void Init();
 		void Release();
@@ -49,13 +49,13 @@ if ((func) != VK_SUCCESS)			\
 	private:
 		void CreateInstance();
 		void CreateDebugMessenger();
-		bool FindQueueFamilies(VkPhysicalDevice device, QueueFamiliyIndices& indices);
-		bool IsDeviceSuitable(VkPhysicalDevice device, QueueFamiliyIndices& indices);
+		b8 FindQueueFamilies(VkPhysicalDevice device, QueueFamilyIndices& indices);
+		b8 IsDeviceSuitable(VkPhysicalDevice device, QueueFamilyIndices& indices);
 		void CreatePhysicalDevice();
 		void CreateLogicalDevice();
 		void CreateAllocator();
 
-		QueueFamiliyIndices			mIndices;
+		QueueFamilyIndices			mIndices;
 		VkPhysicalDevice			mPhysicalDevice{};
 		::VkDevice					mDevice{};
 		VkInstance					mInstance{};

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+
 #include "Core/Types.h"
 
 #ifdef _WIN64
 struct GLFWwindow;
+using WindowHandle = GLFWwindow*;
 #endif
 
 namespace Lumen
@@ -22,11 +25,11 @@ namespace Lumen
 		~Window();
 
 		b8 ShouldClose() const;
-		decltype(auto) Native() const;
+		WindowHandle Native() const;
 
 		static void Update();
 
 	private:
-		void* mNative{ nullptr };
+		WindowHandle mNative{ nullptr };
 	};
 }

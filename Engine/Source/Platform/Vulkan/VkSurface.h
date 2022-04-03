@@ -2,7 +2,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "Core/Window.h"
+#include "Platform/Window.h"
 #include "Graphics/Rhi/Surface.h"
 
 namespace Lumen::Graphics::Vulkan

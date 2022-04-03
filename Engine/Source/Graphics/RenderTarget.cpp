@@ -1,6 +1,6 @@
 ﻿#include "RenderTarget.h"
 
-#include "Core/Window.h"
+#include "Platform/Window.h"
 #include "Rhi/Surface.h"
 
 namespace Lumen::Graphics

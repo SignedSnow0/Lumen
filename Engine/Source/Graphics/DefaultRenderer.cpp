@@ -4,7 +4,11 @@
 
 #include "Rhi/Buffers.h"
 #include "Rhi/DescriptorSet.h"
+#include "Rhi/Pipeline.h"
+#include "Rhi/RenderPass.h"
+#include "Rhi/Shader.h"
 #include "Rhi/Texture.h"
+#include "Utils/Logger.h"
 
 namespace Lumen::Graphics
 {
@@ -53,6 +57,8 @@ namespace Lumen::Graphics
 
 		texture = Texture::Create(Texture::GetTexturesPath() / "texture.jpg");
 		mDescriptorSet->SetTexture(1, texture);
+
+		LOG_TRACE("Default renderer created");
 	}
 
 	DefaultRenderer::~DefaultRenderer()
@@ -66,6 +72,8 @@ namespace Lumen::Graphics
 		delete mPipeline;
 		delete mShader;
 		delete mRenderPass;
+
+		LOG_TRACE("Default renderer destroyed");
 	}
 
 	void DefaultRenderer::Begin(Surface* surface)

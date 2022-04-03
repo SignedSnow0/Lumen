@@ -6,12 +6,6 @@ namespace Lumen::Graphics
 	class Shader
 	{
 	public:
-		Shader() = delete;
-		Shader(const Shader&) = delete;
-		Shader(Shader&&) = delete;
-		Shader& operator=(const Shader&) = delete;
-		Shader& operator=(Shader&&) = delete;
-
 		/**
 		 * @brief Creates a new Shader instance
 		 * @param sources Code sources to compile the shader with (path, stage)

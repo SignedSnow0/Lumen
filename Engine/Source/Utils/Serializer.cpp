@@ -11,6 +11,7 @@
 #pragma comment(lib, "yaml/yaml-cpp.lib")
 #endif
 
+#include "Logger.h"
 #include "Core/Entity.h"
 #include "Core/Project.h"
 #include "Core/Scene.h"
@@ -110,43 +111,53 @@ namespace Lumen::Utils
 		}
 	}
 
+	/**
+	 * \brief Saves the project to a file.
+	 * \param path The files location.
+	 */
 	void Serializer::Save(const std::filesystem::path& path)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap << YAML::Key << "Project";
+			//project settings
 			out << YAML::BeginMap;
-				out << YAML::Key << "Path" << YAML::Value << mProject->Path.string(); //settings
+				out << YAML::Key << "Path" << YAML::Value << mProject->Path.string();
 				out << YAML::Key << "Name" << YAML::Value << mProject->Name;
 				out << YAML::Key << "GraphicsApi" << YAML::Value << mProject->Api;
 
+				//entities
 				out << YAML::Key << "Entities" << YAML::BeginSeq;
-
 				mProject->Scene->mRegistry.each([&](auto id)
 				{
 					Save(out, Entity{ id, mProject->Scene });
 				});
 
 				out << YAML::EndSeq;//Entities
-			out << YAML::EndMap;
-		out << YAML::EndMap;
+			out << YAML::EndMap;//Scene
+		out << YAML::EndMap;//Project
 
 		if (std::ofstream file{ path }; file.is_open())
 		{
 			file << out.c_str();
 			file.close();
 		}
-		
+
+		LOG_INFO("Project \"{}\" saved to \"{}\"", mProject->Name, path.string());
 	}
 
+	/**
+	 * \brief Loads a project from a YAML file.
+	 * \param path File source path.
+	 */
 	void Serializer::Load(const std::filesystem::path& path)
 	{
 		std::ifstream file{ path };
 		std::stringstream data;
-		data<<file.rdbuf();
+		data << file.rdbuf();
 		file.close();
 
 		YAML::Node pData{YAML::Load(data.str())};
-
+		//returns if file is invalid
 		if(!pData["Project"])
 			return;
 
@@ -155,14 +166,12 @@ namespace Lumen::Utils
 		mProject->Path = pData["Path"].as<std::string>();
 		mProject->Name = pData["Name"].as<std::string>();
 
-		mProject->Scene->Entities().clear();
+		//resets current project
+		mProject->Scene->GetEntities().clear();
 		mProject->Scene->mRegistry.clear();
-		
-		auto entities = pData["Entities"];
-		if (!entities)
-			return;
 
-		for (auto entity : entities)
+		//iterates every entity if there are any
+		for (auto entities = pData["Entities"]; auto entity : entities)
 		{
 			auto newEntity{ mProject->Scene->CreateEntity() };
 			if (auto transform = entity["TransformComponent"]; transform)
@@ -185,8 +194,15 @@ namespace Lumen::Utils
 				sc.ScriptName = script["Script"].as<std::string>();
 			}
 		}
+
+		LOG_INFO("Project loaded from \"{}\"", path.string());
 	}
 
+	/**
+	 * \brief Save function for entities.
+	 * \param out Serializer.
+	 * \param entity Entity to save.
+	 */
 	void Serializer::Save(YAML::Emitter& out, const Entity& entity)
 	{
 		out << YAML::BeginMap;

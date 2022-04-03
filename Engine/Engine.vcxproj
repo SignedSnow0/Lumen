@@ -69,6 +69,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)External\Lib\;$(ProjectDir)External\mono\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>spdlog\spdlog.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,6 +131,7 @@
     <ClInclude Include="Source\Platform\Vulkan\VkSurface.h" />
     <ClInclude Include="Source\Platform\Vulkan\VkTexture.h" />
     <ClInclude Include="Source\Platform\Window.h" />
+    <ClInclude Include="Source\Utils\Logger.h" />
     <ClInclude Include="Source\Utils\Serializer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +170,7 @@
     <ClCompile Include="Source\Platform\Vulkan\VkTexture.cpp" />
     <ClCompile Include="Source\Platform\Vulkan\vma.cpp" />
     <ClCompile Include="Source\Platform\Window.cpp" />
+    <ClCompile Include="Source\Utils\Logger.cpp" />
     <ClCompile Include="Source\Utils\Serializer.cpp" />
   </ItemGroup>
   <ItemGroup>

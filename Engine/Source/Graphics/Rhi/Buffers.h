@@ -9,15 +9,6 @@ namespace Lumen::Graphics
 	{
 	public:
 		/**
-		 * \brief Use Create() instead
-		 */
-		VertexBuffer() = delete;
-		VertexBuffer(const VertexBuffer&) = delete;
-		VertexBuffer(VertexBuffer&&) = delete;
-		VertexBuffer& operator=(const VertexBuffer&) = delete;
-		VertexBuffer& operator=(VertexBuffer&&) = delete;
-		
-		/**
 		 * \brief Creates a new vertex buffer
 		 * \param vertices Pointer to the beginning of the vertices buffer
 		 * \param vertexCount Number of vertices in the buffer
@@ -39,12 +30,6 @@ namespace Lumen::Graphics
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer() = delete;
-		IndexBuffer(const IndexBuffer&) = delete;
-		IndexBuffer(IndexBuffer&&) = delete;
-		IndexBuffer& operator=(const IndexBuffer&) = delete;
-		IndexBuffer& operator=(IndexBuffer&&) = delete;
-		
 		/**
 		 * \brief Creates a new index buffer
 		 * \param indices Pointer to the beginning of the indices buffer

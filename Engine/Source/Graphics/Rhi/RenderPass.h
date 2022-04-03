@@ -6,16 +6,10 @@
 #include "Core/Types.h"
 
 namespace Lumen::Graphics
-{	
+{
 	class RenderPass
 	{
 	public:
-		RenderPass() = delete;
-		RenderPass(const RenderPass&) = delete;
-		RenderPass(RenderPass&&) = delete;
-		RenderPass& operator=(const RenderPass&) = delete;
-		RenderPass& operator=(RenderPass&&) = delete;
-
 		/**
 		 * @brief Creates a new RenderPass instance
 		 * @param attachments Attachments to use in the render pass
@@ -26,7 +20,7 @@ namespace Lumen::Graphics
 		virtual ~RenderPass() = default;
 
 		/**
-		 * @brief Intializes the renderpass resources
+		 * @brief Initializes the renderpass resources
 		 */
 		virtual void Init() = 0;
 		/**

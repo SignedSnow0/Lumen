@@ -21,7 +21,7 @@ namespace Lumen
 	{
 		class ScriptManager;
 	}
-	
+
 	class Scene
 	{
 	public:
@@ -31,7 +31,7 @@ namespace Lumen
 		Entity CreateEntity();
 		bool GetEntity(u32 id, Entity& entity);
 		void DestroyEntity(Entity entity);
-		std::vector<Entity*>& Entities() { return mEntities; }
+		std::vector<Entity*>& GetEntities();
 
 	private:
 		entt::registry mRegistry{};

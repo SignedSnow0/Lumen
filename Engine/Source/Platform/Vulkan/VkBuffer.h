@@ -13,7 +13,7 @@ namespace Lumen::Graphics::Vulkan
 		explicit VkBuffer(u64 size, VkBufferUsageFlags usage, VmaMemoryUsage vmaUsage);
 		~VkBuffer();
 
-		[[nodiscard]] constexpr ::VkBuffer Buffer() const { return  mBuffer; }
+		[[nodiscard]] ::VkBuffer Buffer() const;
 
 		void InsertData(const void* data, u64 size = 0, u64 offset = 0) const;
 
@@ -60,8 +60,8 @@ namespace Lumen::Graphics::Vulkan
 		explicit VkUniformBuffer(u32 size);
 		~VkUniformBuffer();
 
-		[[nodiscard]] constexpr u32 Size() const { return mSize; }
-		[[nodiscard]] constexpr ::VkBuffer Buffer(u32 frame) const { return mBuffers[frame]; }
+		u32 Size() const;
+		::VkBuffer Buffer(u32 frame) const;
 
 		void Update(const void* data, u32 frame) const;
 

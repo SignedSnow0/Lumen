@@ -6,19 +6,19 @@
 
 namespace Lumen::Script
 {
-    class ScriptInstance
-    {
-    public:
-        explicit ScriptInstance(MonoClass* monoClass, MonoDomain* monoDomain, Entity& owner);
+	class ScriptInstance
+	{
+	public:
+		explicit ScriptInstance(MonoClass* monoClass, MonoDomain* monoDomain, const Entity& owner);
 
-        void Start();
-        void Update();
-    
-    private:
-        MonoClass*  mClass{ nullptr };
-        MonoObject* mInstance{ nullptr };
-        MonoMethod* mStart{ nullptr };
-        MonoMethod* mUpdate{ nullptr };
-        MonoObject* mException{ nullptr };
-    };    
+		void Start();
+		void Update();
+
+	private:
+		MonoClass*  mClass{ nullptr };
+		MonoObject* mInstance{ nullptr };
+		MonoMethod* mStart{ nullptr };
+		MonoMethod* mUpdate{ nullptr };
+		MonoObject* mException{ nullptr };
+	};
 }

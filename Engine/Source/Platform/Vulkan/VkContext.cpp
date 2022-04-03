@@ -12,8 +12,14 @@ namespace Lumen::Graphics::Vulkan
 		}
 	}
 
+	/**
+	 * \brief Singleton instance of the graphics context
+	 */
 	VkContext* VkContext::sInstance{ nullptr };
 
+	/**
+	 * \brief Creates a new instance of the Vulkan context singleton
+	 */
 	VkContext::VkContext()
 	{
 		sInstance = this;
@@ -21,10 +27,38 @@ namespace Lumen::Graphics::Vulkan
 
 	VkContext::~VkContext()
 	{
-		WaitIdle();
+		VkContext::WaitIdle();
 		vkDestroyCommandPool(mDevice.Device(), mSingleTimeCommandPool, nullptr);
 	}
 
+	/**
+	 * \brief Returns the device
+	 */
+	const VkDevice& VkContext::Device() const { return mDevice; }
+
+	/**
+	 * \brief Returns the native device
+	 */
+	::VkDevice VkContext::LogicalDevice() const { return mDevice.Device(); }
+
+	/**
+	 * \brief Returns the native physical device
+	 */
+	VkPhysicalDevice VkContext::PhysicalDevice() const { return mDevice.PhysicalDevice(); }
+
+	/**
+	 * \brief Returns the native instance
+	 */
+	VkInstance VkContext::Instance() const { return mDevice.Instance(); }
+
+	/**
+	 * \brief Returns a reference to the singleton instance
+	 */
+	VkContext& VkContext::Get() { return *sInstance; }
+
+	/**
+	 * \brief Initializes the graphics contexts resources
+	 */
 	void VkContext::Init()
 	{
 		mDevice.Init();
@@ -34,12 +68,19 @@ namespace Lumen::Graphics::Vulkan
 		VK_ASSERT(vkCreateCommandPool(mDevice.Device(), &createInfo, nullptr, &mSingleTimeCommandPool), "Failed to create single time command pool");
 	}
 
+	/**
+	 * \brief Waits for gpu operations to finish
+	 */
 	void VkContext::WaitIdle() const
 	{
 		vkDeviceWaitIdle(mDevice.Device());
 	}
 
-	VkCommandBuffer VkContext::StartCommand()
+	/**
+	 * \brief Starts a temporary command buffer
+	 * \return The temporary command buffer
+	 */
+	VkCommandBuffer VkContext::StartCommand() const
 	{
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -59,7 +100,11 @@ namespace Lumen::Graphics::Vulkan
 		return commandBuffer;
 	}
 
-	void VkContext::EndCommand(VkCommandBuffer cmd)
+	/**
+	 * \brief Submits the temporary command buffer and executes it
+	 * \param cmd The command buffer to submit created by StartCommand()
+	 */
+	void VkContext::EndCommand(VkCommandBuffer cmd) const
 	{
 		vkEndCommandBuffer(cmd);
 

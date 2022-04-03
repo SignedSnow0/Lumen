@@ -17,7 +17,7 @@ void SceneView::Render()
 		}
 
 		u32 i{ 0 };
-		for (const auto e : scene->Entities())
+		for (const auto e : scene->GetEntities())
 		{
 			auto* name{ e->GetComponents<Components::Tag>() };
 			std::string label{ "Entity##" };

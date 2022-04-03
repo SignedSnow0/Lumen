@@ -8,6 +8,9 @@
 
 namespace Lumen::Components
 {
+	/**
+	 * \brief Returns a model matrix using the structs position, rotation and scale
+	 */
 	glm::mat4 Transform::GetTransform() const
 	{
 		return glm::translate(glm::mat4{ 1.0f }, Translation) * glm::toMat4(glm::quat{ glm::radians(Rotation) }) * glm::scale(glm::mat4{ 1.0f }, Scale);

@@ -7,30 +7,30 @@
 
 namespace Lumen::Graphics::Vulkan
 {
-	class VkContext final : public GraphicsContext
+	class VkContext : public GraphicsContext
 	{
 	public:
 		explicit VkContext();
 		~VkContext() override;
 
-		[[nodiscard]] constexpr const VkDevice& Device() const			{ return mDevice; }
-		[[nodiscard]] constexpr ::VkDevice LogicalDevice() const		{ return mDevice.Device(); }
-		[[nodiscard]] constexpr VkPhysicalDevice PhysicalDevice() const { return mDevice.PhysicalDevice(); }
-		[[nodiscard]] constexpr VkInstance Instance() const				{ return mDevice.Instance(); }
+		[[nodiscard]] const VkDevice& Device() const;
+		[[nodiscard]] ::VkDevice LogicalDevice() const;
+		[[nodiscard]] VkPhysicalDevice PhysicalDevice() const;
+		[[nodiscard]] VkInstance Instance() const;
 
-		static VkContext& Get() { return *sInstance; }
+		static VkContext& Get();
 
 		void Init() override;
 
 		void WaitIdle() const override;
-		[[nodiscard]] VkCommandBuffer StartCommand();
-		void EndCommand(VkCommandBuffer cmd);
+		[[nodiscard]] VkCommandBuffer StartCommand() const;
+		void EndCommand(VkCommandBuffer cmd) const;
 
 		static void SetInterface();
 
 	private:
 		VkDevice mDevice{};
-		VkCommandPool mSingleTimeCommandPool;
+		VkCommandPool mSingleTimeCommandPool{};
 
 		static VkContext* sInstance;
 	};

@@ -1,5 +1,5 @@
-[submodule "Lumen/External/Include/stb"]
-	path = Lumen/External/Include/stb
+[submodule "Engine/External/Include/stb"]
+	path = Engine/External/Include/stb
 	url = https://github.com/nothings/stb.git
 [submodule "imgui"]
 	path = External/ImGui/imgui

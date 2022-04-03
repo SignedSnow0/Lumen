@@ -36,7 +36,7 @@ namespace Lumen::Graphics::Vulkan
 		VkTexture* Texture{ nullptr };
 	};
 
-	class VkDescriptorSet final : public DescriptorSet
+	class VkDescriptorSet : public DescriptorSet
 	{
 	public:
 		VkDescriptorSet() = default;
@@ -49,8 +49,8 @@ namespace Lumen::Graphics::Vulkan
 		void Init() override;
 		void Release() override;
 
-		[[nodiscard]] constexpr u32 SetIndex() const { return mSet; }
-		[[nodiscard]] constexpr ::VkDescriptorSet Set(u32 frame) const { return mSets.at(frame); }
+		[[nodiscard]] u32 SetIndex() const;
+		[[nodiscard]] ::VkDescriptorSet Set(u32 frame) const;
 
 		void Update(u32 frame) override;
 		void UpdateUniform(u32 binding, const void* data, u32 frame) override;
@@ -71,6 +71,7 @@ namespace Lumen::Graphics::Vulkan
 		u32										mSet{};
 		b8										mCreated{ false };
 		b8										mToUpdate[VkSurface::BufferCount]{ false };
+		VkShader* mShader						{ nullptr };
 
 		friend class VkShader;
 	};

@@ -4,9 +4,10 @@
 #include <fstream>
 #include <set>
 #include <vector>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
-#include "Core/Window.h"
+#include "Platform/Window.h"
+#include "Utils/Logger.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -39,17 +40,29 @@ namespace Lumen::Graphics::Vulkan
 		{
 			static bool reset{ true };
 
-			if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+			if(messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
 			{
+				switch (messageSeverity)
+				{
+				case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+					LOG_TRACE(pCallbackData->pMessage);
+					break;
+				case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+					LOG_INFO(pCallbackData->pMessage);
+					break;
+				case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+					LOG_WARN(pCallbackData->pMessage);
+					break;
+				case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+					LOG_ERROR(pCallbackData->pMessage);
+					break;
+				}
+
 				std::string out = "[Validation layer: ] ";
 				out.append(pCallbackData->pMessage);
-#ifdef _DEBUG
-				std::cerr << out << std::endl;
-				
-#endif
 				if (std::ofstream log{ ".FrostEngine/ValidationLayer.txt", std::ios::out | (reset ? std::ios::trunc : std::ios::app) }; log.is_open())
 				{
-					log << out << "\n\n";
+					log << out << "\n";
 					log.close();
 				}
 
@@ -180,8 +193,31 @@ namespace Lumen::Graphics::Vulkan
 		}
 	}
 
+	VkDevice::~VkDevice()
+	{
+		Release();
+	}
+
+	VkPhysicalDeviceProperties VkDevice::Properties() const { return mProperties; }
+	
+	u32 VkDevice::GraphicsFamily() const { return mIndices.Graphics.value(); }
+	
+	u32 VkDevice::PresentFamily() const { return mIndices.Present.value(); }
+	
+	::VkDevice VkDevice::Device() const { return mDevice; }
+	
+	VkPhysicalDevice VkDevice::PhysicalDevice() const { return mPhysicalDevice; }
+	
+	VkInstance VkDevice::Instance() const { return mInstance; }
+	
+	VkQueue VkDevice::GraphicsQueue() const { return mGraphicsQueue; }
+	
+	VkQueue VkDevice::PresentQueue() const { return mPresentQueue; }
+	
+	VmaAllocator VkDevice::Allocator() const { return mAllocator; }
+
 	/**
-	 * @brief Creates all the necessary resources for the class
+	 * @brief Initializes the devices resources
 	 */
 	void VkDevice::Init()
 	{
@@ -193,7 +229,7 @@ namespace Lumen::Graphics::Vulkan
 	}
 
 	/**
-	 * @brief Destroys all the class` resources
+	 * @brief Releases all the resources
 	 */
 	void VkDevice::Release()
 	{
@@ -250,7 +286,7 @@ namespace Lumen::Graphics::Vulkan
 	 * @param indices Structure containing the retrieved indices
 	 * @return true if all the indices are found
 	 */
-	bool VkDevice::FindQueueFamilies(VkPhysicalDevice device, QueueFamiliyIndices& indices)
+	b8 VkDevice::FindQueueFamilies(VkPhysicalDevice device, QueueFamilyIndices& indices)
 	{
 		u32 queueFamilyCount{ 0 };
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -296,7 +332,7 @@ namespace Lumen::Graphics::Vulkan
 	 * @param indices Retrieved queue indices from the device if it is suitable
 	 * @return true if the device meets all the criterias
 	 */
-	bool VkDevice::IsDeviceSuitable(VkPhysicalDevice device, QueueFamiliyIndices& indices)
+	b8 VkDevice::IsDeviceSuitable(VkPhysicalDevice device, QueueFamilyIndices& indices)
 	{
 		VkPhysicalDeviceFeatures features{};
 		vkGetPhysicalDeviceProperties(device, &mProperties);

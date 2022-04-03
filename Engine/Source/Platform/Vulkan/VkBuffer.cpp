@@ -8,7 +8,7 @@ namespace Lumen::Graphics::Vulkan
 {
 	namespace 
 	{
-		void CopyBuffer(::VkBuffer src, ::VkBuffer dst, VkDeviceSize size)
+		void CopyBuffer(const ::VkBuffer src, const ::VkBuffer dst, const VkDeviceSize size)
 		{
 			VkCommandPoolCreateInfo poolInfo{};
 			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -49,18 +49,24 @@ namespace Lumen::Graphics::Vulkan
 			vkDestroyCommandPool(VkContext::Get().LogicalDevice(), pool, nullptr);
 		}
 
-		VertexBuffer* CreateFuncVulkan(const Vertex* vertices, u32 vertexCount)
+		VertexBuffer* CreateFuncVulkan(const Vertex* vertices, const u32 vertexCount)
 		{
 			return new VkVertexBuffer{ vertices, vertexCount };
 		}
 
-		IndexBuffer* CreateFuncVulkan(const u32 * indices, u32 indexCount)
+		IndexBuffer* CreateFuncVulkan(const u32 * indices, const u32 indexCount)
 		{
 			return new VkIndexBuffer{ indices, indexCount };
 		}
 	}
 
-	VkBuffer::VkBuffer(u64 size, VkBufferUsageFlags usage, VmaMemoryUsage vmaUsage)
+	/**
+	 * \brief Creates a generic buffer
+	 * \param size Byte size of the buffer
+	 * \param usage Usage for the buffer
+	 * \param vmaUsage Vma usage for the buffer
+	 */
+	VkBuffer::VkBuffer(const u64 size, const VkBufferUsageFlags usage, const VmaMemoryUsage vmaUsage)
 		: mSize{ size }
 	{
 		VkBufferCreateInfo createInfo{};
@@ -81,7 +87,18 @@ namespace Lumen::Graphics::Vulkan
 		vkDestroyBuffer(VkContext::Get().LogicalDevice(), mBuffer, nullptr);
 	}
 
-	void VkBuffer::InsertData(const void* data, u64 size, u64 offset) const
+	/**
+	 * \brief Returns the native buffer
+	 */
+	::VkBuffer VkBuffer::Buffer() const { return mBuffer; }
+
+	/**
+	 * \brief Inserts data into the buffer
+	 * \param data Pointer to the data in the cpu
+	 * \param size Byte size of the data (if 0 then the whole buffer is filled)
+	 * \param offset Offset in the gpu buffer
+	 */
+	void VkBuffer::InsertData(const void* data, const u64 size, const u64 offset) const
 	{
 		void* gpuMem;
 		vmaMapMemory(VkContext::Get().Device().Allocator(), mAllocation, &gpuMem);
@@ -89,7 +106,12 @@ namespace Lumen::Graphics::Vulkan
 		vmaUnmapMemory(VkContext::Get().Device().Allocator(), mAllocation);
 	}
 
-	VkVertexBuffer::VkVertexBuffer(const Vertex* vertices, u32 vertexCount)
+	/**
+	 * \brief Creates a new vertex buffer
+	 * \param vertices Pointer to the vertices in the cpu
+	 * \param vertexCount Number of vertices
+	 */
+	VkVertexBuffer::VkVertexBuffer(const Vertex* vertices, const u32 vertexCount)
 		: VkBuffer{ sizeof(Vertex) * vertexCount, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY }, mCount{ vertexCount }
 	{ 
 		const VkBuffer stagingBuffer{ sizeof(Vertex) * vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY };
@@ -98,6 +120,10 @@ namespace Lumen::Graphics::Vulkan
 		CopyBuffer(stagingBuffer.Buffer(), mBuffer, mSize);
 	}
 
+	/**
+	 * \brief Sets this vertex buffer as the current vertex buffer
+	 * \param target The target to set the vertex buffer to
+	 */
 	void VkVertexBuffer::Bind(Surface* target) const
 	{
 		VkCommandBuffer cmd = dynamic_cast<VkSurface*>(target)->CommandBuffer();
@@ -105,6 +131,9 @@ namespace Lumen::Graphics::Vulkan
 		vkCmdBindVertexBuffers(cmd, 0, 1, &mBuffer, offsets);
 	}
 
+	/**
+	 * \brief Returns the default vertex binding description
+	 */
 	VkVertexInputBindingDescription VkVertexBuffer::BindingDescription()
 	{
 		VkVertexInputBindingDescription bindingDescription{};
@@ -115,6 +144,9 @@ namespace Lumen::Graphics::Vulkan
 		return bindingDescription;
 	}
 
+	/**
+	 * \brief Returns the default vertex attribute descriptions
+	 */
 	std::array<VkVertexInputAttributeDescription, 3> VkVertexBuffer::AttributeDescriptions()
 	{
 		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
@@ -141,7 +173,12 @@ namespace Lumen::Graphics::Vulkan
 		sCreateFunc = CreateFuncVulkan;
 	}
 
-	VkIndexBuffer::VkIndexBuffer(const u32* indices, u32 indicesCount)
+	/**
+	 * \brief Creates a new index buffer
+	 * \param indices Pointer to the indices in the cpu
+	 * \param indicesCount Number of indices
+	 */
+	VkIndexBuffer::VkIndexBuffer(const u32* indices, const u32 indicesCount)
 		: VkBuffer{ sizeof(u32) * indicesCount, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY }, mCount{ indicesCount }
 	{
 		const VkBuffer stagingBuffer{ sizeof(Vertex) * indicesCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY };
@@ -150,12 +187,20 @@ namespace Lumen::Graphics::Vulkan
 		CopyBuffer(stagingBuffer.Buffer(), mBuffer, mSize);
 	}
 
+	/**
+	 * \brief Sets this index buffer as the current index buffer
+	 * \param target The target to set the index buffer to
+	 */
 	void VkIndexBuffer::Bind(Surface* target) const
 	{
 		VkCommandBuffer cmd = dynamic_cast<VkSurface*>(target)->CommandBuffer();
 		vkCmdBindIndexBuffer(cmd, mBuffer, 0, VK_INDEX_TYPE_UINT32);
 	}
 
+	/**
+	 * \brief Draws to the target using the last vertex and index buffer bound
+	 * \param target The target to draw to
+	 */
 	void VkIndexBuffer::Draw(Surface* target) const
 	{
 		VkCommandBuffer cmd = dynamic_cast<VkSurface*>(target)->CommandBuffer();
@@ -167,7 +212,11 @@ namespace Lumen::Graphics::Vulkan
 		sCreateFunc = CreateFuncVulkan;
 	}
 
-	VkUniformBuffer::VkUniformBuffer(u32 size)
+	/**
+	 * \brief Creates a new uniform buffer
+	 * \param size Byte size of the buffer
+	 */
+	VkUniformBuffer::VkUniformBuffer(const u32 size)
 		: mSize{ size }
 	{
 		VkBufferCreateInfo createInfo{};
@@ -188,7 +237,23 @@ namespace Lumen::Graphics::Vulkan
 			vkDestroyBuffer(VkContext::Get().LogicalDevice(), buffer, nullptr);
 	}
 
-	void VkUniformBuffer::Update(const void* data, u32 frame) const
+	/**
+	 * \brief Returns the byte size of the buffer
+	 */
+	u32 VkUniformBuffer::Size() const { return mSize; }
+
+	/**
+	 * \brief Returns the native buffer
+	 * \param frame The frame to get the buffer from
+	 */
+	::VkBuffer VkUniformBuffer::Buffer(const u32 frame) const { return mBuffers[frame]; }
+
+	/**
+	 * \brief Sets the data of the buffer
+	 * \param data Pointer to the uniform data in the cpu
+	 * \param frame The frame to set the data to
+	 */
+	void VkUniformBuffer::Update(const void* data, const u32 frame) const
 	{
 		void* gpuMem;
 		vmaMapMemory(VkContext::Get().Device().Allocator(), mAllocations[frame], &gpuMem);

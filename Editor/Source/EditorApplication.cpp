@@ -3,7 +3,7 @@
 EditorApp* EditorApp::sInstance = nullptr;
 
 EditorApp::EditorApp()
-	: Application({ "Test", R"(C:\Dev\Lumen\TestProject\)", Lumen::Graphics::RendererApi::Vulkan })
+	: Application({ "Test", R"(C:\Dev\Lumen\TestProject\)", Lumen::Graphics::RendererApi::Vulkan, { "Editor", 1920, 1080 } })
 {
 	sInstance = this;
 }
@@ -11,7 +11,6 @@ EditorApp::EditorApp()
 EditorApp::~EditorApp()
 {
 	delete mGui;
-
 }
 
 b8 EditorApp::Init()

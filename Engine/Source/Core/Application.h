@@ -9,9 +9,10 @@ namespace Lumen
 {
 	struct AppInitInfo
 	{
-		std::string Name{};
-		std::filesystem::path Path{};
-		Graphics::RendererApi Api{};
+		std::string AppName{};
+		std::filesystem::path ProjectPath{};
+		Graphics::RendererApi GraphicsApi{};
+		WindowInitInfo WindowInitInfo{};
 	};
 
 	class Application
@@ -20,33 +21,32 @@ namespace Lumen
 		explicit Application(const AppInitInfo& initInfo);
 		virtual ~Application();
 
-		b8 GetClosing() const;
-		std::filesystem::path GetEnginePath() const;
-		std::filesystem::path GetAssetsPath() const;
-		Scene* GetScene() const;
-		Script::ScriptManager& GetScriptManager();
-		b8 GetIsPlaying() const;
+		[[nodiscard]] std::filesystem::path GetEnginePath() const;
+		[[nodiscard]] std::filesystem::path GetAssetsPath() const;
+		[[nodiscard]] b8 GetClosing() const;
+		[[nodiscard]] b8 GetIsPlaying() const;
 		void SetPlaying(b8 value);
-		
+		[[nodiscard]] Scene* GetScene() const;
+		[[nodiscard]] Script::ScriptManager& GetScriptManager();
+
 		virtual b8 Init();
 		virtual void Shutdown();
-		
 		virtual void Run();
-		
+
 		void Save();
 		void Load();
 
-		static Application* Get() { return sInstance; }
+		[[nodiscard]] static Application* Get() { return sInstance; }
 
 	protected:
 		void Begin();
 		void End();
 
-		Graphics::RenderTarget* GetRenderTarget(u32 index);
-		Graphics::DefaultRenderer* GetDefaultRenderer() const;
+		[[nodiscard]] Graphics::RenderTarget* GetRenderTarget(u32 index);
+		[[nodiscard]] Graphics::DefaultRenderer* GetDefaultRenderer() const;
 
 		Project	mProject{};
-		
+
 	private:
 		b8 mShutdown{ false };
 		b8 mIsPlaying{ false };
@@ -55,7 +55,7 @@ namespace Lumen
 		Graphics::GraphicsContext* mGraphicsContext{ nullptr };
 		Graphics::SceneRenderer* mRenderer{ nullptr };
 		Script::ScriptManager mScriptManager{};
-		
+
 		static Application* sInstance;
 	};
 }

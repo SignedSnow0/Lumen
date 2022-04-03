@@ -12,7 +12,7 @@ namespace Lumen
 	public:
 		std::string				Name{};
 		std::filesystem::path	Path{};
-		Graphics::RendererApi	Api{ Graphics::RendererApi::Count };
+		Graphics::RendererApi	Api{};
 		Scene*					Scene{ nullptr };
 	};
 }

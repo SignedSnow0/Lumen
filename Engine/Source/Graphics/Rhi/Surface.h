@@ -7,12 +7,6 @@ namespace Lumen::Graphics
 	class Surface
 	{
 	public:
-		Surface() = delete;
-		Surface(const Surface&) = delete;
-		Surface(Surface&&) = delete;
-		Surface& operator=(const Surface&) = delete;
-		Surface& operator=(Surface&&) = delete;
-
 		/**
 		 * @brief Creates a new Surface instance
 		 * @param target Window the surface will be created for

@@ -8,12 +8,6 @@ namespace Lumen::Graphics
 	class Texture
 	{
 	public:
-		Texture() = default;
-		Texture(const Texture&) = delete;
-		Texture(Texture&&) = delete;
-		Texture& operator=(const Texture&) = delete;
-		Texture& operator=(Texture&&) = delete;
-
 		/**
 		 * @brief Creates a new Texture instance
 		 * @param source Path to the texture file

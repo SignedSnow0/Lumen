@@ -7,12 +7,6 @@ namespace Lumen::Graphics
 	class DescriptorSet
 	{
 	public:
-		DescriptorSet() = delete;
-		DescriptorSet(const DescriptorSet&) = delete;
-		DescriptorSet(DescriptorSet&&) = delete;
-		DescriptorSet& operator=(const DescriptorSet&) = delete;
-		DescriptorSet& operator=(DescriptorSet&&) = delete;
-		
 		/**
 		 * \brief Creates a descriptor set
 		 * \param shader Shader containing the descriptor set layout

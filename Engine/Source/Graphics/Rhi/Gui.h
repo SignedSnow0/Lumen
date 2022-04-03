@@ -10,12 +10,6 @@ namespace Lumen::Graphics
 	class Gui
 	{
 	public:
-		Gui() = delete;
-		Gui(const Gui&) = delete;
-		Gui(Gui&&) = delete;
-		Gui& operator=(const Gui&) = delete;
-		Gui& operator=(Gui&&) = delete;
-		
 		/**
 		 * \brief Creates a new Gui instance
 		 * \return The new Gui instance

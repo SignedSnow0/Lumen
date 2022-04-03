@@ -45,8 +45,6 @@ namespace Lumen::Graphics::Vulkan
 					case AttachmentUsage::Depth:
 						vkAttachment.AsDepth(FormatToVk(attachment.Format), LayoutToVk(attachment.Usage));
 						break;
-					case AttachmentUsage::Count:
-						break;
 				}
 				vkAttachments[i] = vkAttachment;
 				

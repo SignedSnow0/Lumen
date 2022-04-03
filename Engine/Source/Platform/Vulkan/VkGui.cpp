@@ -5,7 +5,7 @@
 #include "VkRenderPass.h"
 #include "VkSurface.h"
 #include "VkTexture.h"
-#include "Core/Window.h"
+#include "Platform/Window.h"
 #ifdef _WIN64
 #include <imgui/backends/imgui_impl_glfw.h>
 #endif
@@ -19,6 +19,15 @@ namespace Lumen::Graphics::Vulkan
 			return new VkGui{};
 		}
 	}
+
+	VkGui::~VkGui()
+	{
+		VkGui::Release();
+	}
+
+	ImFont* VkGui::GetBoldFont() { return mBoldFont; }
+
+	ImFont* VkGui::GetItalicFont() { return mItalicFont; }
 
 	void VkGui::Init(const Window* target, Surface* surface)
 	{

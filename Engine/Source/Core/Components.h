@@ -31,6 +31,8 @@ namespace Lumen::Components
 	struct Tag : Component
 	{
 		std::string Name{ "Empty entity" };
+
+		inline static const char* ComponentName = "Tag";
 	};
 
 	struct Mesh : Component

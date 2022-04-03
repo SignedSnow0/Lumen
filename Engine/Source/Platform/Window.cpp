@@ -18,6 +18,7 @@ namespace Lumen
 	 */
 	Window::Window(const WindowInitInfo& initInfo, bool visible)
 	{
+		//inits glfw if it hasn't been already
 		if (!glfwInitialized)
 		{
 			glfwInit();
@@ -35,8 +36,9 @@ namespace Lumen
 
 	Window::~Window()
 	{
-		glfwDestroyWindow(static_cast<GLFWwindow*>(mNative));
+		glfwDestroyWindow(mNative);
 		windowCount--;
+		//terminates glfw if there are no windows
 		if (!windowCount)
 		{
 			glfwTerminate();
@@ -48,9 +50,9 @@ namespace Lumen
 	 * @brief Asks the window if the close button has been pressed.
 	 * @return True if the window is closing.
 	 */
-	b8 Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow*>(mNative)); }
+	b8 Window::ShouldClose() const { return glfwWindowShouldClose(mNative); }
 
-	decltype(auto) Window::Native() const { return static_cast<GLFWwindow*>(mNative); }
+	WindowHandle Window::Native() const { return mNative; }
 	
 	/**
 	 * @brief Updates all the windows by polling native events and messages.
